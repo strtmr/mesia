@@ -21,6 +21,21 @@ ddev exec bin/console doctrine:migrations:migrate -n
 
 App: https://mealplanner.ddev.site
 
+### Haushalt und Benutzer anlegen
+
+Es gibt keine Selbstregistrierung. Haushalt und Benutzer werden per Konsole angelegt, das Passwort wird verdeckt abgefragt:
+
+```bash
+ddev exec bin/console app:household:create "Familie Muster"
+ddev exec bin/console app:user:create marco@example.com Marco      # --household=<ID> nur nötig bei mehreren Haushalten
+ddev exec bin/console app:user:set-password marco@example.com       # Passwort zurücksetzen
+```
+
+### Auf dem iPhone testen
+
+Service Worker und PWA-Installation brauchen HTTPS mit gültigem Zertifikat. Am einfachsten: `ddev share`
+(öffentlicher Tunnel, URL im Safari öffnen, „Teilen“ → „Zum Home-Bildschirm“).
+
 ### Testdatenbank einmalig anlegen
 
 ```bash

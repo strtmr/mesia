@@ -1,0 +1,42 @@
+# Alle UI-Texte. Deutsch ist vorerst die einzige Sprache, eine englische Datei kann später daneben gelegt werden.
+
+app:
+    name: Mealplanner
+
+nav:
+    label: Hauptnavigation
+    shopping: Einkauf
+    more: Mehr
+
+login:
+    title: Anmelden
+    intro: Melde dich mit deinem Konto an.
+    email: E-Mail
+    password: Passwort
+    submit: Anmelden
+    stay_signed_in: Du bleibst auf diesem Gerät angemeldet.
+
+shopping:
+    title: Einkauf
+    placeholder:
+        headline: Hier entsteht eure Einkaufsliste
+        text: Die offlinefähige Liste folgt in Phase 1.
+
+more:
+    title: Mehr
+    account:
+        section: Konto
+        name: Name
+        email: E-Mail
+        household: Haushalt
+    app:
+        section: App
+        version: Version
+        connection: Verbindung
+        online: Online
+        offline: Offline
+    logout: Abmelden
+
+install_hint:
+    text: 'Tipp: Tippe auf „Teilen“ und dann auf „Zum Home-Bildschirm“, um die App wie eine normale App zu nutzen.'
+    dismiss: Ausblenden

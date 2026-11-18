@@ -384,7 +384,17 @@ Vitest. Später Playwright-E2E (WebKit). Plattform: **GitHub Actions** (privates
 
 ### Phase 0: Fundament
 
-> **Stand 2026-11-18:** 0.2–0.4 umgesetzt. Erkenntnisse dabei:
+> **Stand 2026-11-18:** 0.2–0.6 umgesetzt. Offen: 0.1 (PostgreSQL bei Hetzner prüfen), 0.7 (Deployment).
+>
+> Für 0.7 vormerken: `symfony/apache-pack` (.htaccess für Apache), dort `AddType application/manifest+json .webmanifest`
+> und `Cache-Control: no-cache` für `/sw.js` (lokal per `.ddev/nginx/pwa.conf` gelöst), `APP_SECRET` für prod setzen.
+>
+> Umsetzung 0.5/0.6: Login mit Remember-me (1 Jahr, Signatur enthält den Passwort-Hash), Login-Drosselung (5 Versuche / 15 min),
+> E-Mail unabhängig von Groß-/Kleinschreibung, Befehle `app:household:create`, `app:user:create`, `app:user:set-password`.
+> Layout mit Tab-Leiste (Einkauf, Mehr), Safe Areas, Dark Mode, Manifest + Icons, Service Worker (Netzwerk zuerst,
+> Offline-Seite), Hinweis „Zum Home-Bildschirm“ für iOS Safari.
+>
+> Erkenntnisse aus 0.2–0.4:
 > - PostgreSQL `jsonb` speichert Schlüssel in eigener Reihenfolge. Clients dürfen sich in Snapshots nicht auf die Reihenfolge verlassen.
 > - Doctrine ORM 3.8 löst `postPersist/postUpdate/postRemove` innerhalb der flush()-Transaktion aus. Das Änderungsprotokoll wird darin per DBAL geschrieben.
 > - Sequenznummern werden erst beim Commit sichtbar. Darum serialisiert `HouseholdWriteLock` (pg_advisory_xact_lock) die Schreibvorgänge pro Haushalt.

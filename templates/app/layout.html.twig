@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{#
+    App-Rahmen für angemeldete Benutzer: Kopfzeile, Inhalt, Tab-Leiste unten (wie bei iOS-Apps).
+    Seiten setzen die Blöcke "page_title" und "content", optional "header_actions".
+#}
+{% block title %}{{ block('page_title') }} · {{ 'app.name'|trans }}{% endblock %}
+
+{% block body %}
+    <div class="app">
+        <header class="app-header">
+            <h1 class="app-header__title">{% block page_title %}{% endblock %}</h1>
+            <div class="app-header__actions">{% block header_actions %}{% endblock %}</div>
+        </header>
+
+        <main class="app-main" id="main">
+            {% block content %}{% endblock %}
+        </main>
+
+        {% set current_route = app.request.attributes.get('_route') ?? '' %}
+        <nav class="tabbar" aria-label="{{ 'nav.label'|trans }}">
+            <a class="tabbar__item" href="{{ path('shopping_list') }}"{% if current_route starts with 'shopping_' %} aria-current="page"{% endif %}>
+                <svg class="tabbar__icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 4h2l2.4 10.2a1.5 1.5 0 0 0 1.5 1.1h8.4a1.5 1.5 0 0 0 1.5-1.1L21 7H6.2"/>
+                    <circle cx="9.5" cy="19.5" r="1.5"/>
+                    <circle cx="17" cy="19.5" r="1.5"/>
+                </svg>
+                <span>{{ 'nav.shopping'|trans }}</span>
+            </a>
+            <a class="tabbar__item" href="{{ path('app_more') }}"{% if current_route == 'app_more' %} aria-current="page"{% endif %}>
+                <svg class="tabbar__icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="5" cy="12" r="1.6"/>
+                    <circle cx="12" cy="12" r="1.6"/>
+                    <circle cx="19" cy="12" r="1.6"/>
+                </svg>
+                <span>{{ 'nav.more'|trans }}</span>
+            </a>
+        </nav>
+
+        <aside class="install-hint" data-controller="install-hint" hidden>
+            <p class="install-hint__text">{{ 'install_hint.text'|trans }}</p>
+            <button type="button" class="install-hint__dismiss" data-action="install-hint#dismiss">{{ 'install_hint.dismiss'|trans }}</button>
+        </aside>
+    </div>
+{% endblock %}

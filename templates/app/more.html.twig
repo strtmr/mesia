@@ -1,0 +1,49 @@
+{% extends 'app/layout.html.twig' %}
+
+{% block page_title %}{{ 'more.title'|trans }}{% endblock %}
+
+{% block content %}
+    {% set user = app.user %}
+
+    <section class="list-section">
+        <h2 class="list-section__title">{{ 'more.account.section'|trans }}</h2>
+        <dl class="list-group">
+            <div class="list-group__row">
+                <dt>{{ 'more.account.name'|trans }}</dt>
+                <dd>{{ user.displayName }}</dd>
+            </div>
+            <div class="list-group__row">
+                <dt>{{ 'more.account.email'|trans }}</dt>
+                <dd>{{ user.email }}</dd>
+            </div>
+            <div class="list-group__row">
+                <dt>{{ 'more.account.household'|trans }}</dt>
+                <dd>{{ user.household.name }}</dd>
+            </div>
+        </dl>
+    </section>
+
+    <section class="list-section">
+        <h2 class="list-section__title">{{ 'more.app.section'|trans }}</h2>
+        <dl class="list-group">
+            <div class="list-group__row">
+                <dt>{{ 'more.app.version'|trans }}</dt>
+                <dd>{{ app_version }}</dd>
+            </div>
+            <div class="list-group__row" data-controller="connection-status"
+                 data-connection-status-online-value="{{ 'more.app.online'|trans }}"
+                 data-connection-status-offline-value="{{ 'more.app.offline'|trans }}">
+                <dt>{{ 'more.app.connection'|trans }}</dt>
+                <dd data-connection-status-target="label">{{ 'more.app.online'|trans }}</dd>
+            </div>
+        </dl>
+    </section>
+
+    <section class="list-section">
+        <div class="list-group">
+            <a class="list-group__row list-group__row--action list-group__row--danger" href="{{ path('app_logout') }}" data-turbo="false">
+                {{ 'more.logout'|trans }}
+            </a>
+        </div>
+    </section>
+{% endblock %}

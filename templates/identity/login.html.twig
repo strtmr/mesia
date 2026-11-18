@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'login.title'|trans }} · {{ 'app.name'|trans }}{% endblock %}
+{% block body_class %}page-login{% endblock %}
+
+{% block body %}
+    <main class="login">
+        <img class="login__logo" src="/icons/icon.svg" alt="" width="72" height="72">
+        <h1 class="login__title">{{ 'app.name'|trans }}</h1>
+        <p class="login__intro">{{ 'login.intro'|trans }}</p>
+
+        {% if error %}
+            <p class="form-error" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</p>
+        {% endif %}
+
+        <form method="post" action="{{ path('app_login') }}" class="form-group" data-turbo="false">
+            <label class="field">
+                <span class="field__label">{{ 'login.email'|trans }}</span>
+                <input class="field__input" type="email" name="email" value="{{ last_username }}"
+                       autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false"
+                       inputmode="email" enterkeyhint="next" required autofocus>
+            </label>
+            <label class="field">
+                <span class="field__label">{{ 'login.password'|trans }}</span>
+                <input class="field__input" type="password" name="password"
+                       autocomplete="current-password" enterkeyhint="go" required>
+            </label>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" data-controller="csrf-protection">
+
+            <button type="submit" class="button button--primary button--block">{{ 'login.submit'|trans }}</button>
+        </form>
+
+        <p class="login__hint">{{ 'login.stay_signed_in'|trans }}</p>
+    </main>
+{% endblock %}

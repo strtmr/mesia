@@ -1,0 +1,15 @@
+{% extends 'app/layout.html.twig' %}
+
+{% block page_title %}{{ 'shopping.title'|trans }}{% endblock %}
+
+{% block content %}
+    <div class="empty-state">
+        <svg class="empty-state__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 4h2l2.4 10.2a1.5 1.5 0 0 0 1.5 1.1h8.4a1.5 1.5 0 0 0 1.5-1.1L21 7H6.2"/>
+            <circle cx="9.5" cy="19.5" r="1.5"/>
+            <circle cx="17" cy="19.5" r="1.5"/>
+        </svg>
+        <h2 class="empty-state__headline">{{ 'shopping.placeholder.headline'|trans }}</h2>
+        <p class="empty-state__text">{{ 'shopping.placeholder.text'|trans }}</p>
+    </div>
+{% endblock %}
