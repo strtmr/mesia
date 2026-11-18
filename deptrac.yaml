@@ -1,0 +1,27 @@
+# Modulgrenzen (siehe docs/spezifikation-phase-0-1.md, Kapitel 2).
+# Jedes Fachmodul darf Shared nutzen. Weitere erlaubte Richtungen stehen im Ruleset.
+deptrac:
+    paths:
+        - ./src
+    layers:
+        - name: Shared
+          collectors:
+              - { type: classLike, value: '^App\\Shared\\.*' }
+        - name: Identity
+          collectors:
+              - { type: classLike, value: '^App\\Identity\\.*' }
+        - name: Catalog
+          collectors:
+              - { type: classLike, value: '^App\\Catalog\\.*' }
+        - name: Shopping
+          collectors:
+              - { type: classLike, value: '^App\\Shopping\\.*' }
+        - name: Sync
+          collectors:
+              - { type: classLike, value: '^App\\Sync\\.*' }
+    ruleset:
+        Shared: ~
+        Identity: [Shared]
+        Catalog: [Shared]
+        Shopping: [Shared, Catalog]
+        Sync: [Shared, Identity, Catalog, Shopping]

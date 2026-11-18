@@ -1,0 +1,12 @@
+{
+    "name": "mealplanner",
+    "private": true,
+    "type": "module",
+    "description": "Nur für Tests (Vitest/Playwright). Die Frontend-Assets werden über Symfony AssetMapper ausgeliefert, ohne Node-Build.",
+    "scripts": {
+        "test:unit": "vitest run"
+    },
+    "devDependencies": {
+        "vitest": "^5.1.1"
+    }
+}

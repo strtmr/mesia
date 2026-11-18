@@ -1,0 +1,23 @@
+[
+  { "input": "Milch", "expected": "milch" },
+  { "input": "  Milch  ", "expected": "milch" },
+  { "input": "MILCH", "expected": "milch" },
+  { "input": "Äpfel", "expected": "aepfel" },
+  { "input": "Grüße", "expected": "gruesse" },
+  { "input": "Süßkartoffel", "expected": "suesskartoffel" },
+  { "input": "Crème fraîche", "expected": "creme fraiche" },
+  { "input": "Crème  fraîche ", "expected": "creme fraiche" },
+  { "input": "Jalapeño", "expected": "jalapeno" },
+  { "input": "Café au lait", "expected": "cafe au lait" },
+  { "input": "Café", "expected": "cafe" },
+  { "input": "TK-Erbsen", "expected": "tk erbsen" },
+  { "input": "O-Saft", "expected": "o saft" },
+  { "input": "Würstchen (Wiener)", "expected": "wuerstchen wiener" },
+  { "input": "Milch 1,5 %", "expected": "milch 1 5 %" },
+  { "input": "Rote Bete", "expected": "rote bete" },
+  { "input": "Tomaten, gehackt", "expected": "tomaten gehackt" },
+  { "input": "Brot & Butter", "expected": "brot butter" },
+  { "input": "ÖL", "expected": "oel" },
+  { "input": "", "expected": "" },
+  { "input": " - ", "expected": "" }
+]

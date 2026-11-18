@@ -1,0 +1,382 @@
+# Deutscher Grundkatalog für die Einkaufsliste (Entwurf v0.1)
+#
+# Format: pro Kategorie-Key (siehe categories.yaml) eine Liste von Einträgen.
+#   - "Name"                       → Artikel ohne Aliase
+#   - "Name | Alias1, Alias2, …"   → Artikel mit Aliasen (Synonyme, regionale Begriffe, unregelmäßige Formen)
+#
+# Regeln:
+# - Der Name ist das, was in der Liste angezeigt wird. Für Dinge, die man fast immer in der Mehrzahl kauft, ist der Name
+#   in der Mehrzahl (z. B. "Erdbeeren"), dann steht die Einzahl als Alias.
+# - Regelmäßige Mehrzahlformen (-n, -en, -e, -s) muss man NICHT als Alias eintragen, das erledigt die Normalisierung
+#   ("Bananen" → "Banane"). Unregelmäßige Formen mit Umlautwechsel schon ("Äpfel" → Apfel).
+# - Jeder Name und jeder Alias darf nach der Normalisierung nur EINMAL vorkommen (wird beim Seeden geprüft).
+# - Markennamen nur als Alias, wenn sie umgangssprachlich als Gattungsbegriff dienen (Tempo, Nutella, Zewa).
+
+articles:
+
+  produce:
+    - Apfel | Äpfel
+    - Banane
+    - Birne
+    - Orange | Apfelsine
+    - Mandarine | Clementine, Klementine
+    - Zitrone
+    - Limette
+    - Grapefruit
+    - Kiwi
+    - Weintrauben | Weintraube, Trauben
+    - Erdbeeren | Erdbeere
+    - Himbeeren | Himbeere
+    - Heidelbeeren | Heidelbeere, Blaubeeren, Blaubeere
+    - Ananas
+    - Mango
+    - Melone | Wassermelone, Honigmelone
+    - Pfirsich
+    - Nektarine
+    - Pflaume | Zwetschge, Zwetschgen, Zwetschke
+    - Kirschen | Kirsche
+    - Avocado
+    - Granatapfel | Granatäpfel
+    - Tomate | Paradeiser
+    - Cherrytomaten | Cherrytomate, Kirschtomaten, Cocktailtomaten
+    - Gurke | Salatgurke
+    - Paprika | Paprikaschote, Spitzpaprika
+    - Zucchini
+    - Aubergine
+    - Karotte | Möhre, Mohrrübe, Möhrchen, Rüebli
+    - Kartoffel | Erdapfel, Erdäpfel
+    - Süßkartoffel
+    - Zwiebel
+    - Rote Zwiebel
+    - Schalotte
+    - Frühlingszwiebel | Lauchzwiebel
+    - Knoblauch | Knofi
+    - Ingwer
+    - Chili | Chilischote, Peperoni
+    - Lauch | Porree
+    - Sellerie | Knollensellerie
+    - Staudensellerie | Stangensellerie
+    - Brokkoli | Broccoli
+    - Blumenkohl | Karfiol
+    - Rosenkohl
+    - Weißkohl | Weißkraut
+    - Rotkohl | Blaukraut, Rotkraut
+    - Spitzkohl
+    - Wirsing
+    - Kohlrabi
+    - Fenchel
+    - Kürbis | Hokkaido, Butternut
+    - Pastinake
+    - Rote Bete | Rote Beete, Rote Rübe
+    - Radieschen
+    - Spargel
+    - Grüne Bohnen | Brechbohnen, Prinzessbohnen
+    - Champignons | Champignon, Pilze, Egerlinge
+    - Spinat | Blattspinat, Babyspinat
+    - Salat | Blattsalat
+    - Feldsalat | Rapunzel, Nüsslisalat
+    - Rucola | Rauke
+    - Eisbergsalat
+    - Kopfsalat
+    - Romanasalat | Romana
+    - Petersilie
+    - Schnittlauch
+    - Basilikum
+    - Koriander
+    - Dill
+    - Minze
+
+  bakery:
+    - Brot
+    - Vollkornbrot
+    - Toastbrot | Toast
+    - Brötchen | Semmel, Schrippe, Wecken, Weckle, Rundstück
+    - Aufbackbrötchen
+    - Baguette
+    - Laugenbrezel | Brezel, Breze, Brezn
+    - Croissant
+    - Ciabatta
+    - Fladenbrot
+    - Burgerbrötchen | Burger Buns, Buns
+    - Wraps | Wrap, Tortilla, Tortillas
+    - Knäckebrot
+    - Zwieback
+    - Kuchen
+
+  dairy:
+    - Milch | Vollmilch
+    - Fettarme Milch | Milch 1,5 %, Milch fettarm
+    - Hafermilch | Haferdrink
+    - Sojamilch | Sojadrink
+    - Mandelmilch | Mandeldrink
+    - Butter
+    - Margarine
+    - Sahne | Schlagsahne, Rahm
+    - Saure Sahne | Sauerrahm
+    - Schmand
+    - Crème fraîche | Creme fraiche
+    - Kaffeesahne | Kondensmilch
+    - Joghurt | Jogurt, Naturjoghurt
+    - Griechischer Joghurt | Griechisch Joghurt
+    - Quark | Magerquark, Topfen
+    - Frischkäse | Philadelphia
+    - Hüttenkäse | Körniger Frischkäse
+    - Käse | Käsescheiben, Scheibenkäse
+    - Reibekäse | Geriebener Käse, Pizzakäse
+    - Gouda
+    - Emmentaler
+    - Bergkäse
+    - Camembert | Brie
+    - Mozzarella
+    - Parmesan | Parmigiano, Grana Padano
+    - Feta | Schafskäse, Hirtenkäse
+    - Halloumi | Grillkäse
+    - Mascarpone
+    - Ricotta
+    - Eier | Ei
+    - Buttermilch
+    - Kefir
+    - Pudding
+
+  meat_fish:
+    - Hackfleisch | Hack, Gehacktes, Rinderhack, Gemischtes Hack, Faschiertes
+    - Hähnchenbrust | Hähnchenbrustfilet, Hühnerbrust, Hühnchenbrust, Hähnchenfilet
+    - Hähnchenschenkel | Hähnchenkeulen, Hähnchenkeule
+    - Putenbrust | Putenschnitzel
+    - Geschnetzeltes
+    - Schnitzel | Schweineschnitzel
+    - Schweinefilet
+    - Rindersteak | Steak
+    - Gulasch | Rindergulasch
+    - Bratwurst | Bratwürste
+    - Würstchen | Wiener, Frankfurter, Wienerle
+    - Speck | Bacon, Speckwürfel, Schinkenwürfel
+    - Kochschinken | Schinken
+    - Salami
+    - Aufschnitt | Wurst
+    - Leberwurst
+    - Chorizo
+    - Lachs | Lachsfilet
+    - Räucherlachs
+    - Kabeljau | Seelachs, Fischfilet
+    - Garnelen | Shrimps, Crevetten, Scampi, Gambas
+
+  chilled:
+    - Tofu
+    - Räuchertofu
+    - Veggie-Burger | Vegane Burger, Burger Patties
+    - Gnocchi
+    - Tortellini
+    - Frische Pasta | Frische Nudeln
+    - Blätterteig
+    - Pizzateig
+    - Mürbeteig | Quicheteig
+    - Hummus
+    - Tzatziki | Zaziki
+    - Kartoffelsalat
+    - Kräuterbutter
+
+  frozen:
+    - Erbsen | TK-Erbsen, Erbse
+    - TK-Gemüse | Gemüsemischung, Tiefkühlgemüse
+    - Rahmspinat | TK-Spinat
+    - TK-Beeren | Tiefkühlbeeren, Beerenmischung
+    - TK-Kräuter | Tiefkühlkräuter
+    - Pommes | Pommes frites, Fritten
+    - Kroketten
+    - Pizza | Tiefkühlpizza, TK-Pizza
+    - Fischstäbchen
+    - Eis | Eiscreme, Speiseeis
+    - Eiswürfel
+
+  grains:
+    - Nudeln | Pasta
+    - Spaghetti
+    - Penne
+    - Fusilli
+    - Bandnudeln | Tagliatelle
+    - Lasagneplatten | Lasagne-Platten
+    - Spätzle
+    - Mie-Nudeln | Mienudeln, Asianudeln
+    - Reisnudeln
+    - Reis | Basmatireis, Langkornreis, Jasminreis
+    - Risottoreis | Arborio
+    - Milchreis
+    - Couscous
+    - Bulgur
+    - Quinoa
+    - Polenta
+    - Linsen | Rote Linsen, Tellerlinsen
+
+  canned:
+    - Gehackte Tomaten | Stückige Tomaten, Dosentomaten, Tomaten Dose
+    - Passierte Tomaten | Passata
+    - Tomatenmark
+    - Kokosmilch
+    - Kichererbsen
+    - Kidneybohnen | Rote Bohnen
+    - Weiße Bohnen
+    - Baked Beans | Gebackene Bohnen
+    - Mais | Dosenmais
+    - Thunfisch
+    - Oliven
+    - Kapern
+    - Gewürzgurken | Essiggurken, Saure Gurken, Cornichons
+    - Sauerkraut
+    - Getrocknete Tomaten
+    - Pesto | Pesto Genovese, Pesto Rosso
+    - Ajvar
+    - Apfelmus
+    - Brühe | Gemüsebrühe, Hühnerbrühe, Rinderbrühe, Bouillon, Brühwürfel
+
+  baking:
+    - Mehl | Weizenmehl
+    - Dinkelmehl
+    - Zucker
+    - Brauner Zucker | Rohrzucker
+    - Puderzucker
+    - Vanillezucker
+    - Backpulver
+    - Natron
+    - Hefe | Trockenhefe, Frischhefe
+    - Speisestärke | Maisstärke, Mondamin
+    - Backkakao | Kakaopulver
+    - Kuvertüre | Blockschokolade
+    - Gelatine
+    - Mandeln
+    - Gemahlene Mandeln | Mandeln gemahlen
+    - Gemahlene Haselnüsse | Haselnüsse gemahlen
+    - Walnüsse | Walnusskerne
+    - Pinienkerne
+    - Rosinen
+    - Semmelbrösel | Paniermehl
+
+  spices:
+    - Salz | Meersalz, Jodsalz
+    - Pfeffer | Schwarzer Pfeffer
+    - Paprikapulver | Paprika edelsüß, Paprika rosenscharf
+    - Currypulver | Curry
+    - Kreuzkümmel | Cumin
+    - Kurkuma
+    - Zimt
+    - Muskatnuss | Muskat
+    - Oregano
+    - Thymian
+    - Rosmarin
+    - Majoran
+    - Lorbeerblätter | Lorbeer
+    - Gewürznelken | Nelken
+    - Chiliflocken | Chili getrocknet
+    - Kräuter der Provence | Italienische Kräuter
+    - Currypaste | Rote Currypaste, Grüne Currypaste
+    - Olivenöl
+    - Rapsöl
+    - Sonnenblumenöl
+    - Sesamöl
+    - Essig | Weißweinessig, Apfelessig
+    - Balsamico | Balsamessig, Aceto Balsamico
+    - Zitronensaft
+    - Sojasauce | Sojasoße
+    - Fischsauce
+    - Worcestershiresauce | Worcestersauce
+    - Tabasco
+    - Sriracha
+    - Sambal Oelek
+    - Ketchup
+    - Senf
+    - Mayonnaise | Mayo
+    - Remoulade
+    - Grillsauce | BBQ-Sauce, Barbecuesauce
+
+  breakfast:
+    - Müsli | Granola, Knuspermüsli
+    - Cornflakes | Cerealien
+    - Haferflocken
+    - Marmelade | Konfitüre
+    - Honig
+    - Nussnougatcreme | Nutella
+    - Erdnussbutter | Erdnusscreme
+    - Ahornsirup
+    - Chiasamen
+    - Leinsamen
+
+  coffee_tea:
+    - Kaffee | Kaffeebohnen, Gemahlener Kaffee
+    - Espresso
+    - Kaffeekapseln | Kapseln, Kaffeepads
+    - Instantkaffee | Löslicher Kaffee
+    - Tee | Schwarztee, Grüner Tee, Kräutertee, Früchtetee
+    - Kakao | Trinkkakao, Kaba
+
+  sweets:
+    - Schokolade | Schoki, Tafel Schokolade
+    - Kekse | Plätzchen, Butterkekse
+    - Gummibärchen | Gummibären, Fruchtgummi
+    - Bonbons
+    - Kaugummi
+    - Müsliriegel
+    - Chips | Kartoffelchips
+    - Tortilla-Chips | Nachos
+    - Salzstangen
+    - Cracker
+    - Reiswaffeln
+    - Popcorn
+    - Erdnüsse
+    - Nüsse | Nussmischung, Studentenfutter
+
+  drinks:
+    - Wasser | Mineralwasser, Sprudel, Sprudelwasser, Stilles Wasser
+    - Apfelsaft
+    - Orangensaft | O-Saft
+    - Apfelschorle | Schorle
+    - Cola
+    - Limonade | Limo
+    - Eistee
+    - Tonic Water | Tonic
+    - Sirup | Holunderblütensirup
+    - Bier
+    - Alkoholfreies Bier | Bier alkoholfrei
+    - Weißwein
+    - Rotwein
+    - Sekt | Prosecco
+
+  drugstore:
+    - Toilettenpapier | Klopapier
+    - Küchenrolle | Küchenpapier, Haushaltsrolle, Zewa
+    - Taschentücher | Tempo
+    - Zahnpasta | Zahncreme
+    - Zahnbürste
+    - Zahnseide
+    - Duschgel
+    - Shampoo
+    - Spülung | Conditioner
+    - Deo | Deodorant
+    - Seife | Handseife, Flüssigseife
+    - Handcreme
+    - Bodylotion | Körperlotion
+    - Sonnencreme | Sonnenschutz
+    - Rasierklingen
+    - Wattepads
+    - Wattestäbchen
+    - Pflaster
+    - Tampons
+    - Binden
+
+  household:
+    - Spülmittel
+    - Spülmaschinentabs | Tabs, Geschirrspültabs
+    - Klarspüler
+    - Spülmaschinensalz | Regeneriersalz
+    - Waschmittel
+    - Weichspüler
+    - Müllbeutel | Mülltüten
+    - Gefrierbeutel
+    - Frischhaltefolie
+    - Alufolie | Aluminiumfolie
+    - Backpapier
+    - Schwämme | Schwamm, Spülschwamm
+    - Allzweckreiniger
+    - WC-Reiniger | Klostein, WC-Steine
+    - Glasreiniger
+    - Entkalker
+    - Batterien

@@ -1,0 +1,35 @@
+# Prüfungen vor jedem Commit. Dieselben Prüfungen (plus Integrationstests) laufen in der CI.
+# Manuell ausführen: ddev exec vendor/bin/grumphp run
+grumphp:
+    git_hook_variables:
+        # Git läuft auf dem Host (WSL), PHP im DDEV-Container.
+        EXEC_GRUMPHP_COMMAND: 'ddev exec php'
+    process_timeout: 300
+    tasks:
+        composer:
+            no_check_publish: true
+        yamllint:
+            parse_custom_tags: true
+        phpcsfixer:
+            config: .php-cs-fixer.dist.php
+            diff: true
+        phpstan:
+            configuration: phpstan.dist.neon
+            memory_limit: 512M
+            use_grumphp_paths: false
+        deptrac:
+            depfile: deptrac.yaml
+        phpunit:
+            testsuite: unit
+        symfony_lint:
+            metadata:
+                task: shell
+            scripts:
+                - ['-c', 'bin/console lint:container && bin/console lint:twig templates']
+            triggered_by: [php, yaml, twig]
+        vitest:
+            metadata:
+                task: shell
+            scripts:
+                - ['-c', 'npm run --silent test:unit']
+            triggered_by: [js, json]

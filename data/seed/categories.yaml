@@ -1,0 +1,25 @@
+# Standardkategorien der Einkaufsliste (Entwurf v0.1)
+#
+# - Reihenfolge in dieser Datei = Standard-Sortierung (grob am Weg durch einen typischen Supermarkt orientiert).
+# - key: stabiler technischer Schlüssel, ändert sich nie (wird als seed_key gespeichert).
+# - name/icon: Startwerte, im Haushalt frei änderbar.
+# - fallback: genau eine Kategorie, in die unbekannte Artikel fallen.
+
+categories:
+  - { key: produce,     icon: "🥬", name: "Obst & Gemüse" }
+  - { key: bakery,      icon: "🥖", name: "Brot & Backwaren" }
+  - { key: dairy,       icon: "🥛", name: "Milchprodukte & Eier" }
+  - { key: meat_fish,   icon: "🥩", name: "Fleisch, Wurst & Fisch" }
+  - { key: chilled,     icon: "🥗", name: "Kühlregal & Feinkost" }
+  - { key: frozen,      icon: "❄️", name: "Tiefkühl" }
+  - { key: grains,      icon: "🍝", name: "Nudeln, Reis & Getreide" }
+  - { key: canned,      icon: "🥫", name: "Konserven & Gläser" }
+  - { key: baking,      icon: "🧁", name: "Backen & Zucker" }
+  - { key: spices,      icon: "🧂", name: "Gewürze, Öle & Saucen" }
+  - { key: breakfast,   icon: "🍯", name: "Frühstück & Aufstriche" }
+  - { key: coffee_tea,  icon: "☕", name: "Kaffee & Tee" }
+  - { key: sweets,      icon: "🍫", name: "Süßes & Snacks" }
+  - { key: drinks,      icon: "🥤", name: "Getränke" }
+  - { key: drugstore,   icon: "🧴", name: "Drogerie & Hygiene" }
+  - { key: household,   icon: "🧽", name: "Haushalt" }
+  - { key: other,       icon: "📦", name: "Sonstiges", fallback: true }

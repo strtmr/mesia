@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Checks & Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app
+          POSTGRES_DB: app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U app"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      # Echte Umgebungsvariable: hat Vorrang vor .env/.env.test. Im Test-Env hängt Doctrine "_test" an (→ app_test).
+      DATABASE_URL: postgresql://app:app@127.0.0.1:5432/app?serverVersion=17&charset=utf8
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: intl, pdo_pgsql, apcu
+          coverage: none
+          tools: composer
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - run: composer install --no-interaction --no-progress
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      # PHPStan (phpstan-symfony) liest den kompilierten Dev-Container.
+      - run: bin/console cache:warmup --env=dev
+
+      # Dieselben Prüfungen wie im Pre-Commit-Hook, aber über alle Dateien.
+      - name: GrumPHP (CS, PHPStan, deptrac, Unit-Tests, Lint, Vitest)
+        run: vendor/bin/grumphp run --no-interaction
+
+      - name: Testdatenbank vorbereiten
+        run: |
+          bin/console doctrine:database:create --env=test --if-not-exists
+          bin/console doctrine:migrations:migrate --env=test --no-interaction
+          bin/console doctrine:schema:validate --env=test
+
+      - name: Integrationstests
+        run: bin/phpunit --testsuite integration
