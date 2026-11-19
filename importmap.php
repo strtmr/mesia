@@ -29,4 +29,8 @@ return [
     '@hotwired/stimulus' => ['version' => '3.2.2'],
     '@symfony/stimulus-bundle' => ['path' => './vendor/symfony/stimulus-bundle/assets/dist/loader.js'],
     '@hotwired/turbo' => ['version' => '8.0.23'],
+    'alpinejs' => ['version' => '3.17.5'],
+    'dexie' => ['version' => '4.4.7'],
+    'sortablejs' => ['version' => '1.15.7'],
+    'fractional-indexing' => ['version' => '4.0.0'],
 ];

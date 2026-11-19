@@ -421,3 +421,455 @@ a {
     font: inherit;
     font-weight: 600;
 }
+
+/* ---------- Alpine: Elemente bis zur Initialisierung verstecken ---------- */
+
+[x-cloak] {
+    display: none !important;
+}
+
+/* ---------- Hinweise, Badges ---------- */
+
+.notice {
+    margin: 0 0 var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-m);
+    background: var(--color-surface);
+    font-size: 15px;
+}
+
+.notice--warning {
+    background: color-mix(in srgb, #e3a008 16%, var(--color-surface));
+}
+
+.badge {
+    padding: 1px var(--space-2);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-accent) 16%, transparent);
+    color: var(--color-accent);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge--muted {
+    background: var(--color-separator);
+    color: var(--color-text-muted);
+}
+
+.button--danger {
+    background: color-mix(in srgb, var(--color-danger) 12%, transparent);
+    color: var(--color-danger);
+}
+
+/* ---------- Sync-Status in der Kopfzeile ---------- */
+
+.sync-status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    margin-bottom: 6px;
+    color: var(--color-text-muted);
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.sync-status::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-accent);
+}
+
+.sync-status[data-state="syncing"]::before,
+.sync-status[data-state="pending"]::before {
+    background: #e3a008;
+}
+
+.sync-status[data-state="offline"]::before {
+    background: var(--color-text-muted);
+}
+
+.sync-status[data-state="unauthorized"]::before,
+.sync-status[data-state="error"]::before {
+    background: var(--color-danger);
+}
+
+/* ---------- Einkaufsliste ---------- */
+
+/* Hinweis "Zum Home-Bildschirm" über der Eingabeleiste statt darauf */
+.page-shopping .install-hint {
+    bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 72px);
+}
+
+.page-shopping .app-main {
+    /* Platz für Eingabeleiste + Tab-Leiste */
+    padding-bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 96px);
+}
+
+.shopping__loading {
+    color: var(--color-text-muted);
+    text-align: center;
+}
+
+.shopping-group {
+    margin-bottom: var(--space-5);
+}
+
+.shopping-group__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-2) var(--space-1);
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.shopping-items {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    list-style: none;
+    background: var(--color-surface);
+    border-radius: var(--radius-m);
+}
+
+.item-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding-right: var(--space-4);
+    background: var(--color-surface);
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+
+/* Eingerückte Trennlinie */
+.item-row + .item-row::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 52px;
+    border-top: 0.5px solid var(--color-separator);
+}
+
+.item-row--chosen {
+    box-shadow: 0 6px 24px rgb(0 0 0 / 0.18);
+}
+
+.item-row--ghost {
+    opacity: 0.35;
+}
+
+.item-check {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    min-height: 48px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+}
+
+.item-check__circle {
+    width: 24px;
+    height: 24px;
+    border: 1.5px solid var(--color-text-muted);
+    border-radius: 50%;
+    transition: background-color 0.15s, border-color 0.15s;
+}
+
+.item-check:active .item-check__circle {
+    background: color-mix(in srgb, var(--color-accent) 25%, transparent);
+}
+
+.item-check.is-checked .item-check__circle {
+    border-color: var(--color-accent);
+    background: var(--color-accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center / 16px no-repeat;
+}
+
+.item-body {
+    flex: 1;
+    display: grid;
+    min-width: 0;
+    min-height: 48px;
+    align-content: center;
+    padding: var(--space-2) var(--space-2) var(--space-2) 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.item-body__name,
+.item-body__note {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.item-body__note {
+    color: var(--color-text-muted);
+    font-size: 14px;
+}
+
+.item-qty {
+    flex-shrink: 0;
+    color: var(--color-text-muted);
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Noch nicht synchronisiert: kleiner Punkt neben der Menge */
+.item-row--pending .item-qty::after {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-left: var(--space-2);
+    border-radius: 50%;
+    background: #e3a008;
+    vertical-align: middle;
+}
+
+.item-row--done .item-body__name {
+    color: var(--color-text-muted);
+}
+
+.shopping-done {
+    margin-top: var(--space-5);
+}
+
+.shopping-done__toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--touch-target);
+    margin-bottom: var(--space-2);
+    padding: 0 var(--space-1);
+    border: 0;
+    background: none;
+    color: var(--color-text-muted);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.shopping-done__chevron {
+    display: inline-block;
+    font-size: 22px;
+    line-height: 1;
+    transition: transform 0.15s;
+}
+
+.shopping-done__chevron.is-open {
+    transform: rotate(90deg);
+}
+
+/* ---------- Schnelleingabe ---------- */
+
+.quick-add {
+    position: fixed;
+    right: 0;
+    bottom: max(calc(var(--tabbar-height) + var(--safe-bottom)), var(--keyboard-inset, 0px));
+    left: 0;
+    z-index: 15;
+    display: flex;
+    gap: var(--space-2);
+    padding: var(--space-2) calc(var(--space-4) + var(--safe-right)) var(--space-2) calc(var(--space-4) + var(--safe-left));
+    background: var(--color-tabbar-bg);
+    border-top: 0.5px solid var(--color-separator);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+}
+
+.quick-add__input {
+    flex: 1;
+    min-width: 0;
+    min-height: var(--touch-target);
+    padding: 0 var(--space-4);
+    border: 0.5px solid var(--color-separator);
+    border-radius: 999px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font: inherit;
+    font-size: 17px; /* >= 16px: kein Zoom in iOS Safari */
+}
+
+.quick-add__input:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 0;
+}
+
+.quick-add__submit {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: var(--touch-target);
+    height: var(--touch-target);
+    border: 0;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: var(--color-accent-contrast);
+    cursor: pointer;
+}
+
+.quick-add__submit:disabled {
+    opacity: 0.35;
+}
+
+.quick-add__submit svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+}
+
+.quick-add__suggestions {
+    position: absolute;
+    right: calc(var(--space-4) + var(--safe-right));
+    bottom: 100%;
+    left: calc(var(--space-4) + var(--safe-left));
+    margin: 0 0 var(--space-2);
+    padding: var(--space-1) 0;
+    overflow: hidden;
+    list-style: none;
+    border-radius: var(--radius-m);
+    background: var(--color-surface);
+    box-shadow: 0 8px 30px rgb(0 0 0 / 0.18);
+}
+
+.quick-add__suggestion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    width: 100%;
+    min-height: var(--touch-target);
+    padding: 0 var(--space-4);
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.quick-add__suggestion:active {
+    background: var(--color-separator);
+}
+
+/* ---------- Toast ---------- */
+
+.toast {
+    position: fixed;
+    right: calc(var(--space-4) + var(--safe-right));
+    bottom: calc(max(calc(var(--tabbar-height) + var(--safe-bottom)), var(--keyboard-inset, 0px)) + 72px);
+    left: calc(var(--space-4) + var(--safe-left));
+    z-index: 25;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+    border-radius: var(--radius-m);
+    background: #2a302b;
+    color: #f2f4f1;
+    box-shadow: 0 8px 30px rgb(0 0 0 / 0.25);
+    font-size: 15px;
+}
+
+.toast__text {
+    flex: 1;
+}
+
+.toast__action {
+    min-height: 36px;
+    padding: 0 var(--space-3);
+    border: 0;
+    background: none;
+    color: #8fe0ad;
+    font: inherit;
+    font-weight: 600;
+}
+
+/* ---------- Bearbeiten-Sheet (von unten) ---------- */
+
+.sheet {
+    width: 100%;
+    max-width: 560px;
+    max-height: calc(100dvh - var(--safe-top) - 24px);
+    margin: auto auto 0;
+    padding: 0 var(--space-4) calc(var(--space-5) + var(--safe-bottom));
+    border: 0;
+    border-radius: var(--radius-l) var(--radius-l) 0 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+.sheet::backdrop {
+    background: rgb(0 0 0 / 0.35);
+}
+
+.sheet[open] {
+    animation: sheet-in 0.2s ease-out;
+}
+
+@keyframes sheet-in {
+    from {
+        transform: translateY(40px);
+        opacity: 0;
+    }
+}
+
+.sheet__form {
+    display: grid;
+    gap: var(--space-3);
+}
+
+.sheet__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 52px;
+}
+
+.sheet__title {
+    margin: 0;
+    font-size: 17px;
+}
+
+.sheet__link {
+    min-height: var(--touch-target);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-accent);
+    font: inherit;
+}
+
+.sheet__link--strong {
+    font-weight: 600;
+}
+
+.field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+}
+
+select.field__input {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b716c' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3C/svg%3E");
+    background-position: right 10px center;
+    background-repeat: no-repeat;
+    background-size: 18px;
+}

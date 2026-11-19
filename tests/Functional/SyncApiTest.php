@@ -127,6 +127,24 @@ final class SyncApiTest extends WebTestCase
         self::assertCount(2, $items[0]['contributions']);
     }
 
+    public function testFollowUpMutationsInTheSamePushAreRedirectedAfterAMerge(): void
+    {
+        $existingId = $this->uuid();
+        $this->pushOne('item.add', $this->addItemPayload($existingId, 'Milch'), at: '-10 minutes');
+
+        // Anderes Gerät: offline Milch angelegt (eigene ID) und gleich abgehakt
+        $localId = $this->uuid();
+        $results = $this->push([
+            $this->mutation('item.add', $this->addItemPayload($localId, 'Milch'), at: '-5 minutes'),
+            $this->mutation('item.check', ['item_id' => $localId], at: '-4 minutes'),
+        ]);
+
+        self::assertSame('merged', $results[0]['status']);
+        self::assertSame($existingId, $results[0]['merged_into']);
+        self::assertSame('applied', $results[1]['status'], 'Das Abhaken wird auf den bestehenden Eintrag umgelenkt.');
+        self::assertNotNull($this->item($existingId)['checked_at']);
+    }
+
     public function testOfflineCheckOlderThanALaterReactivationIsIgnored(): void
     {
         $itemId = $this->uuid();

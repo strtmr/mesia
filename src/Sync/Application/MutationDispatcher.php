@@ -51,10 +51,58 @@ final readonly class MutationDispatcher
      */
     public function dispatch(Uuid $householdId, Uuid $actorId, string $deviceId, array $mutations): array
     {
-        return array_map(
-            fn (IncomingMutation $mutation): array => $this->process($householdId, $actorId, $deviceId, $mutation),
-            $mutations,
-        );
+        $results = [];
+        /** @var array<string, string> $redirects lokale ID → ID des bestehenden Objekts (nach "merged") */
+        $redirects = [];
+
+        foreach ($mutations as $mutation) {
+            $mutation = self::redirect($mutation, $redirects);
+            $result = $this->process($householdId, $actorId, $deviceId, $mutation);
+
+            $localId = self::createdId($mutation);
+            if (null !== $localId && \is_string($result['merged_into'] ?? null)) {
+                $redirects[$localId] = $result['merged_into'];
+            }
+
+            $results[] = $result;
+        }
+
+        return $results;
+    }
+
+    /**
+     * Folgemutationen im selben Push auf das zusammengeführte Objekt umlenken. Beispiel: offline "Milch" angelegt und
+     * gleich abgehakt, das andere Gerät hatte Milch schon. Ohne Umlenkung würde das Abhaken abgelehnt.
+     *
+     * @param array<string, string> $redirects
+     */
+    private static function redirect(IncomingMutation $mutation, array $redirects): IncomingMutation
+    {
+        $payload = $mutation->payload;
+        $changed = false;
+        foreach (['item_id', 'article_id'] as $key) {
+            if (\is_string($payload[$key] ?? null) && isset($redirects[$payload[$key]])) {
+                $payload[$key] = $redirects[$payload[$key]];
+                $changed = true;
+            }
+        }
+
+        return $changed ? new IncomingMutation($mutation->id, $mutation->type, $mutation->at, $payload) : $mutation;
+    }
+
+    /**
+     * ID des Objekts, das eine Mutation neu anlegt (und das deshalb zusammengeführt werden kann).
+     */
+    private static function createdId(IncomingMutation $mutation): ?string
+    {
+        $key = match ($mutation->type) {
+            'item.add' => 'item_id',
+            'article.create' => 'article_id',
+            default => null,
+        };
+        $id = null === $key ? null : ($mutation->payload[$key] ?? null);
+
+        return \is_string($id) ? $id : null;
     }
 
     /**

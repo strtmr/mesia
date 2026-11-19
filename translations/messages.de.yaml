@@ -18,9 +18,44 @@ login:
 
 shopping:
     title: Einkauf
-    placeholder:
-        headline: Hier entsteht eure Einkaufsliste
-        text: Die offlinefähige Liste folgt in Phase 1.
+    loading: Liste wird geladen …
+    first_sync:
+        headline: Noch keine Daten auf diesem Gerät
+        text: Für den ersten Start wird einmal eine Internetverbindung gebraucht. Danach funktioniert die Liste auch offline.
+    empty:
+        headline: Alles erledigt
+        text: Füge unten etwas hinzu, z. B. „2 l Milch“.
+    status:
+        synced: Synchron
+        syncing: Synchronisiere …
+        pending: ausstehend
+        offline: Offline
+        unauthorized: Abgemeldet
+        error: Sync-Fehler
+    unauthorized: Deine Anmeldung ist abgelaufen. Deine Änderungen bleiben gespeichert und werden nach dem Anmelden übertragen.
+    login: Jetzt anmelden
+    done: Erledigt
+    add: Hinzufügen
+    add_placeholder: Artikel hinzufügen …
+    check_label: Abhaken
+    reactivate_label: Wieder auf die Liste
+    undo: Rückgängig
+    toast:
+        checked: '„%name%“ erledigt'
+    suggestion:
+        on_list: auf der Liste
+        history: schon gekauft
+    editor:
+        title: Bearbeiten
+        name: Name
+        quantity: Menge
+        unit: Einheit
+        no_unit: –
+        category: Kategorie
+        note: Notiz
+        save: Fertig
+        cancel: Abbrechen
+        delete: Löschen
 
 more:
     title: Mehr

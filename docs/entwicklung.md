@@ -70,6 +70,39 @@ Status im Push-Ergebnis: `applied`, `merged` (auf bestehendes Objekt umgelenkt, 
 3. Fachliche Fehler als `MutationRejected` werfen, nie selbst `flush()` aufrufen (macht der Dispatcher).
 4. Functional-Test in `tests/Functional/SyncApiTest.php` ergänzen.
 
+## Offline-Client (assets/shopping)
+
+```
+core/   reines JavaScript ohne DOM, getestet mit Vitest (tests/js)
+  db.js        Dexie/IndexedDB: entities (bestätigter Serverzustand), outbox, meta (cursor, deviceId, householdId)
+  state.js     buildState(server, outbox): Serverzustand + ausstehende Mutationen → Anzeigezustand (spiegelt die Server-Handler)
+  commands.js  fachliche Aktionen → Mutationen (addFromText, checkItem, editItem, moveItem …)
+  sync.js      SyncEngine: push → pull → Outbox bereinigen, Status, Timer
+  quickadd.js, matcher.js, normalize.js, units.js, sortkey.js, view.js, api.js
+ui/     Alpine.js: app.js (Einstieg, Store "sync"), list.js (Komponente)
+```
+
+- **Anzeige = Server + Outbox.** IndexedDB speichert nur Bestätigtes. Was die Oberfläche zeigt, wird im Speicher
+  berechnet. Abgelehnte Mutationen verschwinden dadurch von selbst, und nach einem Pull muss nichts zurückgespielt werden.
+- **Zyklus:** push → pull → bestätigte Mutationen aus der Outbox löschen → neu berechnen (in dieser Reihenfolge, sonst flackert es).
+- **merged:** Server und Client lenken Folgemutationen auf die bestehende ID um (Server innerhalb eines Push, Client
+  zwischen Batches und in der restlichen Outbox).
+- **Laden:** `app.js` importiert `shopping/ui/app.js` nur, wenn die Seite `[data-shopping-app]` enthält. Die Listenseite
+  setzt `turbo-cache-control: no-cache`, damit Turbo keine Alpine-Ausgabe wiederverwendet.
+- **Alpine:** `$refs`/`$root` sind in Methoden nach einem `await` nicht mehr verfügbar. Die Komponente merkt sich ihr
+  Wurzelelement in `init()`.
+- **Drag & Drop:** SortableJS verschiebt DOM-Knoten. `onEnd` setzt das DOM zurück und löst nur eine Mutation aus,
+  Alpine rendert die neue Reihenfolge.
+- UI-Texte stehen im Twig-Template bzw. in `translations/`, nicht im JavaScript.
+
+## Tests
+
+| Befehl | Was |
+|--------|-----|
+| `ddev exec bin/phpunit` | PHP: Unit, Integration, Functional (Sync-API) |
+| `ddev npm run test:unit` | JS-Kern (Vitest, IndexedDB per fake-indexeddb) |
+| `ddev exec bash tests/e2e/run.sh` | Rauchtest im echten Browser (Playwright/Chromium, iPhone-Viewport) gegen die Dev-App. Legt einen Haushalt „E2E-Test“ an, Screenshots unter `var/e2e/`. Einmalig: `ddev exec 'sudo npx playwright install-deps chromium && npx playwright install chromium --only-shell'` (nach `ddev restart` erneut nötig) |
+
 ## Stolperfallen
 
 - **Zeitstempel sind sekundengenau.** DBAL speichert sie in PostgreSQL ohne Sekundenbruchteile. Der Dispatcher kürzt

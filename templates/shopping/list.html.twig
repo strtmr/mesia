@@ -1,15 +1,168 @@
 {% extends 'app/layout.html.twig' %}
 
+{#
+    Offline-Einkaufsliste. Die Seite ist eine benutzerunabhängige Hülle: Alle Daten kommen aus IndexedDB
+    (assets/shopping), gerendert mit Alpine.js. So kann sie später vom Service Worker vorab gecacht werden.
+#}
+
+{% block head_meta %}
+    {# Turbo soll keinen Schnappschuss der Alpine-Ausgabe wiederverwenden #}
+    <meta name="turbo-cache-control" content="no-cache">
+{% endblock %}
+
+{% block body_class %}page-shopping{% endblock %}
 {% block page_title %}{{ 'shopping.title'|trans }}{% endblock %}
 
+{% block header_actions %}
+    <span class="sync-status" x-data :data-state="$store.sync.state" role="status" aria-live="polite">
+        <span x-cloak x-show="['synced', 'idle'].includes($store.sync.state)">{{ 'shopping.status.synced'|trans }}</span>
+        <span x-cloak x-show="$store.sync.state === 'syncing'">{{ 'shopping.status.syncing'|trans }}</span>
+        <span x-cloak x-show="$store.sync.state === 'pending'"><span x-text="$store.sync.pending"></span> {{ 'shopping.status.pending'|trans }}</span>
+        <span x-cloak x-show="$store.sync.state === 'offline'">{{ 'shopping.status.offline'|trans }}<template x-if="$store.sync.pending > 0"><span> · <span x-text="$store.sync.pending"></span> {{ 'shopping.status.pending'|trans }}</span></template></span>
+        <span x-cloak x-show="$store.sync.state === 'unauthorized'">{{ 'shopping.status.unauthorized'|trans }}</span>
+        <span x-cloak x-show="$store.sync.state === 'error'">{{ 'shopping.status.error'|trans }}</span>
+    </span>
+{% endblock %}
+
 {% block content %}
-    <div class="empty-state">
-        <svg class="empty-state__icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M3 4h2l2.4 10.2a1.5 1.5 0 0 0 1.5 1.1h8.4a1.5 1.5 0 0 0 1.5-1.1L21 7H6.2"/>
-            <circle cx="9.5" cy="19.5" r="1.5"/>
-            <circle cx="17" cy="19.5" r="1.5"/>
-        </svg>
-        <h2 class="empty-state__headline">{{ 'shopping.placeholder.headline'|trans }}</h2>
-        <p class="empty-state__text">{{ 'shopping.placeholder.text'|trans }}</p>
+    <div class="shopping" x-data="shoppingList" data-shopping-app
+         data-text-checked="{{ 'shopping.toast.checked'|trans }}">
+
+        <p class="notice notice--warning" x-cloak x-show="$store.sync.state === 'unauthorized'">
+            {{ 'shopping.unauthorized'|trans }}
+            <a href="{{ path('app_login') }}" data-turbo="false">{{ 'shopping.login'|trans }}</a>
+        </p>
+
+        <p class="shopping__loading" x-show="!ready">{{ 'shopping.loading'|trans }}</p>
+
+        <div class="empty-state" x-cloak x-show="ready && !hasData">
+            <h2 class="empty-state__headline">{{ 'shopping.first_sync.headline'|trans }}</h2>
+            <p class="empty-state__text">{{ 'shopping.first_sync.text'|trans }}</p>
+        </div>
+
+        <div class="empty-state" x-cloak x-show="ready && hasData && view.openCount === 0">
+            <h2 class="empty-state__headline">{{ 'shopping.empty.headline'|trans }}</h2>
+            <p class="empty-state__text">{{ 'shopping.empty.text'|trans }}</p>
+        </div>
+
+        {# Offene Einträge nach Kategorie #}
+        <template x-for="group in view.groups" :key="group.category.id">
+            <section class="shopping-group">
+                <h2 class="shopping-group__title">
+                    <span class="shopping-group__icon" x-text="group.category.icon" aria-hidden="true"></span>
+                    <span x-text="group.category.name"></span>
+                </h2>
+                <ul class="shopping-items" :data-category-id="group.category.id" x-init="enableSorting($el)">
+                    <template x-for="item in group.items" :key="item.id">
+                        <li class="item-row" :class="{ 'item-row--pending': item.pending }" :data-id="item.id">
+                            <button type="button" class="item-check" @click="check(item)" :aria-label="'{{ 'shopping.check_label'|trans|e('js') }} ' + item.name">
+                                <span class="item-check__circle"></span>
+                            </button>
+                            <button type="button" class="item-body" @click="openEditor(item)">
+                                <span class="item-body__name" x-text="item.name"></span>
+                                <span class="item-body__note" x-show="item.note" x-text="item.note"></span>
+                            </button>
+                            <span class="item-qty" x-text="item.quantityLabel"></span>
+                        </li>
+                    </template>
+                </ul>
+            </section>
+        </template>
+
+        {# Erledigt (Historie): Antippen setzt den Artikel wieder auf die Liste #}
+        <section class="shopping-done" x-cloak x-show="view.done.length > 0">
+            <button type="button" class="shopping-done__toggle" @click="showDone = !showDone" :aria-expanded="showDone">
+                <span class="shopping-done__chevron" :class="{ 'is-open': showDone }" aria-hidden="true">›</span>
+                {{ 'shopping.done'|trans }} (<span x-text="view.done.length"></span>)
+            </button>
+            <ul class="shopping-items shopping-items--done" x-show="showDone">
+                <template x-for="item in view.done" :key="item.id">
+                    <li class="item-row item-row--done">
+                        <button type="button" class="item-check is-checked" @click="reactivate(item)" :aria-label="'{{ 'shopping.reactivate_label'|trans|e('js') }} ' + item.name">
+                            <span class="item-check__circle"></span>
+                        </button>
+                        <button type="button" class="item-body" @click="reactivate(item)">
+                            <span class="item-body__name" x-text="item.name"></span>
+                        </button>
+                        <span class="item-qty" x-text="item.quantityLabel"></span>
+                    </li>
+                </template>
+            </ul>
+        </section>
+
+        {# Schnelleingabe #}
+        <form class="quick-add" @submit.prevent="add()" autocomplete="off">
+            <ul class="quick-add__suggestions" x-cloak x-show="suggestions.length > 0">
+                <template x-for="suggestion in suggestions" :key="suggestion.id">
+                    <li>
+                        <button type="button" class="quick-add__suggestion" @mousedown.prevent @click="pick(suggestion)">
+                            <span x-text="suggestion.name"></span>
+                            <span class="badge" x-show="suggestion.onList">{{ 'shopping.suggestion.on_list'|trans }}</span>
+                            <span class="badge badge--muted" x-show="!suggestion.onList && suggestion.fromHistory">{{ 'shopping.suggestion.history'|trans }}</span>
+                        </button>
+                    </li>
+                </template>
+            </ul>
+            <input class="quick-add__input" type="text" x-model="query" @input="updateSuggestions()"
+                   @keydown.escape="query = ''; suggestions = []"
+                   placeholder="{{ 'shopping.add_placeholder'|trans }}" aria-label="{{ 'shopping.add_placeholder'|trans }}"
+                   enterkeyhint="done" autocapitalize="sentences" autocorrect="on" spellcheck="false" :disabled="!hasData">
+            <button type="submit" class="quick-add__submit" :disabled="!query.trim()" aria-label="{{ 'shopping.add'|trans }}">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            </button>
+        </form>
+
+        {# Hinweis mit "Rückgängig" #}
+        <div class="toast" x-cloak x-show="toast" x-transition.opacity role="status" aria-live="polite">
+            <span class="toast__text" x-text="toast?.text"></span>
+            <button type="button" class="toast__action" x-show="toast?.undoItemId" @click="undoCheck()">{{ 'shopping.undo'|trans }}</button>
+        </div>
+
+        {# Bearbeiten-Sheet #}
+        <dialog class="sheet" @close="editor = null" @click.self="closeEditor()">
+            <template x-if="editor">
+                <form class="sheet__form" @submit.prevent="saveEditor()">
+                    <header class="sheet__header">
+                        <button type="button" class="sheet__link" @click="closeEditor()">{{ 'shopping.editor.cancel'|trans }}</button>
+                        <h2 class="sheet__title">{{ 'shopping.editor.title'|trans }}</h2>
+                        <button type="submit" class="sheet__link sheet__link--strong">{{ 'shopping.editor.save'|trans }}</button>
+                    </header>
+
+                    <label class="field">
+                        <span class="field__label">{{ 'shopping.editor.name'|trans }}</span>
+                        <input class="field__input" type="text" x-model="editor.name" required maxlength="100" enterkeyhint="done">
+                    </label>
+                    <div class="field-row">
+                        <label class="field">
+                            <span class="field__label">{{ 'shopping.editor.quantity'|trans }}</span>
+                            <input class="field__input" type="text" inputmode="decimal" x-model="editor.quantity" enterkeyhint="done">
+                        </label>
+                        <label class="field">
+                            <span class="field__label">{{ 'shopping.editor.unit'|trans }}</span>
+                            <select class="field__input" x-model="editor.unit">
+                                <option value="">{{ 'shopping.editor.no_unit'|trans }}</option>
+                                <template x-for="unit in units" :key="unit.value">
+                                    <option :value="unit.value" x-text="unit.label" :selected="unit.value === editor.unit"></option>
+                                </template>
+                            </select>
+                        </label>
+                    </div>
+                    <label class="field">
+                        <span class="field__label">{{ 'shopping.editor.category'|trans }}</span>
+                        <select class="field__input" x-model="editor.categoryId">
+                            <template x-for="category in view.categories" :key="category.id">
+                                <option :value="category.id" x-text="category.icon + ' ' + category.name" :selected="category.id === editor.categoryId"></option>
+                            </template>
+                        </select>
+                    </label>
+                    <label class="field">
+                        <span class="field__label">{{ 'shopping.editor.note'|trans }}</span>
+                        <input class="field__input" type="text" x-model="editor.note" maxlength="200" enterkeyhint="done">
+                    </label>
+
+                    <button type="button" class="button button--danger button--block" @click="deleteFromEditor()">{{ 'shopping.editor.delete'|trans }}</button>
+                </form>
+            </template>
+        </dialog>
     </div>
 {% endblock %}

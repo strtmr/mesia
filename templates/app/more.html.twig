@@ -41,7 +41,8 @@
 
     <section class="list-section">
         <div class="list-group">
-            <a class="list-group__row list-group__row--action list-group__row--danger" href="{{ path('app_logout') }}" data-turbo="false">
+            <a class="list-group__row list-group__row--action list-group__row--danger" href="{{ path('app_logout') }}" data-turbo="false"
+               data-controller="logout" data-action="logout#logout">
                 {{ 'more.logout'|trans }}
             </a>
         </div>

@@ -415,7 +415,13 @@ Vitest. Später Playwright-E2E (WebKit). Plattform: **GitHub Actions** (privates
 > **Stand 2026-11-19:** 1.1–1.3 (Server) umgesetzt: Katalog-, Listen- und Sync-Entities, Startkatalog per
 > `HouseholdCreated`, Mutationstypen `item.*`, `article.create/update`, `alias.add`, Endpunkte snapshot/push/pull,
 > `/api/me`. Noch offen: Kategorie-Mutationen (mit 1.7), 410 bei bereinigtem Log (es wird noch nichts bereinigt),
-> Client (1.4 ff.). Abweichungen: Der Startkatalog hat 274 Aliase (ein redundanter Alias wurde entfernt).
+> Client (1.4 ff.).
+>
+> **Stand 2026-11-19 (2):** 1.4 und 1.5 umgesetzt: JS-Kern (Dexie, Outbox, Sync-Engine, Schnelleingabe, Matching,
+> Sortierschlüssel) und Alpine-Oberfläche (Kategorien, Abhaken mit Rückgängig, Erledigt/Reaktivieren, Bearbeiten-Sheet,
+> Drag & Drop, Vorschläge, Sync-Status). Ergänzung zum Protokoll: Nach "merged" lenkt der Server Folgemutationen im
+> selben Push auf die bestehende ID um. Offen für 1.6: App-Start ohne Verbindung (Precache der Listenhülle und der
+> JS-Module im Service Worker). Eine geöffnete Liste arbeitet bereits offline. Abweichungen: Der Startkatalog hat 274 Aliase (ein redundanter Alias wurde entfernt).
 > Zeitstempel werden sekundengenau verarbeitet (siehe docs/entwicklung.md).
 
 | # | Paket | Fertig, wenn … |

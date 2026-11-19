@@ -10,7 +10,7 @@ Essensplanung und gemeinsame, offlinefähige Einkaufsliste als PWA. Lernprojekt 
 ## Stack
 
 PHP 8.5 · Symfony 8.1 · PostgreSQL 17 · Doctrine · Twig + Turbo/Stimulus (AssetMapper, kein Node-Build) ·
-Einkaufsliste als Offline-Insel mit Alpine.js + Dexie.js (folgt in Phase 1)
+Einkaufsliste als Offline-Insel mit Alpine.js + Dexie.js (IndexedDB) + SortableJS
 
 ## Lokale Entwicklung (DDEV)
 
@@ -56,6 +56,7 @@ ddev exec bin/console doctrine:migrations:migrate --env=test -n
 | `ddev exec bin/phpunit --testsuite unit` | schnelle Unit-Tests |
 | `ddev exec bin/phpunit --testsuite integration` | Tests mit Kernel und PostgreSQL |
 | `ddev npm run test:unit` | JavaScript-Tests (Vitest) |
+| `ddev exec bash tests/e2e/run.sh` | Rauchtest im Browser (siehe docs/entwicklung.md) |
 | `ddev exec vendor/bin/php-cs-fixer fix` | Code-Stil korrigieren |
 | `ddev exec vendor/bin/phpstan analyse` | statische Analyse (Level 8) |
 | `ddev exec vendor/bin/deptrac analyse` | Modulgrenzen prüfen |
