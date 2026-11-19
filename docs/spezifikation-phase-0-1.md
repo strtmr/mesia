@@ -412,9 +412,15 @@ Vitest. Später Playwright-E2E (WebKit). Plattform: **GitHub Actions** (privates
 
 ### Phase 1: Einkaufsliste
 
+> **Stand 2026-11-19:** 1.1–1.3 (Server) umgesetzt: Katalog-, Listen- und Sync-Entities, Startkatalog per
+> `HouseholdCreated`, Mutationstypen `item.*`, `article.create/update`, `alias.add`, Endpunkte snapshot/push/pull,
+> `/api/me`. Noch offen: Kategorie-Mutationen (mit 1.7), 410 bei bereinigtem Log (es wird noch nichts bereinigt),
+> Client (1.4 ff.). Abweichungen: Der Startkatalog hat 274 Aliase (ein redundanter Alias wurde entfernt).
+> Zeitstempel werden sekundengenau verarbeitet (siehe docs/entwicklung.md).
+
 | # | Paket | Fertig, wenn … |
 |---|-------|----------------|
-| 1.1 | Seed-Daten (Entwurf liegt vor: [categories.yaml](../data/seed/categories.yaml), [articles.yaml](../data/seed/articles.yaml), 17 Kategorien, 335 Artikel, 275 Aliase). Seeder kopiert sie in den Haushalt und prüft die Eindeutigkeit nach Normalisierung | `app:household:create` legt einen vollständigen Katalog an. Ein Test schlägt bei doppelten Namen oder Aliasen fehl |
+| 1.1 | Seed-Daten (Entwurf liegt vor: [categories.yaml](../data/seed/categories.yaml), [articles.yaml](../data/seed/articles.yaml), 17 Kategorien, 335 Artikel, 274 Aliase). Seeder kopiert sie in den Haushalt und prüft die Eindeutigkeit nach Normalisierung | `app:household:create` legt einen vollständigen Katalog an. Ein Test schlägt bei doppelten Namen oder Aliasen fehl |
 | 1.2 | Catalog + Shopping: Entities, Regeln, Handler je Mutationstyp | Unit- und Integrationstests für alle Regeln aus 4.4 |
 | 1.3 | Sync-Endpunkte snapshot/push/pull | Functional-Tests inkl. Idempotenz, Merge, 410 |
 | 1.4 | JS-Core: db, outbox, sync, commands, normalize, matcher, quickadd, sortkey | Vitest grün, gemeinsame Fixtures bestanden |

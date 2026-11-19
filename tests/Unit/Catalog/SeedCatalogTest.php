@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Catalog;
 
 use App\Catalog\Domain\TextNormalizer;
+use App\Catalog\Infrastructure\Seed\SeedCatalogReader;
+use App\Catalog\Infrastructure\Seed\SeedCategory;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Prüft die Seed-Dateien in data/seed/ auf Konsistenz.
@@ -15,94 +16,57 @@ use Symfony\Component\Yaml\Yaml;
  */
 final class SeedCatalogTest extends TestCase
 {
-    private const string SEED_DIR = __DIR__.'/../../../data/seed';
+    /** @var list<SeedCategory> */
+    private array $categories;
+
+    protected function setUp(): void
+    {
+        $this->categories = (new SeedCatalogReader(__DIR__.'/../../../data/seed'))->read();
+    }
 
     public function testCategoriesHaveUniqueKeysAndExactlyOneFallback(): void
     {
-        $categories = $this->categories();
+        $keys = array_map(static fn (SeedCategory $category): string => $category->key, $this->categories);
+        self::assertSame(array_values(array_unique($keys)), $keys, 'Kategorie-Keys müssen eindeutig sein.');
 
-        $keys = array_column($categories, 'key');
-        self::assertSame(array_unique($keys), $keys, 'Kategorie-Keys müssen eindeutig sein.');
-
-        $fallbacks = array_filter($categories, static fn (array $category): bool => true === ($category['fallback'] ?? false));
+        $fallbacks = array_filter($this->categories, static fn (SeedCategory $category): bool => $category->fallback);
         self::assertCount(1, $fallbacks, 'Es muss genau eine Fallback-Kategorie geben.');
 
-        foreach ($categories as $category) {
-            self::assertMatchesRegularExpression('/^[a-z_]+$/', $category['key']);
-            self::assertNotSame('', trim($category['name']));
-            self::assertNotSame('', trim($category['icon']));
+        foreach ($this->categories as $category) {
+            self::assertMatchesRegularExpression('/^[a-z_]+$/', $category->key);
+            self::assertNotSame('', trim($category->name));
+            self::assertNotSame('', trim($category->icon));
         }
     }
 
-    public function testArticlesReferenceExistingCategories(): void
-    {
-        $categoryKeys = array_column($this->categories(), 'key');
-
-        foreach (array_keys($this->articlesByCategory()) as $categoryKey) {
-            self::assertContains($categoryKey, $categoryKeys, \sprintf('Unbekannte Kategorie "%s" in articles.yaml.', $categoryKey));
-        }
-    }
-
+    /**
+     * Jeder Name und jeder Alias muss nach der Normalisierung genau einmal vorkommen, auch ein Alias, der nur seinen
+     * eigenen Namen wiederholt ("Creme fraiche" zu "Crème fraîche"), gilt als Dublette.
+     */
     public function testNamesAndAliasesAreUniqueAfterNormalization(): void
     {
         $normalizer = new TextNormalizer();
         /** @var array<string, string> $owners normalisierter Begriff => Artikelname */
         $owners = [];
         $duplicates = [];
+        $articleCount = 0;
 
-        foreach ($this->articlesByCategory() as $entries) {
-            foreach ($entries as $entry) {
-                [$name, $aliases] = self::parseEntry($entry);
-
-                foreach ([$name, ...$aliases] as $term) {
+        foreach ($this->categories as $category) {
+            foreach ($category->articles as $article) {
+                ++$articleCount;
+                foreach ([$article->name, ...$article->aliases] as $term) {
                     $normalized = $normalizer->normalize($term);
                     self::assertNotSame('', $normalized, \sprintf('"%s" ist nach der Normalisierung leer.', $term));
 
-                    if (isset($owners[$normalized]) && $owners[$normalized] !== $name) {
-                        $duplicates[] = \sprintf('"%s" (%s) kollidiert mit %s', $term, $name, $owners[$normalized]);
+                    if (isset($owners[$normalized])) {
+                        $duplicates[] = \sprintf('"%s" (%s) kollidiert mit %s', $term, $article->name, $owners[$normalized]);
                     }
-                    $owners[$normalized] = $name;
+                    $owners[$normalized] = $article->name;
                 }
             }
         }
 
         self::assertSame([], $duplicates);
-        self::assertGreaterThan(300, \count(array_unique($owners)), 'Der Grundkatalog sollte mehr als 300 Artikel enthalten.');
-    }
-
-    /**
-     * @return array{string, list<string>}
-     */
-    private static function parseEntry(string $entry): array
-    {
-        $parts = explode('|', $entry, 2);
-        $name = trim($parts[0]);
-        $aliases = isset($parts[1])
-            ? array_values(array_filter(array_map(trim(...), explode(',', $parts[1])), static fn (string $alias): bool => '' !== $alias))
-            : [];
-
-        return [$name, $aliases];
-    }
-
-    /**
-     * @return list<array{key: string, name: string, icon: string, fallback?: bool}>
-     */
-    private function categories(): array
-    {
-        /** @var array{categories: list<array{key: string, name: string, icon: string, fallback?: bool}>} $data */
-        $data = Yaml::parseFile(self::SEED_DIR.'/categories.yaml');
-
-        return $data['categories'];
-    }
-
-    /**
-     * @return array<string, list<string>>
-     */
-    private function articlesByCategory(): array
-    {
-        /** @var array{articles: array<string, list<string>>} $data */
-        $data = Yaml::parseFile(self::SEED_DIR.'/articles.yaml');
-
-        return $data['articles'];
+        self::assertGreaterThan(300, $articleCount, 'Der Grundkatalog sollte mehr als 300 Artikel enthalten.');
     }
 }

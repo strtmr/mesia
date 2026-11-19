@@ -23,6 +23,21 @@ doctrine:
                 is_bundle: false
                 dir: '%kernel.project_dir%/src/Identity/Domain/Model'
                 prefix: 'App\Identity\Domain\Model'
+            Catalog:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Catalog/Domain/Model'
+                prefix: 'App\Catalog\Domain\Model'
+            Shopping:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Shopping/Domain/Model'
+                prefix: 'App\Shopping\Domain\Model'
+            Sync:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Sync/Domain/Model'
+                prefix: 'App\Sync\Domain\Model'
 
 when@test:
     doctrine:

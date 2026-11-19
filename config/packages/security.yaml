@@ -17,6 +17,8 @@ security:
         main:
             lazy: true
             provider: app_users
+            # Webseiten → Login-Seite, /api/* → 401 JSON
+            entry_point: App\Identity\Infrastructure\Security\AppAuthenticationEntryPoint
 
             form_login:
                 login_path: app_login

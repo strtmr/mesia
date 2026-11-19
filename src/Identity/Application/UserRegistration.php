@@ -7,8 +7,10 @@ namespace App\Identity\Application;
 use App\Identity\Domain\Model\Household;
 use App\Identity\Domain\Model\User;
 use App\Identity\Infrastructure\Doctrine\UserRepository;
+use App\Shared\Domain\Event\HouseholdCreated;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Clock\ClockInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
@@ -23,16 +25,25 @@ final readonly class UserRegistration
         private UserRepository $users,
         private UserPasswordHasherInterface $passwordHasher,
         private ClockInterface $clock,
+        private EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
+    /**
+     * Legt den Haushalt an und löst {@see HouseholdCreated} aus, alles in einer Transaktion. Andere Module legen
+     * daraufhin ihre Grunddaten an (Startkatalog, Einkaufsliste).
+     */
     public function createHousehold(string $name): Household
     {
-        $household = new Household($name, $this->clock->now());
-        $this->entityManager->persist($household);
-        $this->entityManager->flush();
+        return $this->entityManager->wrapInTransaction(function () use ($name): Household {
+            $household = new Household($name, $this->clock->now());
+            $this->entityManager->persist($household);
+            $this->entityManager->flush();
 
-        return $household;
+            $this->eventDispatcher->dispatch(new HouseholdCreated($household->getId()));
+
+            return $household;
+        });
     }
 
     public function createUser(Household $household, string $email, string $displayName, string $plainPassword): User

@@ -2,6 +2,8 @@
 
 Essensplanung und gemeinsame, offlinefähige Einkaufsliste als PWA. Lernprojekt mit Symfony.
 
+- Benutzerhandbuch: [docs/benutzerhandbuch.md](docs/benutzerhandbuch.md)
+- Entwicklerdokumentation (Module, Sync-API, Stolperfallen): [docs/entwicklung.md](docs/entwicklung.md)
 - Architektur und Entscheidungen: [docs/architektur.md](docs/architektur.md)
 - Aktuelle Spezifikation (Phase 0 + 1): [docs/spezifikation-phase-0-1.md](docs/spezifikation-phase-0-1.md)
 
@@ -29,7 +31,10 @@ Es gibt keine Selbstregistrierung. Haushalt und Benutzer werden per Konsole ange
 ddev exec bin/console app:household:create "Familie Muster"
 ddev exec bin/console app:user:create marco@example.com Marco      # --household=<ID> nur nötig bei mehreren Haushalten
 ddev exec bin/console app:user:set-password marco@example.com       # Passwort zurücksetzen
+ddev exec bin/console app:household:initialize                     # fehlende Grunddaten nach Updates ergänzen
 ```
+
+Ein neuer Haushalt bekommt automatisch den Startkatalog (`data/seed/`) und eine Einkaufsliste.
 
 ### Auf dem iPhone testen
 

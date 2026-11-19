@@ -5,6 +5,10 @@ framework:
     # Note that the session will be started ONLY if you read or write from it.
     session: true
 
+    # JSON der API in snake_case (device_id statt deviceId), PHP-Properties bleiben camelCase.
+    serializer:
+        name_converter: 'serializer.name_converter.camel_case_to_snake_case'
+
     #esi: true
     #fragments: true
 

@@ -1,0 +1,210 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Sync\Application;
+
+use App\Shared\Application\ChangeLog\ChangeContext;
+use App\Shared\Application\Sync\MutationContext;
+use App\Shared\Application\Sync\MutationHandler;
+use App\Shared\Application\Sync\MutationOutcome;
+use App\Shared\Application\Sync\MutationRejected;
+use App\Shared\Infrastructure\Persistence\HouseholdWriteLock;
+use App\Sync\Domain\Model\ProcessedMutation;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Clock\ClockInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
+use Symfony\Component\Serializer\Exception\ExceptionInterface as SerializerException;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
+/**
+ * Verarbeitet die Mutationen eines Sync-Push der Reihe nach, jede in einer eigenen Transaktion.
+ *
+ * - Idempotent: Bereits verarbeitete Mutationen (gleiche ID) liefern ihr gespeichertes Ergebnis als "duplicate".
+ * - Jede Transaktion holt zuerst den HouseholdWriteLock (Reihenfolge im Änderungsprotokoll, siehe dort).
+ * - Fachlich ungültige Mutationen werden "rejected" und ebenfalls gespeichert. Die übrigen laufen weiter.
+ * - Liegt die Geräteuhr in der Zukunft, wird der Zeitpunkt auf "jetzt" begrenzt.
+ */
+final readonly class MutationDispatcher
+{
+    public function __construct(
+        #[AutowireLocator(MutationHandler::TAG, defaultIndexMethod: 'mutationType')]
+        private ContainerInterface $handlers,
+        private EntityManagerInterface $entityManager,
+        private HouseholdWriteLock $householdWriteLock,
+        private ChangeContext $changeContext,
+        private DenormalizerInterface $denormalizer,
+        private ValidatorInterface $validator,
+        private ClockInterface $clock,
+    ) {
+    }
+
+    /**
+     * @param list<IncomingMutation> $mutations
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function dispatch(Uuid $householdId, Uuid $actorId, string $deviceId, array $mutations): array
+    {
+        return array_map(
+            fn (IncomingMutation $mutation): array => $this->process($householdId, $actorId, $deviceId, $mutation),
+            $mutations,
+        );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function process(Uuid $householdId, Uuid $actorId, string $deviceId, IncomingMutation $mutation): array
+    {
+        $previous = $this->previousResult($householdId, $mutation->id);
+        if (null !== $previous) {
+            return $previous;
+        }
+
+        $connection = $this->entityManager->getConnection();
+        $connection->beginTransaction();
+
+        try {
+            $this->householdWriteLock->acquire($householdId);
+
+            // Erneut prüfen, jetzt unter dem Lock: Ein paralleler Push derselben Mutation könnte schneller gewesen sein.
+            $previous = $this->previousResult($householdId, $mutation->id);
+            if (null !== $previous) {
+                $connection->commit();
+
+                return $previous;
+            }
+
+            $outcome = $this->changeContext->runForMutation(
+                $mutation->id,
+                fn (): MutationOutcome => $this->handle($householdId, $actorId, $mutation),
+            );
+            $result = self::result($mutation->id, $outcome->status, $outcome->mergedInto);
+            $this->remember($householdId, $deviceId, $mutation, $result);
+            $this->entityManager->flush();
+            $connection->commit();
+        } catch (MutationRejected $rejection) {
+            $connection->rollBack();
+            $this->entityManager->clear();
+            $result = self::result($mutation->id, 'rejected', error: $rejection->getMessage());
+            $this->remember($householdId, $deviceId, $mutation, $result);
+            $this->entityManager->flush();
+        } catch (\Throwable $exception) {
+            if ($connection->isTransactionActive()) {
+                $connection->rollBack();
+            }
+
+            throw $exception;
+        } finally {
+            $this->entityManager->clear();
+        }
+
+        return $result;
+    }
+
+    private function handle(Uuid $householdId, Uuid $actorId, IncomingMutation $mutation): MutationOutcome
+    {
+        if (!$this->handlers->has($mutation->type)) {
+            throw new MutationRejected(\sprintf('Unbekannter Mutationstyp "%s".', $mutation->type));
+        }
+
+        /** @var MutationHandler<object> $handler */
+        $handler = $this->handlers->get($mutation->type);
+
+        try {
+            $payload = $this->denormalizer->denormalize($mutation->payload, $handler->payloadClass(), 'json', [
+                AbstractNormalizer::ALLOW_EXTRA_ATTRIBUTES => false,
+            ]);
+        } catch (SerializerException|\TypeError $exception) {
+            throw new MutationRejected(\sprintf('Ungültige Daten für "%s": %s', $mutation->type, $exception->getMessage()), previous: $exception);
+        }
+
+        $violations = $this->validator->validate($payload);
+        if (\count($violations) > 0) {
+            $violation = $violations->get(0);
+            throw new MutationRejected(\sprintf('Ungültige Daten für "%s": %s %s', $mutation->type, $violation->getPropertyPath(), (string) $violation->getMessage()));
+        }
+
+        $now = self::toSeconds($this->clock->now());
+        $at = self::toSeconds($mutation->at);
+
+        return $handler->handle($payload, new MutationContext(
+            householdId: $householdId,
+            actorId: $actorId,
+            mutationId: $mutation->id,
+            at: $at > $now ? $now : $at,
+            now: $now,
+        ));
+    }
+
+    /**
+     * Doctrine speichert Zeitstempel in PostgreSQL sekundengenau. Damit Vergleiche im Speicher und nach dem Neuladen
+     * gleich ausgehen (z. B. Abhaken vs. Reaktivieren), rechnen wir durchgehend mit ganzen Sekunden.
+     */
+    private static function toSeconds(\DateTimeImmutable $time): \DateTimeImmutable
+    {
+        return $time->setTime((int) $time->format('H'), (int) $time->format('i'), (int) $time->format('s'));
+    }
+
+    /**
+     * Gespeichertes Ergebnis einer schon verarbeiteten Mutation, mit Status "duplicate". Gelesen per DBAL, damit
+     * kein veralteter Stand aus der Identity Map kommt.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function previousResult(Uuid $householdId, Uuid $mutationId): ?array
+    {
+        $row = $this->entityManager->getConnection()->fetchAssociative(
+            'SELECT household_id, result FROM processed_mutation WHERE mutation_id = ?',
+            [$mutationId],
+            [UuidType::NAME],
+        );
+        if (false === $row) {
+            return null;
+        }
+
+        if (!Uuid::fromString((string) $row['household_id'])->equals($householdId)) {
+            return self::result($mutationId, 'rejected', error: 'Mutations-ID ist bereits vergeben.');
+        }
+
+        /** @var array<string, mixed> $result */
+        $result = json_decode((string) $row['result'], true, flags: \JSON_THROW_ON_ERROR);
+
+        return ['status' => 'duplicate', 'original_status' => $result['status'] ?? null] + $result;
+    }
+
+    /**
+     * @param array<string, mixed> $result
+     */
+    private function remember(Uuid $householdId, string $deviceId, IncomingMutation $mutation, array $result): void
+    {
+        $this->entityManager->persist(new ProcessedMutation(
+            $mutation->id,
+            $householdId,
+            $deviceId,
+            mb_substr($mutation->type, 0, 40),
+            (string) $result['status'],
+            $result,
+            $this->clock->now(),
+        ));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function result(Uuid $mutationId, string $status, ?Uuid $mergedInto = null, ?string $error = null): array
+    {
+        return array_filter([
+            'id' => $mutationId->toRfc4122(),
+            'status' => $status,
+            'merged_into' => $mergedInto?->toRfc4122(),
+            'error' => $error,
+        ], static fn (?string $value): bool => null !== $value);
+    }
+}
