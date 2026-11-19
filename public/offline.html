@@ -15,16 +15,19 @@
         img { width: 72px; height: 72px; }
         h1 { font-size: 22px; margin: 16px 0 4px; }
         p { color: var(--muted); margin: 0 0 24px; }
-        button { min-height: 44px; padding: 0 20px; border: 0; border-radius: 12px; background: var(--accent);
-                 color: var(--accent-contrast); font: inherit; font-weight: 600; }
+        .button, button { display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; border: 0;
+                 border-radius: 12px; background: var(--accent); color: var(--accent-contrast); font: inherit;
+                 font-weight: 600; text-decoration: none; margin: 4px; }
+        .secondary { background: none; color: var(--accent); }
     </style>
 </head>
 <body>
     <main>
         <img src="/icons/icon.svg" alt="">
         <h1>Keine Verbindung</h1>
-        <p>Diese Seite braucht eine Internetverbindung.<br>Die Einkaufsliste funktioniert ab Phase 1 auch offline.</p>
-        <button type="button" onclick="location.reload()">Erneut versuchen</button>
+        <p>Diese Seite braucht eine Internetverbindung.<br>Die Einkaufsliste funktioniert auch offline.</p>
+        <a class="button" href="/einkauf">Zur Einkaufsliste</a>
+        <button type="button" class="secondary" onclick="location.reload()">Erneut versuchen</button>
     </main>
 </body>
 </html>

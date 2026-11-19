@@ -19,5 +19,8 @@ engine.subscribe(() => {
 
 Alpine.data('shoppingList', () => shoppingList(engine));
 
+// Bitten, die lokalen Daten nicht bei Speicherknappheit zu löschen (iOS gewährt das v. a. Home-Bildschirm-Apps)
+navigator.storage?.persist?.().catch(() => {});
+
 window.Alpine = Alpine;
 Alpine.start();

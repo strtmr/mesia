@@ -72,6 +72,10 @@ more:
         offline: Offline
     logout: Abmelden
 
+app_update:
+    text: Neue Version verfügbar
+    reload: Neu laden
+
 install_hint:
     text: 'Tipp: Tippe auf „Teilen“ und dann auf „Zum Home-Bildschirm“, um die App wie eine normale App zu nutzen.'
     dismiss: Ausblenden

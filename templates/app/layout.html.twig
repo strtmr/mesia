@@ -37,6 +37,11 @@
             </a>
         </nav>
 
+        <aside class="update-banner" data-controller="app-update" role="status" hidden>
+            <p class="update-banner__text">{{ 'app_update.text'|trans }}</p>
+            <button type="button" class="update-banner__action" data-action="app-update#reload">{{ 'app_update.reload'|trans }}</button>
+        </aside>
+
         <aside class="install-hint" data-controller="install-hint" hidden>
             <p class="install-hint__text">{{ 'install_hint.text'|trans }}</p>
             <button type="button" class="install-hint__dismiss" data-action="install-hint#dismiss">{{ 'install_hint.dismiss'|trans }}</button>

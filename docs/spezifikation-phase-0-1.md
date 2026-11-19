@@ -44,7 +44,7 @@ mealplanner/
 │   │   │   └── sortkey.js      Fractional Index (Bibliothek fractional-indexing)
 │   │   └── ui/
 │   │       └── list.js         Alpine-Komponente, bindet core an das DOM
-│   ├── sw.js                   Service Worker
+│   ├── pwa/                    Service-Worker-Registrierung (der Service Worker selbst: templates/pwa/sw.js.twig)
 │   └── styles/
 ├── config/
 ├── data/seed/                  categories.yaml, articles.yaml (deutscher Grundkatalog)
@@ -387,7 +387,8 @@ Vitest. Später Playwright-E2E (WebKit). Plattform: **GitHub Actions** (privates
 > **Stand 2026-11-18:** 0.2–0.6 umgesetzt. Offen: 0.1 (PostgreSQL bei Hetzner prüfen), 0.7 (Deployment).
 >
 > Für 0.7 vormerken: `symfony/apache-pack` (.htaccess für Apache), dort `AddType application/manifest+json .webmanifest`
-> und `Cache-Control: no-cache` für `/sw.js` (lokal per `.ddev/nginx/pwa.conf` gelöst), `APP_SECRET` für prod setzen.
+> (lokal per `.ddev/nginx/pwa.conf` gelöst), `APP_SECRET` für prod setzen. `/sw.js` liefert seit 1.6 Symfony aus
+> (inkl. `Cache-Control: no-cache`), dafür ist keine Serverkonfiguration nötig.
 >
 > Umsetzung 0.5/0.6: Login mit Remember-me (1 Jahr, Signatur enthält den Passwort-Hash), Login-Drosselung (5 Versuche / 15 min),
 > E-Mail unabhängig von Groß-/Kleinschreibung, Befehle `app:household:create`, `app:user:create`, `app:user:set-password`.
@@ -423,6 +424,13 @@ Vitest. Später Playwright-E2E (WebKit). Plattform: **GitHub Actions** (privates
 > selben Push auf die bestehende ID um. Offen für 1.6: App-Start ohne Verbindung (Precache der Listenhülle und der
 > JS-Module im Service Worker). Eine geöffnete Liste arbeitet bereits offline. Abweichungen: Der Startkatalog hat 274 Aliase (ein redundanter Alias wurde entfernt).
 > Zeitstempel werden sekundengenau verarbeitet (siehe docs/entwicklung.md).
+>
+> **Stand 2026-11-19 (3):** 1.6 umgesetzt. Der Service Worker wird von Symfony gerendert (`/sw.js`), kennt so alle
+> versionierten Asset-URLs und cacht sie bei der Installation. Die Listenhülle kommt per Netzwerk zuerst (4 s Timeout),
+> sonst aus dem Cache. Andere Seiten zeigen offline die Offline-Seite. Neue Version → Hinweis „Neu laden“.
+> Fehlerfälle aus 4.5 sind abgedeckt (Offline mit Zähler, 401-Hinweis, Backoff, Hinweis bei `rejected`, Snapshot bei 410).
+> Abnahme automatisiert im Browser-Rauchtest: Kaltstart im Flugmodus, hinzufügen und abhaken, zweites Gerät sieht
+> die Änderungen nach ca. 8 s. Noch offen: Test auf einem echten iPhone.
 
 | # | Paket | Fertig, wenn … |
 |---|-------|----------------|

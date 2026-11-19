@@ -73,7 +73,7 @@
         <section class="shopping-done" x-cloak x-show="view.done.length > 0">
             <button type="button" class="shopping-done__toggle" @click="showDone = !showDone" :aria-expanded="showDone">
                 <span class="shopping-done__chevron" :class="{ 'is-open': showDone }" aria-hidden="true">›</span>
-                {{ 'shopping.done'|trans }} (<span x-text="view.done.length"></span>)
+                <span>{{ 'shopping.done'|trans }} (<span x-text="view.done.length"></span>)</span>
             </button>
             <ul class="shopping-items shopping-items--done" x-show="showDone">
                 <template x-for="item in view.done" :key="item.id">

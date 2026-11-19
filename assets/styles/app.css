@@ -422,6 +422,40 @@ a {
     font-weight: 600;
 }
 
+/* ---------- Hinweis "Neue Version" (Service-Worker-Update) ---------- */
+
+.update-banner {
+    position: fixed;
+    top: calc(var(--safe-top) + var(--space-2));
+    right: calc(var(--space-3) + var(--safe-right));
+    left: calc(var(--space-3) + var(--safe-left));
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+    border-radius: var(--radius-l);
+    background: var(--color-surface);
+    box-shadow: 0 8px 30px rgb(0 0 0 / 0.18);
+    font-size: 15px;
+}
+
+.update-banner__text {
+    flex: 1;
+    margin: 0;
+}
+
+.update-banner__action {
+    min-height: var(--touch-target);
+    padding: 0 var(--space-4);
+    border: 0;
+    border-radius: var(--radius-m);
+    background: var(--color-accent);
+    color: var(--color-accent-contrast);
+    font: inherit;
+    font-weight: 600;
+}
+
 /* ---------- Alpine: Elemente bis zur Initialisierung verstecken ---------- */
 
 [x-cloak] {

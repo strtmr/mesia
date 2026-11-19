@@ -29,40 +29,60 @@ async function waitForSync(page, expected = 'synced') {
 }
 
 const browser = await chromium.launch();
-const context = await browser.newContext({ ...devices['iPhone 13'], locale: 'de-DE' });
-// Die Symfony-Debug-Toolbar (nur dev) liegt über der Tab-Leiste und fängt Klicks ab
-await context.addInitScript(() => {
+function watchErrors(target, label) {
+    target.on('pageerror', (error) => errors.push(`${label} pageerror: ${error.message}`));
+    target.on('console', (message) => {
+        // Fehlgeschlagene Requests in den Offline-Schritten sind erwartet
+        if (message.type() === 'error' && !/ERR_INTERNET_DISCONNECTED|Failed to fetch/.test(message.text())) {
+            errors.push(`${label} console: ${message.text()}`);
+        }
+    });
+}
+
+async function login(target) {
+    await target.goto(`${BASE}/login`);
+    await target.fill('input[name=email]', email);
+    await target.fill('input[name=password]', password);
+    await target.click('button[type=submit]');
+    await target.waitForURL('**/einkauf');
+}
+
+async function newDevice(label) {
+    const deviceContext = await browser.newContext({ ...devices['iPhone 13'], locale: 'de-DE' });
+    await deviceContext.addInitScript(hideDebugToolbar);
+    const devicePage = await deviceContext.newPage();
+    watchErrors(devicePage, label);
+
+    return { context: deviceContext, page: devicePage };
+}
+
+/** Hinweis "Zum Home-Bildschirm" (erscheint im iPhone-Safari) wie ein Benutzer ausblenden. */
+async function dismissInstallHint(target) {
+    const hint = target.locator('.install-hint:not([hidden])');
+    if (await hint.count()) {
+        await hint.locator('button').click();
+    }
+}
+
+function hideDebugToolbar() {
+    // Die Symfony-Debug-Toolbar (nur dev) liegt über der Tab-Leiste und fängt Klicks ab
     document.addEventListener('DOMContentLoaded', () => {
         const style = document.createElement('style');
         style.textContent = '.sf-toolbar, .sf-minitoolbar { display: none !important; }';
         document.head.append(style);
     });
-});
-const page = await context.newPage();
-page.on('pageerror', (error) => errors.push(`pageerror: ${error.message}`));
-page.on('console', (message) => {
-    // Fehlgeschlagene Requests im Offline-Schritt sind erwartet
-    if (message.type() === 'error' && !message.text().includes('ERR_INTERNET_DISCONNECTED')) {
-        errors.push(`console: ${message.text()}`);
-    }
-});
+}
+
+const { context, page } = await newDevice('A');
 
 try {
     step('Login');
-    await page.goto(`${BASE}/login`);
-    await page.fill('input[name=email]', email);
-    await page.fill('input[name=password]', password);
-    await page.click('button[type=submit]');
-    await page.waitForURL('**/einkauf');
+    await login(page);
 
     step('Erster Sync (Snapshot)');
     await waitForSync(page);
     await page.screenshot({ path: `${screenshotDir}/0-start.png` });
-    // Hinweis "Zum Home-Bildschirm" (erscheint im iPhone-Safari) wie ein Benutzer ausblenden
-    const hint = page.locator('.install-hint:not([hidden])');
-    if (await hint.count()) {
-        await hint.locator('button').click();
-    }
+    await dismissInstallHint(page);
     await expectVisible(page.locator('.quick-add__input:not([disabled])'), 'Eingabefeld');
 
     step('Schnelleingabe "2 l Milch"');
@@ -138,7 +158,53 @@ try {
     await page.waitForURL('**/einkauf');
     await expectVisible(page.locator('.item-row', { hasText: 'Brot' }), 'Liste nach Tab-Wechsel');
     if ((await page.locator('.item-row', { hasText: 'Brot' }).count()) !== 1) throw new Error('Brot doppelt nach Tab-Wechsel');
-    await page.screenshot({ path: `${screenshotDir}/5-final.png`, fullPage: true });
+    await page.screenshot({ path: `${screenshotDir}/5-tabwechsel.png`, fullPage: true });
+
+    step('Service Worker hat die Listenseite gespeichert');
+    await page.waitForFunction(async () => {
+        await navigator.serviceWorker.ready;
+        return navigator.serviceWorker.controller !== null && (await caches.match('/einkauf')) !== undefined;
+    }, null, { timeout: 15000 });
+
+    step('Kaltstart ohne Verbindung (Flugmodus)');
+    await context.setOffline(true);
+    await page.reload();
+    await expectVisible(page.locator('.item-row', { hasText: 'Brot' }), 'Liste offline aus IndexedDB');
+    await waitForSync(page, 'offline');
+
+    step('Offline hinzufügen und abhaken');
+    await page.fill('.quick-add__input', 'Kaffee');
+    await page.press('.quick-add__input', 'Enter');
+    await expectVisible(page.locator('.item-row--pending', { hasText: 'Kaffee' }), 'Kaffee (ausstehend)');
+    await page.locator('.item-row:not(.item-row--done)', { hasText: 'Butter' }).locator('.item-check').click();
+    await expectVisible(page.locator('.sync-status', { hasText: '2 ausstehend' }), 'Offline · 2 ausstehend');
+    await page.screenshot({ path: `${screenshotDir}/6-kaltstart-offline.png`, fullPage: true });
+
+    step('Andere Seite offline: Offline-Seite, zurück zur Liste');
+    await page.click('nav.tabbar a[href="/mehr"]');
+    await expectVisible(page.getByText('Keine Verbindung'), 'Offline-Seite');
+    await page.click('a[href="/einkauf"]');
+    await expectVisible(page.locator('.item-row--pending', { hasText: 'Kaffee' }), 'Kaffee nach Rückkehr');
+
+    step('Zweites Gerät sieht die Offline-Änderungen nach ≤ 10 s');
+    const deviceB = await newDevice('B');
+    await login(deviceB.page);
+    await waitForSync(deviceB.page);
+    await dismissInstallHint(deviceB.page);
+    if (await deviceB.page.locator('.item-row', { hasText: 'Kaffee' }).count()) throw new Error('Kaffee schon vor dem Sync auf Gerät B');
+    await context.setOffline(false);
+    await page.evaluate(() => window.dispatchEvent(new Event('online')));
+    await waitForSync(page);
+    const start = Date.now();
+    await deviceB.page.locator('.item-row:not(.item-row--done)', { hasText: 'Kaffee' }).waitFor({ timeout: 10000 }).catch(() => {
+        throw new Error('Kaffee nach 10 s nicht auf Gerät B');
+    });
+    await deviceB.page.click('.shopping-done__toggle');
+    await expectVisible(deviceB.page.locator('.item-row--done', { hasText: 'Butter' }), 'Butter erledigt auf Gerät B');
+    console.log(`  (auf Gerät B nach ${((Date.now() - start) / 1000).toFixed(1)} s)`);
+    await deviceB.page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await deviceB.page.screenshot({ path: `${screenshotDir}/7-geraet-b.png` });
+    await deviceB.context.close();
 
     if (errors.length > 0) {
         throw new Error(`Browserfehler:\n${errors.join('\n')}`);

@@ -95,13 +95,34 @@ ui/     Alpine.js: app.js (Einstieg, Store "sync"), list.js (Komponente)
   Alpine rendert die neue Reihenfolge.
 - UI-Texte stehen im Twig-Template bzw. in `translations/`, nicht im JavaScript.
 
+## Service Worker (Offline-Start)
+
+`/sw.js` wird von `ServiceWorkerController` aus `templates/pwa/sw.js.twig` gerendert, nicht als statische Datei
+ausgeliefert. Nur so kennt er die versionierten AssetMapper-URLs.
+
+| Anfrage | Strategie |
+|---------|-----------|
+| `/assets/*` | Cache zuerst (bei der Installation vollständig vorab geladen) |
+| `/einkauf` (Listenhülle), `/` | Netzwerk zuerst, nach 4 s oder ohne Verbindung die gespeicherte Hülle |
+| andere Seiten (auch Turbo-Requests) | Netzwerk zuerst, ohne Verbindung `public/offline.html` |
+| `/api/*`, `/login`, `/logout`, Profiler | nie angefasst |
+
+- **Die Listenhülle muss benutzerunabhängig bleiben** (keine Namen, keine Daten im Twig-Template), sie wird für alle
+  Benutzer des Geräts aus dem Cache ausgeliefert. Daten kommen ausschließlich aus IndexedDB.
+- **Version:** Hash über alle Asset-Pfade, `app.version` und die statischen Dateien. Ändert sich etwas, installiert
+  der Browser den neuen Service Worker, löscht alte Caches und zeigt „Neue Version verfügbar – Neu laden“
+  (`assets/pwa/register-service-worker.js`, `controllers/app_update_controller.js`).
+- Neue statische Datei unter `public/`, die offline gebraucht wird → in `ServiceWorkerController::STATIC_FILES` eintragen.
+- **Entwicklung:** Auch in dev ist der Service Worker aktiv. Jede Asset-Änderung erzeugt eine neue Version (Hinweis
+  oben). Zum Zurücksetzen: Browser-Entwicklertools → Application → Storage → „Clear site data“.
+
 ## Tests
 
 | Befehl | Was |
 |--------|-----|
 | `ddev exec bin/phpunit` | PHP: Unit, Integration, Functional (Sync-API) |
 | `ddev npm run test:unit` | JS-Kern (Vitest, IndexedDB per fake-indexeddb) |
-| `ddev exec bash tests/e2e/run.sh` | Rauchtest im echten Browser (Playwright/Chromium, iPhone-Viewport) gegen die Dev-App. Legt einen Haushalt „E2E-Test“ an, Screenshots unter `var/e2e/`. Einmalig: `ddev exec 'sudo npx playwright install-deps chromium && npx playwright install chromium --only-shell'` (nach `ddev restart` erneut nötig) |
+| `ddev exec bash tests/e2e/run.sh` | Rauchtest im echten Browser (Playwright/Chromium, iPhone-Viewport) gegen die Dev-App, inkl. Kaltstart offline und zweitem Gerät. Legt einen Haushalt „E2E-Test“ an, Screenshots unter `var/e2e/`. Einmalig: `ddev exec 'sudo npx playwright install-deps chromium && npx playwright install chromium --only-shell'` (nach `ddev restart` erneut nötig) |
 
 ## Stolperfallen
 

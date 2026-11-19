@@ -1,0 +1,119 @@
+/*
+ * Service Worker (Spezifikation Kapitel 8), gerendert von ServiceWorkerController.
+ *
+ * - Assets (/assets/*, versionierte Dateinamen): aus dem Cache, bei der Installation vorab geladen.
+ * - Listenseite (App-Hülle): Netzwerk zuerst, ohne Verbindung die zuletzt geladene Hülle. Die Hülle enthält keine
+ *   Benutzerdaten, alles Weitere kommt aus IndexedDB. So startet die Einkaufsliste auch offline.
+ * - Andere Seiten: Netzwerk zuerst, ohne Verbindung die Offline-Seite.
+ * - API, Login/Logout und Profiler: nie angefasst, darum kümmert sich die Sync-Schicht.
+ */
+
+const VERSION = {{ version|json_encode|raw }};
+const CACHE_NAME = `mealplanner-${VERSION}`;
+const SHELL_URL = {{ shell_url|json_encode(constant('JSON_UNESCAPED_SLASHES'))|raw }};
+const OFFLINE_URL = '/offline.html';
+const ASSETS = {{ assets|json_encode(constant('JSON_UNESCAPED_SLASHES'))|raw }};
+const STATIC_FILES = {{ static_files|json_encode(constant('JSON_UNESCAPED_SLASHES'))|raw }};
+const BYPASS = /^\/(api|login|logout|_wdt|_profiler)(\/|$)/;
+// Danach gilt das Netz als zu langsam und die gespeicherte Hülle wird angezeigt (die Antwort aktualisiert den Cache trotzdem)
+const SHELL_TIMEOUT_MS = 4000;
+
+self.addEventListener('install', (event) => {
+    event.waitUntil((async () => {
+        const cache = await caches.open(CACHE_NAME);
+        await cache.addAll([...ASSETS, ...STATIC_FILES]);
+        // Hülle nur, wenn angemeldet. Sonst kommt eine Weiterleitung zum Login, die nicht gecacht werden darf.
+        // Sie wird später beim ersten Aufruf der Liste nachgeholt.
+        try {
+            await storeShell(cache, await fetch(SHELL_URL, { redirect: 'manual', credentials: 'same-origin' }));
+        } catch {
+            // offline oder Fehler: nicht schlimm
+        }
+    })());
+    self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+    event.waitUntil((async () => {
+        const keys = await caches.keys();
+        await Promise.all(keys.filter((key) => key.startsWith('mealplanner-') && key !== CACHE_NAME).map((key) => caches.delete(key)));
+        await self.clients.claim();
+    })());
+});
+
+self.addEventListener('fetch', (event) => {
+    const request = event.request;
+    const url = new URL(request.url);
+    if (request.method !== 'GET' || url.origin !== self.location.origin || BYPASS.test(url.pathname)) {
+        return;
+    }
+
+    if (url.pathname.startsWith('/assets/')) {
+        event.respondWith(fromCacheOrNetwork(request));
+    } else if (isPageRequest(request)) {
+        event.respondWith(page(request, url, event));
+    } else if (STATIC_FILES.includes(url.pathname)) {
+        event.respondWith(fromCacheOrNetwork(request));
+    }
+});
+
+/** Seitenaufruf: normale Navigation oder Turbo-Request (fetch mit Accept: text/html). */
+function isPageRequest(request) {
+    return request.mode === 'navigate' || (request.headers.get('Accept') ?? '').includes('text/html');
+}
+
+async function page(request, url, event) {
+    const isShell = url.pathname === SHELL_URL || url.pathname === '/';
+    const network = fetch(request).then(async (response) => {
+        if (url.pathname === SHELL_URL) {
+            await storeShell(await caches.open(CACHE_NAME), response.clone());
+        }
+        return response;
+    });
+
+    if (!isShell) {
+        return network.catch(offlinePage);
+    }
+
+    // Netzwerk zuerst, aber nicht ewig warten (schlechter Empfang im Supermarkt)
+    event.waitUntil(network.catch(() => {}));
+    const timeout = new Promise((resolve) => setTimeout(resolve, SHELL_TIMEOUT_MS));
+    const usable = network.then((response) => (response.status >= 500 ? null : response), () => null);
+    const response = await Promise.race([usable, timeout]);
+    if (response) {
+        return response;
+    }
+
+    const shell = await caches.match(SHELL_URL);
+    if (shell) {
+        // Startseite "/" leitet sonst serverseitig zur Liste weiter
+        return url.pathname === SHELL_URL ? shell : Response.redirect(SHELL_URL, 302);
+    }
+
+    return network.catch(offlinePage);
+}
+
+async function storeShell(cache, response) {
+    // Nur eine echte Seite speichern, keine Weiterleitung zum Login und keine Fehlerseite
+    if (response.ok && response.type === 'basic' && !response.redirected) {
+        await cache.put(SHELL_URL, response);
+    }
+}
+
+async function fromCacheOrNetwork(request) {
+    const cached = await caches.match(request, { ignoreSearch: true });
+    if (cached) {
+        return cached;
+    }
+    const response = await fetch(request);
+    if (response.ok && response.type === 'basic') {
+        const cache = await caches.open(CACHE_NAME);
+        await cache.put(request, response.clone());
+    }
+
+    return response;
+}
+
+async function offlinePage() {
+    return (await caches.match(OFFLINE_URL)) ?? Response.error();
+}

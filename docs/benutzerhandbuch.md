@@ -3,8 +3,8 @@
 Mealplanner ist eine gemeinsame Einkaufsliste für euren Haushalt, später auch für die Essensplanung. Die App läuft im
 Browser und lässt sich auf dem iPhone wie eine normale App installieren.
 
-> **Stand:** Die gemeinsame Einkaufsliste funktioniert. Noch nicht fertig: die App **ohne Verbindung neu zu starten**
-> (eine bereits geöffnete Liste funktioniert offline weiter) und das Verwalten der Kategorien.
+> **Stand:** Die gemeinsame Einkaufsliste funktioniert, auch ohne Verbindung. Noch nicht fertig: das Verwalten der
+> Kategorien.
 
 ## Anmelden
 
@@ -23,8 +23,8 @@ und Passwort an. Groß- und Kleinschreibung der E-Mail-Adresse spielt keine Roll
 3. **„Zum Home-Bildschirm“** wählen und bestätigen.
 
 Danach startet die App vom Home-Bildschirm ohne Browserleiste. Wichtig: Die installierte App hat einen eigenen
-Speicher, du musst dich dort **einmal neu anmelden**. Das ist auch für die spätere Offline-Nutzung der Einkaufsliste
-nötig: iOS bewahrt die Daten installierter Apps zuverlässiger auf.
+Speicher, du musst dich dort **einmal neu anmelden** und die Einkaufsliste einmal mit Verbindung öffnen. Danach
+startet sie auch im Funkloch. iOS bewahrt die Daten installierter Apps zuverlässiger auf als die von Safari.
 
 ## Bereiche
 
@@ -69,5 +69,11 @@ erscheint **„Rückgängig“**. Tippst du einen erledigten Artikel an, kommt e
 
 Die Liste gleicht sich alle paar Sekunden ab, solange sie geöffnet ist, und sofort beim Öffnen der App.
 Ein kleiner gelber Punkt neben einem Artikel heißt: Diese Änderung ist noch nicht übertragen.
+
+**Ohne Verbindung** (Keller, Supermarkt, Flugmodus) startet die Einkaufsliste trotzdem und du kannst ganz normal
+hinzufügen, abhaken und bearbeiten. Alles wird übertragen, sobald wieder Netz da ist. Der Tab „Mehr“ braucht eine
+Verbindung.
+
+**Neue Version:** Erscheint oben „Neue Version verfügbar“, tippe auf „Neu laden“. Dabei geht nichts verloren.
 
 **Abmelden** löscht die Liste von diesem Gerät. Noch nicht übertragene Änderungen gehen dabei verloren.
