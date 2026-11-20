@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Catalog\Application;
 
 use App\Catalog\Domain\AliasSource;
+use App\Catalog\Domain\ArticleSource;
 use App\Catalog\Domain\Model\Article;
 use App\Catalog\Domain\Model\ArticleAlias;
 use App\Catalog\Domain\Model\Category;
@@ -51,7 +52,7 @@ final readonly class CatalogSeeder
             $this->entityManager->persist($category);
 
             foreach ($seedCategory->articles as $seedArticle) {
-                $article = new Article(Uuid::v7(), $householdId, $seedArticle->name, $this->normalizer->normalize($seedArticle->name), $category->getId(), $now);
+                $article = new Article(Uuid::v7(), $householdId, $seedArticle->name, $this->normalizer->normalize($seedArticle->name), $category->getId(), $now, ArticleSource::Seed);
                 $this->entityManager->persist($article);
                 $usedTerms[$article->getNameNormalized()] = true;
 

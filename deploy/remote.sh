@@ -56,6 +56,8 @@ activate)
     $php bin/console cache:warmup --no-interaction
     echo "→ Datenbank migrieren"
     $php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+    echo "→ Katalog-Abgleich (neue Einträge des Startkatalogs übernehmen)"
+    $php bin/console app:catalog:update --no-interaction
 
     echo "→ Live schalten: $release"
     cd "$base"

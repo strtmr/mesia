@@ -1,0 +1,4 @@
+categories:
+  - { key: produce, icon: "🥬", name: "Obst & Gemüse" }
+  - { key: dairy,   icon: "🥛", name: "Milchprodukte" }
+  - { key: other,   icon: "📦", name: "Sonstiges", fallback: true }

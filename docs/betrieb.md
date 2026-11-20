@@ -9,7 +9,7 @@ Deployt wird automatisch per GitHub Actions, sobald auf `main` alle Prüfungen g
 push auf main → CI (Prüfungen, Tests) → Job "Deployment":
   deploy/build.sh    git archive + composer --no-dev + asset-map:compile (ohne Tests, Doku, Dev-Werkzeuge)
   deploy/release.sh  tar über SSH nach releases/<zeit>-<commit>, dann deploy/remote.sh auf dem Server:
-                     .env.local + Logs verlinken → cache:warmup → Migrationen → current umschalten → alte Releases löschen
+                     .env.local + Logs verlinken → cache:warmup → Migrationen → Katalog-Abgleich → current umschalten → alte Releases löschen
                      danach Test von APP_URL/login, bei Fehler automatisch zurück auf das vorherige Release
 ```
 
@@ -118,6 +118,7 @@ php bin/console app:user:create <email> <Name> --household=<ID>   # für jede Pe
 |---------|--------|
 | Logs ansehen | `ssh -p 222 <benutzer>@<host> 'tail -n 100 ~/public_html/projects/mesia/shared/log/prod-*.log'` |
 | Rollback | `ssh -p 222 <benutzer>@<host> 'sh -s rollback <basis>' < deploy/remote.sh` |
+| Katalog-Abgleich ansehen | auf dem Server: `php85 bin/console app:catalog:update --dry-run` (läuft bei jedem Deployment automatisch) |
 | Passwort neu setzen | auf dem Server: `php bin/console app:user:set-password <email>` |
 | Von Hand deployen | `ddev exec deploy/build.sh var/build`, dann in WSL mit gesetzten `DEPLOY_*`-Variablen `deploy/release.sh var/build` |
 

@@ -438,7 +438,8 @@ Vitest. Später Playwright-E2E (WebKit). Plattform: **GitHub Actions** (privates
 >
 > **Stand 2026-11-20:** Startkatalog überarbeitet: Obst und Gemüse, das man meist in mehreren Stück kauft, heißt jetzt
 > in der Mehrzahl (Äpfel, Zwiebeln …, die Einzahl ist Alias). Neu sind laktosefreie und vegane Alternativen
-> (Milchprodukte, Fleischersatz, Mayonnaise, Ei-Ersatz). Gilt nur für neu angelegte Haushalte.
+> (Milchprodukte, Fleischersatz, Mayonnaise, Ei-Ersatz). Bestehende Haushalte bekommen Erweiterungen per
+> Katalog-Abgleich (`app:catalog:update`, bei jedem Deployment).
 
 | # | Paket | Fertig, wenn … |
 |---|-------|----------------|

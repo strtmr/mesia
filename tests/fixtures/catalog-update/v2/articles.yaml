@@ -1,0 +1,11 @@
+# Neuer Startkatalog: Mehrzahl, neue Aliase, neue Artikel
+articles:
+  produce:
+    - Zwiebeln | Zwiebel
+    - Äpfel | Apfel
+    - Tomaten | Tomate, Paradeiser
+  dairy:
+    - Milch | Vollmilch
+    - Laktosefreie Milch | Milch laktosefrei
+    - Vegane Sahne | Hafersahne, Sojasahne
+    - Falafel | Falafelbällchen

@@ -32,6 +32,21 @@ final class CategoryRepository extends ServiceEntityRepository
         return $this->findBy(['householdId' => $householdId, 'deletedAt' => null]);
     }
 
+    /**
+     * Alle Haushalte, die einen Katalog haben.
+     *
+     * @return list<Uuid>
+     */
+    public function findHouseholdIdsWithCatalog(): array
+    {
+        $ids = $this->createQueryBuilder('c')
+            ->select('DISTINCT c.householdId')
+            ->getQuery()
+            ->getSingleColumnResult();
+
+        return array_values(array_map(static fn (mixed $id): Uuid => $id instanceof Uuid ? $id : Uuid::fromString((string) $id), $ids));
+    }
+
     public function hasAny(Uuid $householdId): bool
     {
         return null !== $this->findOneBy(['householdId' => $householdId]);

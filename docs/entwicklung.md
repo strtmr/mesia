@@ -135,8 +135,11 @@ ausgeliefert. Nur so kennt er die versionierten AssetMapper-URLs.
   (z. B. `'(deleted_at IS NULL)'`), sonst meldet `doctrine:schema:validate` dauerhaft eine Abweichung.
 - **Sortierschlüssel** (`sort_key`) haben Collation `C` und werden byteweise verglichen (Format von fractional-indexing).
 - **Startkatalog** (`data/seed/`): Regeln stehen im Kopf von `articles.yaml` (Mehrzahl als Name → Einzahl als Alias).
-  Er wird nur beim Anlegen eines Haushalts kopiert, bestehende Haushalte ändern sich nicht. Nach Änderungen die
-  Anzahlen in `HouseholdInitializationTest` und `SyncApiTest` anpassen, `SeedCatalogTest` prüft auf Dubletten.
+  Er wird beim Anlegen eines Haushalts kopiert. Spätere Erweiterungen übernimmt `app:catalog:update` (läuft bei jedem
+  Deployment, Regeln im Kommentar von `CatalogUpdater`: nur ergänzen, Seed-Artikel in die neue Mehrzahl umbenennen,
+  nichts löschen, Eigenes nicht anfassen). Ob ein Artikel aus dem Startkatalog stammt, steht in `article.source`.
+  Nach Änderungen die Anzahlen in `HouseholdInitializationTest` und `SyncApiTest` anpassen, `SeedCatalogTest` prüft
+  auf Dubletten.
 - **Normalisierung** gibt es in PHP und JS. Beide gemeinsam ändern und `tests/fixtures/normalize.json` ergänzen.
 - **Test-Container:** private Services nur über `self::getContainer()` in KernelTestCase/WebTestCase holen
   (Trait `CreatesUsers` für Testbenutzer).
@@ -158,3 +161,4 @@ in die Service-Worker-Version ein.
 | `app:user:create <email> <name> [--household=ID]` | Benutzer anlegen, Passwort wird abgefragt |
 | `app:user:set-password <email>` | Passwort neu setzen |
 | `app:household:initialize [--household=ID]` | fehlende Grunddaten in bestehenden Haushalten ergänzen (idempotent) |
+| `app:catalog:update [--dry-run] [--household=ID]` | Katalog-Abgleich: Erweiterungen des Startkatalogs übernehmen (idempotent, `--dry-run` zeigt nur an) |

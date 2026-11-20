@@ -1,0 +1,8 @@
+# Alter Startkatalog (Stand beim Anlegen des Haushalts)
+articles:
+  produce:
+    - Zwiebel
+    - Apfel | Äpfel
+    - Tomate | Paradeiser
+  dairy:
+    - Milch

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Catalog\Domain\Model;
 
+use App\Catalog\Domain\ArticleSource;
 use App\Catalog\Domain\Unit;
 use App\Catalog\Infrastructure\Doctrine\ArticleRepository;
 use App\Shared\Domain\Syncable;
@@ -42,12 +43,16 @@ class Article implements Syncable
     #[ORM\Column(length: 16, nullable: true, enumType: Unit::class)]
     private ?Unit $defaultUnit = null;
 
+    #[ORM\Column(length: 16, enumType: ArticleSource::class, options: ['default' => 'user'])]
+    private ArticleSource $source;
+
     /**
      * @param string $nameNormalized Ergebnis von {@see \App\Catalog\Domain\TextNormalizer::normalize()}
      */
-    public function __construct(Uuid $id, Uuid $householdId, string $name, string $nameNormalized, Uuid $categoryId, \DateTimeImmutable $now)
+    public function __construct(Uuid $id, Uuid $householdId, string $name, string $nameNormalized, Uuid $categoryId, \DateTimeImmutable $now, ArticleSource $source = ArticleSource::User)
     {
         $this->id = $id;
+        $this->source = $source;
         $this->initSyncableFields($householdId, $now);
         $this->rename($name, $nameNormalized, $now);
         $this->categoryId = $categoryId;
@@ -71,6 +76,11 @@ class Article implements Syncable
     public function getNameNormalized(): string
     {
         return $this->nameNormalized;
+    }
+
+    public function isFromSeed(): bool
+    {
+        return ArticleSource::Seed === $this->source;
     }
 
     public function getCategoryId(): Uuid
