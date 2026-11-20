@@ -97,7 +97,8 @@ ssh-keyscan -p 222 <host>                                               # Ausgab
 | Secret | `DEPLOY_SSH_KEY` | Inhalt von `~/.ssh/mesia_deploy` (privater Schlüssel) |
 | Secret | `DEPLOY_KNOWN_HOSTS` | Ausgabe von `ssh-keyscan` |
 
-Solange `DEPLOY_HOST` fehlt, wird der Deployment-Job übersprungen.
+Fehlt etwas davon, bricht der Deployment-Job im ersten Schritt mit einer Meldung ab, welche Einträge fehlen.
+Die Einträge müssen in der Umgebung `production` liegen (oder als Repository-Variablen bzw. -Secrets).
 
 **6. Erstes Deployment:** Actions → CI → „Run workflow“ (oder ein Push auf `main`).
 
