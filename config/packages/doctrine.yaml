@@ -1,7 +1,8 @@
 doctrine:
     dbal:
-        url: '%env(resolve:DATABASE_URL)%'
-        server_version: '17'
+        # Ohne "resolve:": Sonst würde Symfony "%…%" im Wert als Parameter auflösen, und URL-kodierte Passwörter
+        # (z. B. %3A für ":") brächen den Container. Die PostgreSQL-Version kommt aus der URL (?serverVersion=…).
+        url: '%env(DATABASE_URL)%'
 
         profiling_collect_backtrace: '%kernel.debug%'
     orm:

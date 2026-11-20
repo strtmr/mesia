@@ -59,7 +59,8 @@ DATABASE_URL="postgresql://<benutzer>:<passwort>@<host>:5432/<datenbank>?serverV
 DEFAULT_URI=https://<subdomain>
 ```
 
-Sonderzeichen im Passwort URL-kodieren (`@` → `%40`, `/` → `%2F`, `#` → `%23`).
+Sonderzeichen im Passwort URL-kodieren (`@` → `%40`, `:` → `%3A`, `?` → `%3F`, `/` → `%2F`, `#` → `%23`,
+`(` → `%28`, `$` → `%24`). Am einfachsten ist ein langes Passwort nur aus Buchstaben und Ziffern.
 
 **PostgreSQL-Version (`<version>`):** Zuerst einen Platzhalter eintragen (z. B. `serverVersion=16`), dann den
 Hosting-Check (Schritt 3) laufen lassen. Er verbindet sich mit den Zugangsdaten aus `.env.local` und zeigt die
