@@ -435,10 +435,14 @@ Vitest. Später Playwright-E2E (WebKit). Plattform: **GitHub Actions** (privates
 > Fehlerfälle aus 4.5 sind abgedeckt (Offline mit Zähler, 401-Hinweis, Backoff, Hinweis bei `rejected`, Snapshot bei 410).
 > Abnahme automatisiert im Browser-Rauchtest: Kaltstart im Flugmodus, hinzufügen und abhaken, zweites Gerät sieht
 > die Änderungen nach ca. 8 s. Noch offen: Test auf einem echten iPhone.
+>
+> **Stand 2026-11-20:** Startkatalog überarbeitet: Obst und Gemüse, das man meist in mehreren Stück kauft, heißt jetzt
+> in der Mehrzahl (Äpfel, Zwiebeln …, die Einzahl ist Alias). Neu sind laktosefreie und vegane Alternativen
+> (Milchprodukte, Fleischersatz, Mayonnaise, Ei-Ersatz). Gilt nur für neu angelegte Haushalte.
 
 | # | Paket | Fertig, wenn … |
 |---|-------|----------------|
-| 1.1 | Seed-Daten (Entwurf liegt vor: [categories.yaml](../data/seed/categories.yaml), [articles.yaml](../data/seed/articles.yaml), 17 Kategorien, 335 Artikel, 274 Aliase). Seeder kopiert sie in den Haushalt und prüft die Eindeutigkeit nach Normalisierung | `app:household:create` legt einen vollständigen Katalog an. Ein Test schlägt bei doppelten Namen oder Aliasen fehl |
+| 1.1 | Seed-Daten (Entwurf liegt vor: [categories.yaml](../data/seed/categories.yaml), [articles.yaml](../data/seed/articles.yaml), 17 Kategorien, 365 Artikel, 352 Aliase). Seeder kopiert sie in den Haushalt und prüft die Eindeutigkeit nach Normalisierung | `app:household:create` legt einen vollständigen Katalog an. Ein Test schlägt bei doppelten Namen oder Aliasen fehl |
 | 1.2 | Catalog + Shopping: Entities, Regeln, Handler je Mutationstyp | Unit- und Integrationstests für alle Regeln aus 4.4 |
 | 1.3 | Sync-Endpunkte snapshot/push/pull | Functional-Tests inkl. Idempotenz, Merge, 410 |
 | 1.4 | JS-Core: db, outbox, sync, commands, normalize, matcher, quickadd, sortkey | Vitest grün, gemeinsame Fixtures bestanden |

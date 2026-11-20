@@ -1,0 +1,35 @@
+# Neuigkeiten, die die App unter „Mehr → Neuigkeiten“ zeigt. Neueste Version oben.
+#
+# Bei jeder für Benutzer sichtbaren Änderung: neuen Eintrag anlegen (oder den obersten, noch nicht deployten ergänzen)
+# und app.version in config/services.yaml auf dieselbe Version setzen. ReleaseNotesTest prüft das.
+# Kurz und aus Sicht der Benutzer schreiben, ohne Technik. Einträge immer in '…' setzen (ein „: “ im Text würde sonst
+# als Schlüssel gelesen).
+
+- version: 0.4.0
+  date: 2026-11-20
+  changes:
+    - 'Obst und Gemüse heißt jetzt so, wie man es kauft: „Äpfel“, „Zwiebeln“, „Bananen“ (Einzahl wird weiter erkannt)'
+    - 'Neu im Katalog sind laktosefreie und vegane Produkte, z. B. laktosefreie Milch, Hafersahne, Veggie-Hack'
+    - '„Neuigkeiten“ unter „Mehr“ zeigt, was sich in jeder Version geändert hat'
+    - 'Behoben ist, dass nach dem erneuten Anmelden eine technische Seite statt der Liste erschien'
+
+- version: 0.3.0
+  date: 2026-11-20
+  changes:
+    - 'Die App heißt jetzt Mesia und ist online erreichbar'
+    - 'Die Einkaufsliste startet auch ohne Internetverbindung'
+    - 'Gibt es eine neue Version, erscheint oben der Hinweis „Neu laden“'
+
+- version: 0.2.0
+  date: 2026-11-19
+  changes:
+    - 'Gemeinsame Einkaufsliste mit Schnelleingabe („2 l Milch“), automatischen Kategorien und Vorschlägen'
+    - 'Abhaken mit „Rückgängig“, Erledigtes bleibt als Verlauf und kommt per Antippen zurück'
+    - 'Artikel bearbeiten, löschen und per Ziehen umsortieren'
+    - 'Änderungen gleichen sich zwischen den Geräten ab, auch nach einer Zeit ohne Verbindung'
+
+- version: 0.1.0
+  date: 2026-11-18
+  changes:
+    - 'Anmelden und angemeldet bleiben'
+    - 'Als App auf dem Home-Bildschirm des iPhones installierbar'

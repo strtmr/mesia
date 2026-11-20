@@ -25,18 +25,18 @@
 
     <section class="list-section">
         <h2 class="list-section__title">{{ 'more.app.section'|trans }}</h2>
-        <dl class="list-group">
-            <div class="list-group__row">
-                <dt>{{ 'more.app.version'|trans }}</dt>
-                <dd>{{ app_version }}</dd>
-            </div>
+        <div class="list-group">
+            <a class="list-group__row list-group__row--link" href="{{ path('app_release_notes') }}">
+                <span>{{ 'more.app.version'|trans }}</span>
+                <span class="list-group__value">{{ app_version }} · {{ 'more.app.release_notes'|trans }}</span>
+            </a>
             <div class="list-group__row" data-controller="connection-status"
                  data-connection-status-online-value="{{ 'more.app.online'|trans }}"
                  data-connection-status-offline-value="{{ 'more.app.offline'|trans }}">
-                <dt>{{ 'more.app.connection'|trans }}</dt>
-                <dd data-connection-status-target="label">{{ 'more.app.online'|trans }}</dd>
+                <span>{{ 'more.app.connection'|trans }}</span>
+                <span class="list-group__value" data-connection-status-target="label">{{ 'more.app.online'|trans }}</span>
             </div>
-        </dl>
+        </div>
     </section>
 
     <section class="list-section">

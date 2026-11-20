@@ -31,7 +31,7 @@ startet sie auch im Funkloch. iOS bewahrt die Daten installierter Apps zuverläs
 | Tab | Inhalt |
 |-----|--------|
 | **Einkauf** | eure gemeinsame Einkaufsliste |
-| **Mehr** | Konto, Haushalt, App-Version, Verbindungsstatus, Abmelden |
+| **Mehr** | Konto, Haushalt, App-Version mit **Neuigkeiten** (was sich in welcher Version geändert hat), Verbindungsstatus, Abmelden |
 
 ## Einkaufsliste
 
@@ -42,11 +42,12 @@ Artikel eingeben. Mengen erkennt die App automatisch:
 |---------|---------|
 | `Milch` | Milch |
 | `2 l Milch`, `2l Milch`, `Milch 2l` | Milch · 2 l |
-| `3 Zwiebeln` | Zwiebel · 3 Stk |
+| `3 Zwiebeln`, `3 Zwiebel` | Zwiebeln · 3 Stk |
 | `500g Hack` | Hackfleisch · 500 g |
 | `Butter (die gute)` | Butter mit Notiz „die gute“ |
 
 - Artikel werden **automatisch einsortiert** (Obst & Gemüse, Milchprodukte …). Unbekanntes landet in „Sonstiges“.
+  Der Katalog kennt auch laktosefreie und vegane Produkte (z. B. „Laktosefreie Milch“, „Hafersahne“, „Veggie-Hack“).
 - Beim Tippen erscheinen **Vorschläge**, zuerst Dinge, die ihr schon gekauft habt. Tippfehler werden verziehen.
 - Steht ein Artikel schon auf der Liste, kommt die Menge dazu statt eines zweiten Eintrags.
 

@@ -5,8 +5,9 @@
 #   - "Name | Alias1, Alias2, …"   → Artikel mit Aliasen (Synonyme, regionale Begriffe, unregelmäßige Formen)
 #
 # Regeln:
-# - Der Name ist das, was in der Liste angezeigt wird. Für Dinge, die man fast immer in der Mehrzahl kauft, ist der Name
-#   in der Mehrzahl (z. B. "Erdbeeren"), dann steht die Einzahl als Alias.
+# - Der Name ist das, was in der Liste angezeigt wird. Für Dinge, die man fast immer in der Mehrzahl kauft (vor allem
+#   Obst und Gemüse wie "Äpfel", "Zwiebeln"), ist der Name in der Mehrzahl. Dann MUSS die Einzahl als Alias dabei sein,
+#   denn die Mehrzahl-Reduktion funktioniert nur in eine Richtung ("Zwiebeln" findet "Zwiebel", nicht umgekehrt).
 # - Regelmäßige Mehrzahlformen (-n, -en, -e, -s) muss man NICHT als Alias eintragen, das erledigt die Normalisierung
 #   ("Bananen" → "Banane"). Unregelmäßige Formen mit Umlautwechsel schon ("Äpfel" → Apfel).
 # - Jeder Name und jeder Alias darf nach der Normalisierung nur EINMAL vorkommen (wird beim Seeden geprüft).
@@ -15,44 +16,47 @@
 articles:
 
   produce:
-    - Apfel | Äpfel
-    - Banane
-    - Birne
-    - Orange | Apfelsine
-    - Mandarine | Clementine, Klementine
-    - Zitrone
-    - Limette
+    # Obst: Mehrzahl, wenn man üblicherweise mehrere Stück kauft. Einzahl, wenn meist nur eins (Ananas, Melone) oder
+    # wenn Einzahl und Mehrzahl gleich sind bzw. das Wort so üblich ist (Zucchini, Paprika).
+    - Äpfel | Apfel
+    - Bananen | Banane
+    - Birnen | Birne
+    - Orangen | Orange, Apfelsine
+    - Mandarinen | Mandarine, Clementine, Klementine
+    - Zitronen | Zitrone
+    - Limetten | Limette
     - Grapefruit
-    - Kiwi
+    - Kiwis | Kiwi
     - Weintrauben | Weintraube, Trauben
     - Erdbeeren | Erdbeere
     - Himbeeren | Himbeere
     - Heidelbeeren | Heidelbeere, Blaubeeren, Blaubeere
     - Ananas
-    - Mango
+    - Mangos | Mango
     - Melone | Wassermelone, Honigmelone
-    - Pfirsich
-    - Nektarine
-    - Pflaume | Zwetschge, Zwetschgen, Zwetschke
+    - Pfirsiche | Pfirsich
+    - Nektarinen | Nektarine
+    - Pflaumen | Pflaume, Zwetschge, Zwetschgen, Zwetschke
     - Kirschen | Kirsche
-    - Avocado
+    - Avocados | Avocado
     - Granatapfel | Granatäpfel
-    - Tomate | Paradeiser
+    # Gemüse: dieselbe Regel. Kohl, Salat, Kräuter und Knollen, die man einzeln kauft, bleiben in der Einzahl.
+    - Tomaten | Tomate, Paradeiser
     - Cherrytomaten | Cherrytomate, Kirschtomaten, Cocktailtomaten
     - Gurke | Salatgurke
     - Paprika | Paprikaschote, Spitzpaprika
     - Zucchini
-    - Aubergine
-    - Karotte | Möhre, Mohrrübe, Möhrchen, Rüebli
-    - Kartoffel | Erdapfel, Erdäpfel
-    - Süßkartoffel
-    - Zwiebel
-    - Rote Zwiebel
-    - Schalotte
-    - Frühlingszwiebel | Lauchzwiebel
+    - Auberginen | Aubergine
+    - Karotten | Karotte, Möhre, Mohrrübe, Möhrchen, Rüebli
+    - Kartoffeln | Kartoffel, Erdapfel, Erdäpfel
+    - Süßkartoffeln | Süßkartoffel
+    - Zwiebeln | Zwiebel
+    - Rote Zwiebeln | Rote Zwiebel
+    - Schalotten | Schalotte
+    - Frühlingszwiebeln | Frühlingszwiebel, Lauchzwiebel
     - Knoblauch | Knofi
     - Ingwer
-    - Chili | Chilischote, Peperoni
+    - Chilis | Chili, Chilischote, Peperoni
     - Lauch | Porree
     - Sellerie | Knollensellerie
     - Staudensellerie | Stangensellerie
@@ -66,7 +70,7 @@ articles:
     - Kohlrabi
     - Fenchel
     - Kürbis | Hokkaido, Butternut
-    - Pastinake
+    - Pastinaken | Pastinake
     - Rote Bete | Rote Beete, Rote Rübe
     - Radieschen
     - Spargel
@@ -109,6 +113,25 @@ articles:
     - Hafermilch | Haferdrink
     - Sojamilch | Sojadrink
     - Mandelmilch | Mandeldrink
+    - Reismilch | Reisdrink
+    - Kokosdrink
+    # Laktosefrei
+    - Laktosefreie Milch | Milch laktosefrei, Lactosefreie Milch
+    - Laktosefreie Sahne | Sahne laktosefrei
+    - Laktosefreie Butter | Butter laktosefrei
+    - Laktosefreier Joghurt | Joghurt laktosefrei
+    - Laktosefreier Quark | Quark laktosefrei
+    - Laktosefreier Frischkäse | Frischkäse laktosefrei
+    - Laktosefreier Käse | Käse laktosefrei
+    # Vegan (pflanzliche Alternativen)
+    - Vegane Butter | Pflanzenbutter, Butter vegan
+    - Vegane Sahne | Pflanzliche Sahne, Hafersahne, Sojasahne, Kochcreme, Sahne vegan
+    - Vegane Schlagsahne | Vegane Schlagcreme, Schlagsahne vegan
+    - Veganer Joghurt | Pflanzenjoghurt, Sojajoghurt, Haferjoghurt, Kokosjoghurt, Joghurt vegan
+    - Veganer Quark | Quark vegan
+    - Veganer Frischkäse | Frischkäse vegan
+    - Veganer Käse | Pflanzenkäse, Käse vegan, Vegane Käsescheiben
+    - Veganer Reibekäse | Veganer Pizzakäse, Reibekäse vegan
     - Butter
     - Margarine
     - Sahne | Schlagsahne, Rahm
@@ -165,6 +188,16 @@ articles:
     - Tofu
     - Räuchertofu
     - Veggie-Burger | Vegane Burger, Burger Patties
+    - Veganes Hack | Veggie-Hack, Vegetarisches Hack, Hack vegan, Sojahack, Erbsenhack
+    - Vegane Würstchen | Veggie-Würstchen, Vegetarische Würstchen, Würstchen vegan
+    - Vegane Bratwurst | Veggie-Bratwurst, Bratwurst vegan
+    - Veganer Aufschnitt | Veggie-Aufschnitt, Vegetarischer Aufschnitt, Vegane Wurst
+    - Vegane Schnitzel | Veggie-Schnitzel, Vegetarische Schnitzel
+    - Vegane Nuggets | Veggie-Nuggets, Vegetarische Nuggets
+    - Vegane Hähnchenstücke | Veggie-Chicken, Vegane Filetstücke
+    - Seitan
+    - Tempeh
+    - Falafel
     - Gnocchi
     - Tortellini
     - Frische Pasta | Frische Nudeln
@@ -207,6 +240,7 @@ articles:
     - Quinoa
     - Polenta
     - Linsen | Rote Linsen, Tellerlinsen
+    - Sojaschnetzel | Sojageschnetzeltes, Sojafleisch
 
   canned:
     - Gehackte Tomaten | Stückige Tomaten, Dosentomaten, Tomaten Dose
@@ -250,6 +284,7 @@ articles:
     - Pinienkerne
     - Rosinen
     - Semmelbrösel | Paniermehl
+    - Ei-Ersatz | Eiersatz, Veganes Ei
 
   spices:
     - Salz | Meersalz, Jodsalz
@@ -285,6 +320,7 @@ articles:
     - Ketchup
     - Senf
     - Mayonnaise | Mayo
+    - Vegane Mayonnaise | Vegane Mayo, Mayo vegan
     - Remoulade
     - Grillsauce | BBQ-Sauce, Barbecuesauce
 

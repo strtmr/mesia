@@ -56,8 +56,8 @@ final class SyncApiTest extends WebTestCase
         $snapshot = $this->snapshot();
 
         self::assertCount(17, $snapshot['entities']['category']);
-        self::assertCount(335, $snapshot['entities']['article']);
-        self::assertCount(274, $snapshot['entities']['article_alias']);
+        self::assertCount(365, $snapshot['entities']['article']);
+        self::assertCount(352, $snapshot['entities']['article_alias']);
         self::assertCount(1, $snapshot['entities']['shopping_list']);
         self::assertArrayNotHasKey('shopping_item', $snapshot['entities']);
         self::assertGreaterThan(0, $snapshot['cursor']);

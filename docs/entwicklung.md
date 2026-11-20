@@ -134,11 +134,21 @@ ausgeliefert. Nur so kennt er die versionierten AssetMapper-URLs.
 - **Partielle Indizes:** Die `where`-Bedingung im Mapping muss so geschrieben sein, wie PostgreSQL sie zurückgibt
   (z. B. `'(deleted_at IS NULL)'`), sonst meldet `doctrine:schema:validate` dauerhaft eine Abweichung.
 - **Sortierschlüssel** (`sort_key`) haben Collation `C` und werden byteweise verglichen (Format von fractional-indexing).
+- **Startkatalog** (`data/seed/`): Regeln stehen im Kopf von `articles.yaml` (Mehrzahl als Name → Einzahl als Alias).
+  Er wird nur beim Anlegen eines Haushalts kopiert, bestehende Haushalte ändern sich nicht. Nach Änderungen die
+  Anzahlen in `HouseholdInitializationTest` und `SyncApiTest` anpassen, `SeedCatalogTest` prüft auf Dubletten.
 - **Normalisierung** gibt es in PHP und JS. Beide gemeinsam ändern und `tests/fixtures/normalize.json` ergänzen.
 - **Test-Container:** private Services nur über `self::getContainer()` in KernelTestCase/WebTestCase holen
   (Trait `CreatesUsers` für Testbenutzer).
 - **DAMA-Testbundle:** Jeder Test läuft in einer Transaktion, die für DBAL unsichtbar ist. Code, der eine Transaktion
   voraussetzt, muss sie im Test selbst öffnen.
+
+## Version und Neuigkeiten
+
+Jede für Benutzer sichtbare Änderung bekommt einen Eintrag in `data/release-notes.yaml` (neueste Version oben, kurz,
+ohne Technik). `app.version` in `config/services.yaml` muss der obersten Version entsprechen, das prüft
+`ReleaseNotesTest`. Die App zeigt die Einträge unter „Mehr → Neuigkeiten“ (`/neuigkeiten`). Die Version fließt auch
+in die Service-Worker-Version ein.
 
 ## Konsolenbefehle
 

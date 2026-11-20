@@ -1,0 +1,25 @@
+{% extends 'app/layout.html.twig' %}
+
+{# Neuigkeiten je Version, Inhalt aus data/release-notes.yaml #}
+
+{% block page_title %}{{ 'release_notes.title'|trans }}{% endblock %}
+
+{% block header_actions %}
+    <a class="header-link" href="{{ path('app_more') }}">‹ {{ 'release_notes.back'|trans }}</a>
+{% endblock %}
+
+{% block content %}
+    {% for note in notes %}
+        <article class="release-note">
+            <h2 class="release-note__title">
+                <span>{{ 'release_notes.version'|trans({'%version%': note.version}) }}</span>
+                <time class="release-note__date" datetime="{{ note.date|date('Y-m-d') }}">{{ note.date|date('d.m.Y') }}</time>
+            </h2>
+            <ul class="release-note__changes">
+                {% for change in note.changes %}
+                    <li>{{ change }}</li>
+                {% endfor %}
+            </ul>
+        </article>
+    {% endfor %}
+{% endblock %}

@@ -7,6 +7,9 @@
 - Sprache im Projekt: Deutsch (Doku, Kommentare, UI-Texte). Code-Bezeichner Englisch.
 - Doku pflegen: `docs/entwicklung.md` (Entwickler) und `docs/benutzerhandbuch.md` (Benutzer) bei jeder sichtbaren
   oder strukturellen Änderung mitziehen.
+- Sichtbare Änderungen: Version in `config/services.yaml` (`app.version`) erhöhen und kurz aus Benutzersicht in
+  `data/release-notes.yaml` beschreiben (erscheint unter „Mehr → Neuigkeiten“). Noch nicht deployte Version ergänzen
+  statt neu anlegen.
 - Deployment und Server: `docs/betrieb.md` (Skripte in `deploy/`). Was nicht aufs Live-System gehört, steht als
   `export-ignore` in `.gitattributes`.
 - Planung und Entscheidungen: `docs/architektur.md` (Kapitel 0 hat Vorrang), aktuelle Phase: `docs/spezifikation-phase-0-1.md`.

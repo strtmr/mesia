@@ -67,6 +67,7 @@ more:
     app:
         section: App
         version: Version
+        release_notes: Neuigkeiten
         connection: Verbindung
         online: Online
         offline: Offline
@@ -75,6 +76,11 @@ more:
 app_update:
     text: Neue Version verfügbar
     reload: Neu laden
+
+release_notes:
+    title: Neuigkeiten
+    back: Mehr
+    version: Version %version%
 
 install_hint:
     text: 'Tipp: Tippe auf „Teilen“ und dann auf „Zum Home-Bildschirm“, um die App wie eine normale App zu nutzen.'

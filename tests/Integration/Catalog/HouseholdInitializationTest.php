@@ -21,10 +21,10 @@ final class HouseholdInitializationTest extends KernelTestCase
 
         self::assertSame(17, $this->rowCount('category', $householdId));
         self::assertSame(1, $this->rowCount('category', $householdId, 'is_fallback = true'));
-        self::assertSame(335, $this->rowCount('article', $householdId));
-        self::assertSame(274, $this->rowCount('article_alias', $householdId));
+        self::assertSame(365, $this->rowCount('article', $householdId));
+        self::assertSame(352, $this->rowCount('article_alias', $householdId));
         self::assertSame(1, $this->rowCount('shopping_list', $householdId));
-        self::assertSame(17 + 335 + 274 + 1, $this->rowCount('change_log', $householdId), 'Jedes angelegte Objekt steht im Änderungsprotokoll.');
+        self::assertSame(17 + 365 + 352 + 1, $this->rowCount('change_log', $householdId), 'Jedes angelegte Objekt steht im Änderungsprotokoll.');
     }
 
     public function testSeedingIsIdempotent(): void

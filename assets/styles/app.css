@@ -232,7 +232,8 @@ a {
     flex-shrink: 0;
 }
 
-.list-group__row dd {
+.list-group__row dd,
+.list-group__value {
     margin: 0;
     overflow: hidden;
     color: var(--color-text-muted);
@@ -252,6 +253,61 @@ a {
 
 .list-group__row--danger {
     color: var(--color-danger);
+}
+
+/* Zeile, die zu einer Unterseite führt (Pfeil rechts, wie bei iOS) */
+.list-group__row--link::after {
+    content: "›";
+    flex-shrink: 0;
+    margin-left: calc(var(--space-2) * -1);
+    color: var(--color-text-muted);
+    font-size: 22px;
+    line-height: 1;
+}
+
+.list-group__row--link:active {
+    background: var(--color-separator);
+}
+
+/* ---------- Neuigkeiten ---------- */
+
+.header-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch-target);
+    color: var(--color-accent);
+    text-decoration: none;
+}
+
+.release-note {
+    margin-bottom: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface);
+    border-radius: var(--radius-m);
+}
+
+.release-note__title {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-3);
+    margin: 0 0 var(--space-2);
+    font-size: 17px;
+}
+
+.release-note__date {
+    color: var(--color-text-muted);
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.release-note__changes {
+    margin: 0;
+    padding-left: 1.2em;
+}
+
+.release-note__changes li + li {
+    margin-top: var(--space-1);
 }
 
 /* ---------- Formulare ---------- */

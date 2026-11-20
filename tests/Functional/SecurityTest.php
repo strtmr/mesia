@@ -21,6 +21,31 @@ final class SecurityTest extends WebTestCase
         self::assertResponseRedirects('/login');
     }
 
+    public function testApiRequestWithoutLoginIsNotUsedAsTargetAfterLogin(): void
+    {
+        $client = self::createClient();
+        self::createUser();
+
+        // Die App synchronisiert mit abgelaufener Sitzung …
+        $client->request('GET', '/api/sync/pull?since=0&limit=500', server: ['HTTP_X_REQUESTED_WITH' => 'mesia']);
+        self::assertResponseStatusCodeSame(401);
+
+        // … danach meldet man sich an und landet in der App, nicht auf dem JSON der API
+        $this->login($client, 'marco@example.com', self::PASSWORD);
+        self::assertResponseRedirects('/');
+    }
+
+    public function testPageVisitedWithoutLoginIsStillTheTargetAfterLogin(): void
+    {
+        $client = self::createClient();
+        self::createUser();
+
+        $client->request('GET', '/mehr');
+        $this->login($client, 'marco@example.com', self::PASSWORD);
+
+        self::assertResponseRedirects('http://localhost/mehr');
+    }
+
     public function testLoginPageIsPublicAndReadyForTheIphone(): void
     {
         $client = self::createClient();
@@ -95,7 +120,16 @@ final class SecurityTest extends WebTestCase
         self::assertResponseIsSuccessful();
         self::assertAnySelectorTextContains('.list-group', 'Marco');
         self::assertAnySelectorTextContains('.list-group', 'Familie Muster');
-        self::assertAnySelectorTextContains('.list-group', '0.1.0-dev');
+        self::assertAnySelectorTextContains('.list-group', (string) self::getContainer()->getParameter('app.version'));
+
+        $client->clickLink('Neuigkeiten');
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Neuigkeiten');
+        self::assertSelectorTextContains('.release-note__title', 'Version '.self::getContainer()->getParameter('app.version'));
+        self::assertSelectorExists('nav.tabbar a[aria-current="page"][href="/mehr"]');
+        self::assertSelectorTextNotContains('.release-note__changes', 'Array');
+
+        $client->request('GET', '/mehr');
 
         $client->clickLink('Abmelden');
         self::assertResponseRedirects('/login');
