@@ -1,0 +1,38 @@
+{% extends 'app/layout.html.twig' %}
+
+{# Kategorien verwalten: Reihenfolge per Ziehen (controllers/category_sort_controller.js), Antippen öffnet das Bearbeiten #}
+
+{% block page_title %}{{ 'categories.title'|trans }}{% endblock %}
+
+{% block header_actions %}
+    <a class="header-link" href="{{ path('app_more') }}">‹ {{ 'more.title'|trans }}</a>
+{% endblock %}
+
+{% block content %}
+    {% for message in app.flashes('error') %}
+        <p class="form-error">{{ message }}</p>
+    {% endfor %}
+
+    <p class="page-hint">{{ 'categories.hint'|trans }}</p>
+
+    <section class="list-section">
+        <ul class="list-group category-list" data-controller="category-sort"
+            data-category-sort-url-value="{{ path('catalog_categories_reorder') }}"
+            data-category-sort-token-value="{{ csrf_token(reorder_token) }}"
+            data-category-sort-error-value="{{ 'categories.reorder_failed'|trans }}">
+            {% for category in categories %}
+                <li class="list-group__row category-row" data-id="{{ category.id }}">
+                    <span class="category-row__handle" aria-label="{{ 'categories.drag'|trans }}" role="img">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14M5 12h14M5 16h14"/></svg>
+                    </span>
+                    <a class="category-row__link" href="{{ path('catalog_categories_edit', {id: category.id}) }}">
+                        <span class="category-row__icon" aria-hidden="true">{{ category.icon }}</span>
+                        <span class="category-row__name">{{ category.name }}</span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <a class="button button--primary button--block" href="{{ path('catalog_categories_new') }}">{{ 'categories.new'|trans }}</a>
+{% endblock %}

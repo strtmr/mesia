@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional;
 
+use App\Catalog\Application\CategoryManagement;
 use App\Identity\Domain\Model\User;
 use App\Tests\Support\CreatesUsers;
 use Doctrine\DBAL\Connection;
@@ -267,6 +268,32 @@ final class SyncApiTest extends WebTestCase
         self::assertArrayNotHasKey('shopping_item', $this->snapshot()['entities']);
     }
 
+    public function testDeletingACategoryMovesItsItemsToTheFallback(): void
+    {
+        $payload = $this->addItemPayload($this->uuid(), 'Apfelsaft');
+        $this->pushOne('item.add', $payload);
+        $cursor = $this->snapshot()['cursor'];
+
+        self::getContainer()->get(CategoryManagement::class)->delete($this->user->getHousehold()->getId(), Uuid::fromString($payload['category_id']));
+
+        self::assertSame($this->fallbackCategoryId(), $this->pulledEntity($cursor, 'shopping_item', $payload['item_id'])['category_id']);
+        self::assertTrue($this->pulledEntity($cursor, 'category', $payload['category_id'])['deleted']);
+    }
+
+    public function testItemAddedOfflineInADeletedCategoryLandsInTheFallback(): void
+    {
+        $payload = $this->addItemPayload($this->uuid(), 'Apfelsaft');
+        $fallbackId = $this->fallbackCategoryId();
+        // Auf einem anderen Gerät wird die Kategorie gelöscht, während dieses offline etwas hinzufügt
+        self::getContainer()->get(CategoryManagement::class)->delete($this->user->getHousehold()->getId(), Uuid::fromString($payload['category_id']));
+        $cursor = $this->snapshot()['cursor'];
+
+        $result = $this->pushOne('item.add', $payload);
+
+        self::assertSame('applied', $result['status']);
+        self::assertSame($fallbackId, $this->pulledEntity($cursor, 'shopping_item', $payload['item_id'])['category_id']);
+    }
+
     public function testPullPagesThroughTheChangeLog(): void
     {
         $cursor = $this->snapshot()['cursor'];
@@ -284,6 +311,16 @@ final class SyncApiTest extends WebTestCase
     }
 
     // ---------------------------------------------------------------- Hilfsmethoden
+
+    private function fallbackCategoryId(): string
+    {
+        foreach ($this->snapshot()['entities']['category'] as $category) {
+            if ($category['is_fallback']) {
+                return $category['id'];
+            }
+        }
+        self::fail('Keine Fallback-Kategorie');
+    }
 
     /**
      * @return array<string, mixed>

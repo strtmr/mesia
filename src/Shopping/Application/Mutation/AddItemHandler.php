@@ -60,9 +60,9 @@ final readonly class AddItemHandler implements MutationHandler
         if (null === $this->lists->findActive($context->householdId, $payload->listId)) {
             throw new MutationRejected('Liste nicht gefunden.');
         }
-        if (null === $this->categories->findActive($context->householdId, $payload->categoryId)) {
-            throw new MutationRejected('Kategorie nicht gefunden.');
-        }
+        // Offline in einer inzwischen gelöschten Kategorie angelegt → "Sonstiges" statt Ablehnung
+        $categoryId = $this->categories->activeOrFallback($context->householdId, $payload->categoryId)
+            ?? throw new MutationRejected('Kategorie nicht gefunden.');
         if (null !== $payload->articleId && null === $this->articles->findActive($context->householdId, $payload->articleId)) {
             throw new MutationRejected('Artikel nicht gefunden.');
         }
@@ -85,7 +85,7 @@ final readonly class AddItemHandler implements MutationHandler
             $payload->listId,
             $payload->articleId,
             $payload->name,
-            $payload->categoryId,
+            $categoryId,
             $payload->sortKey,
             $payload->note,
             $context->actorId,

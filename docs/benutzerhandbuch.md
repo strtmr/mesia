@@ -3,8 +3,7 @@
 Mesia ist eine gemeinsame Einkaufsliste für euren Haushalt, später auch für die Essensplanung. Die App läuft im
 Browser und lässt sich auf dem iPhone wie eine normale App installieren.
 
-> **Stand:** Die gemeinsame Einkaufsliste funktioniert, auch ohne Verbindung. Noch nicht fertig: das Verwalten der
-> Kategorien.
+> **Stand:** Die gemeinsame Einkaufsliste funktioniert, auch ohne Verbindung, und die Kategorien lassen sich verwalten.
 
 ## Anmelden
 
@@ -31,7 +30,7 @@ startet sie auch im Funkloch. iOS bewahrt die Daten installierter Apps zuverläs
 | Tab | Inhalt |
 |-----|--------|
 | **Einkauf** | eure gemeinsame Einkaufsliste |
-| **Mehr** | Konto, Haushalt, App-Version mit **Neuigkeiten** (was sich in welcher Version geändert hat), Verbindungsstatus, Abmelden |
+| **Mehr** | Kategorien, Konto, Haushalt, App-Version mit **Neuigkeiten** (was sich in welcher Version geändert hat), Verbindungsstatus, Abmelden |
 
 ## Einkaufsliste
 
@@ -78,3 +77,17 @@ Verbindung.
 **Neue Version:** Erscheint oben „Neue Version verfügbar“, tippe auf „Neu laden“. Dabei geht nichts verloren.
 
 **Abmelden** löscht die Liste von diesem Gerät. Noch nicht übertragene Änderungen gehen dabei verloren.
+
+## Kategorien
+
+Unter **Mehr → Kategorien** stellst du ein, in welcher Reihenfolge die Kategorien auf der Liste erscheinen. Am besten
+so, wie du durch deinen Laden gehst.
+
+- **Sortieren:** am Griff (☰) links ziehen.
+- **Umbenennen oder Symbol ändern:** Kategorie antippen. Als Symbol eignet sich ein Emoji.
+- **Neue Kategorie:** unten auf „Neue Kategorie“. Sie erscheint vor „Sonstiges“.
+- **Löschen:** Kategorie antippen → „Kategorie löschen“. Ihre Artikel wandern nach „Sonstiges“. „Sonstiges“ selbst
+  lässt sich nicht löschen.
+
+Die Seite braucht eine Internetverbindung. Die Einkaufsliste übernimmt Änderungen beim nächsten Abgleich, auch auf
+dem anderen Gerät.

@@ -51,10 +51,9 @@ final readonly class UpdateArticleHandler implements MutationHandler
         }
 
         if (null !== $payload->categoryId) {
-            if (null === $this->categories->findActive($context->householdId, $payload->categoryId)) {
-                throw new MutationRejected('Kategorie nicht gefunden.');
-            }
-            $article->moveToCategory($payload->categoryId, $context->now);
+            $categoryId = $this->categories->activeOrFallback($context->householdId, $payload->categoryId)
+                ?? throw new MutationRejected('Kategorie nicht gefunden.');
+            $article->moveToCategory($categoryId, $context->now);
         }
 
         return MutationOutcome::applied();

@@ -63,11 +63,10 @@ final readonly class CreateArticleHandler implements MutationHandler
             return MutationOutcome::merged($existing->getId());
         }
 
-        if (null === $this->categories->findActive($context->householdId, $payload->categoryId)) {
-            throw new MutationRejected('Kategorie nicht gefunden.');
-        }
+        $categoryId = $this->categories->activeOrFallback($context->householdId, $payload->categoryId)
+            ?? throw new MutationRejected('Kategorie nicht gefunden.');
 
-        $this->entityManager->persist(new Article($payload->articleId, $context->householdId, $payload->name, $normalized, $payload->categoryId, $context->now));
+        $this->entityManager->persist(new Article($payload->articleId, $context->householdId, $payload->name, $normalized, $categoryId, $context->now));
 
         return MutationOutcome::applied();
     }

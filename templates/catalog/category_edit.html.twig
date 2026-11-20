@@ -1,0 +1,21 @@
+{% extends 'app/layout.html.twig' %}
+
+{% block page_title %}{{ 'categories.edit'|trans }}{% endblock %}
+
+{% block header_actions %}
+    <a class="header-link" href="{{ path('catalog_categories') }}">‹ {{ 'categories.title'|trans }}</a>
+{% endblock %}
+
+{% block content %}
+    {{ include('catalog/_category_form.html.twig', {submit: 'categories.form.save'}) }}
+
+    {% if category.fallback %}
+        <p class="page-hint">{{ 'categories.fallback_hint'|trans({'%name%': category.name}) }}</p>
+    {% else %}
+        <form class="category-delete" method="post" action="{{ path('catalog_categories_delete', {id: category.id}) }}"
+              data-turbo-confirm="{{ 'categories.delete_confirm'|trans({'%name%': category.name}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token(delete_token) }}">
+            <button type="submit" class="button button--danger button--block">{{ 'categories.delete'|trans }}</button>
+        </form>
+    {% endif %}
+{% endblock %}

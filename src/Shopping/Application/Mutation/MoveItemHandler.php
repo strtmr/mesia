@@ -40,15 +40,14 @@ final readonly class MoveItemHandler implements MutationHandler
     public function handle(object $payload, MutationContext $context): MutationOutcome
     {
         $item = $this->lookup->get($context->householdId, $payload->itemId);
-        if (null === $this->categories->findActive($context->householdId, $payload->categoryId)) {
-            throw new MutationRejected('Kategorie nicht gefunden.');
-        }
+        $categoryId = $this->categories->activeOrFallback($context->householdId, $payload->categoryId)
+            ?? throw new MutationRejected('Kategorie nicht gefunden.');
 
-        $categoryChanged = $item->moveTo($payload->categoryId, $payload->sortKey, $context->actorId, $context->now);
+        $categoryChanged = $item->moveTo($categoryId, $payload->sortKey, $context->actorId, $context->now);
 
         $articleId = $item->getArticleId();
         if ($categoryChanged && null !== $articleId) {
-            $this->articles->findActive($context->householdId, $articleId)?->moveToCategory($payload->categoryId, $context->now);
+            $this->articles->findActive($context->householdId, $articleId)?->moveToCategory($categoryId, $context->now);
         }
 
         return MutationOutcome::applied();

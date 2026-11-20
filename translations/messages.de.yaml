@@ -64,6 +64,10 @@ more:
         name: Name
         email: E-Mail
         household: Haushalt
+    shopping:
+        section: Einkaufsliste
+        categories: Kategorien
+        categories_hint: Reihenfolge, Namen
     app:
         section: App
         version: Version
@@ -76,6 +80,23 @@ more:
 app_update:
     text: Neue Version verfügbar
     reload: Neu laden
+
+categories:
+    title: Kategorien
+    hint: Ordne die Kategorien so an, wie du durch deinen Laden gehst. Zum Verschieben am Griff ziehen.
+    drag: Verschieben
+    new: Neue Kategorie
+    edit: Bearbeiten
+    delete: Kategorie löschen
+    delete_confirm: '„%name%“ löschen? Die Artikel darin wandern nach „Sonstiges“.'
+    fallback_hint: '„%name%“ nimmt alle übrigen Artikel auf und kann deshalb nicht gelöscht werden.'
+    reorder_failed: Die Reihenfolge konnte nicht gespeichert werden. Die Seite wird neu geladen.
+    form:
+        icon: Symbol
+        icon_help: Als Symbol eignet sich ein Emoji (Emoji-Tastatur über 🌐 bzw. 😀 auf der iPhone-Tastatur).
+        name: Name
+        create: Anlegen
+        save: Speichern
 
 release_notes:
     title: Neuigkeiten

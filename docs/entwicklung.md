@@ -18,7 +18,11 @@ Schichten je Modul: `Domain` (Entities in `Domain/Model`, Regeln), `Application`
 `Infrastructure` (Repositories, DBAL), `UI` (Controller, Konsole). Geprüft mit deptrac (`deptrac.yaml`).
 
 Module koppeln sich über Ereignisse statt über direkte Aufrufe: `UserRegistration` löst `HouseholdCreated` aus,
-`Catalog` legt daraufhin den Startkatalog an und `Shopping` die Liste.
+`Catalog` legt daraufhin den Startkatalog an und `Shopping` die Liste. `CategoryManagement` löst beim Löschen
+`CategoryDeleted` aus, `Shopping` verschiebt seine Einträge nach „Sonstiges“ (alles in einer Transaktion).
+
+Den Haushalt des angemeldeten Benutzers liefert `Shared\Application\CurrentHousehold` (umgesetzt in Identity), so
+müssen Module wie `Catalog` den Benutzer nicht kennen.
 
 ## Synchronisierte Entities
 
@@ -45,6 +49,10 @@ Ohne Anmeldung antwortet die API mit `401` statt mit einer Weiterleitung.
 | `GET /api/sync/snapshot` | `{cursor, entities: {category: [...], article: [...], article_alias: [...], shopping_list: [...], shopping_item: [...]}}` |
 | `POST /api/sync/push` | `{device_id, mutations: [{id, type, at, payload}]}` → `{results: [{id, status, merged_into?, error?}]}` |
 | `GET /api/sync/pull?since=&limit=` | `{changes: [{seq, type, id, op, data}], cursor, has_more}` |
+
+Kategorien werden nicht per Mutation geändert, sondern auf der Seite „Mehr → Kategorien“ (mit Verbindung). Verweist
+eine Mutation auf eine inzwischen gelöschte Kategorie (`item.add`, `item.move`, `article.create/update`), landet der
+Eintrag in der Fallback-Kategorie statt abgelehnt zu werden.
 
 Status im Push-Ergebnis: `applied`, `merged` (auf bestehendes Objekt umgelenkt, `merged_into` = dessen ID), `ignored`
 (veraltet bzw. ohne Wirkung), `rejected` (`error` lesbar), `duplicate` (schon verarbeitet, plus `original_status`).

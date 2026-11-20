@@ -67,6 +67,16 @@ class Category implements Syncable
         return $this->name;
     }
 
+    public function getIcon(): string
+    {
+        return $this->icon;
+    }
+
+    public function getSortKey(): string
+    {
+        return $this->sortKey;
+    }
+
     public function getSeedKey(): ?string
     {
         return $this->seedKey;
@@ -87,6 +97,14 @@ class Category implements Syncable
         $this->name = $name;
         $this->icon = trim($icon);
         $this->touch($now);
+    }
+
+    public function moveTo(string $sortKey, \DateTimeImmutable $now): void
+    {
+        if ($sortKey !== $this->sortKey) {
+            $this->sortKey = $sortKey;
+            $this->touch($now);
+        }
     }
 
     public function toSyncSnapshot(): array

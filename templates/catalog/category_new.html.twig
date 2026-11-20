@@ -1,0 +1,11 @@
+{% extends 'app/layout.html.twig' %}
+
+{% block page_title %}{{ 'categories.new'|trans }}{% endblock %}
+
+{% block header_actions %}
+    <a class="header-link" href="{{ path('catalog_categories') }}">‹ {{ 'categories.title'|trans }}</a>
+{% endblock %}
+
+{% block content %}
+    {{ include('catalog/_category_form.html.twig', {submit: 'categories.form.create'}) }}
+{% endblock %}

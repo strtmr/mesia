@@ -24,6 +24,16 @@
     </section>
 
     <section class="list-section">
+        <h2 class="list-section__title">{{ 'more.shopping.section'|trans }}</h2>
+        <div class="list-group">
+            <a class="list-group__row list-group__row--link" href="{{ path('catalog_categories') }}">
+                <span>{{ 'more.shopping.categories'|trans }}</span>
+                <span class="list-group__value">{{ 'more.shopping.categories_hint'|trans }}</span>
+            </a>
+        </div>
+    </section>
+
+    <section class="list-section">
         <h2 class="list-section__title">{{ 'more.app.section'|trans }}</h2>
         <div class="list-group">
             <a class="list-group__row list-group__row--link" href="{{ path('app_release_notes') }}">

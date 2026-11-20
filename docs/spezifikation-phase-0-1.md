@@ -440,6 +440,11 @@ Vitest. Später Playwright-E2E (WebKit). Plattform: **GitHub Actions** (privates
 > in der Mehrzahl (Äpfel, Zwiebeln …, die Einzahl ist Alias). Neu sind laktosefreie und vegane Alternativen
 > (Milchprodukte, Fleischersatz, Mayonnaise, Ei-Ersatz). Bestehende Haushalte bekommen Erweiterungen per
 > Katalog-Abgleich (`app:catalog:update`, bei jedem Deployment).
+>
+> **Stand 2026-11-20 (2):** 1.7 umgesetzt: „Mehr → Kategorien“ (Turbo-Seiten mit Verbindung) zum Sortieren per Ziehen,
+> Umbenennen, Symbol ändern, Anlegen und Löschen. Änderungen laufen über das Änderungsprotokoll zu allen Geräten.
+> Abweichung: Kategorien sind nicht offline bearbeitbar (keine Kategorie-Mutationen). Mutationen mit gelöschter
+> Kategorie weichen auf „Sonstiges“ aus.
 
 | # | Paket | Fertig, wenn … |
 |---|-------|----------------|

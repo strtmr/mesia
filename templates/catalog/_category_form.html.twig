@@ -1,0 +1,18 @@
+{# Formular „Kategorie anlegen/ändern“. Erwartet: form, submit (Übersetzungsschlüssel des Knopfs) #}
+{{ form_start(form, {attr: {class: 'form-group category-form', novalidate: 'novalidate'}}) }}
+    <div class="category-form__row">
+        <label class="field">
+            <span class="field__label">{{ 'categories.form.icon'|trans }}</span>
+            {{ form_widget(form.icon) }}
+        </label>
+        <label class="field">
+            <span class="field__label">{{ 'categories.form.name'|trans }}</span>
+            {{ form_widget(form.name) }}
+        </label>
+    </div>
+    {% for error in form.icon.vars.errors|merge(form.name.vars.errors) %}
+        <p class="form-error">{{ error.message }}</p>
+    {% endfor %}
+    <p class="page-hint">{{ 'categories.form.icon_help'|trans }}</p>
+    <button type="submit" class="button button--primary button--block">{{ submit|trans }}</button>
+{{ form_end(form) }}

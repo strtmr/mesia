@@ -259,6 +259,17 @@ class ShoppingListItem implements Syncable
         return $categoryChanged;
     }
 
+    /**
+     * Kategorie wurde gelöscht: Eintrag in die Fallback-Kategorie verschieben (Position bleibt).
+     */
+    public function reassignCategory(Uuid $categoryId, \DateTimeImmutable $now): void
+    {
+        if (!$this->categoryId->equals($categoryId)) {
+            $this->categoryId = $categoryId;
+            $this->touch($now);
+        }
+    }
+
     public function delete(Uuid $actorId, \DateTimeImmutable $now): void
     {
         $this->updatedBy = $actorId;
