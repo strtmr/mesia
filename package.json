@@ -1,5 +1,5 @@
 {
-    "name": "mealplanner",
+    "name": "mesia",
     "private": true,
     "type": "module",
     "description": "Nur für Tests (Vitest/Playwright). Die Frontend-Assets werden über Symfony AssetMapper ausgeliefert, ohne Node-Build.",

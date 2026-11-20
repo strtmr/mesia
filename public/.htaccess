@@ -6,8 +6,13 @@
 DirectoryIndex index.php
 
 # ---------------------------------------------------------------------------------------------------------------
-# Mealplanner (Produktion auf Apache, z. B. Hetzner Webhosting). Lokal läuft nginx (.ddev/nginx/pwa.conf).
+# Mesia (Produktion auf Apache, z. B. Hetzner Webhosting). Lokal läuft nginx (.ddev/nginx/pwa.conf).
 # ---------------------------------------------------------------------------------------------------------------
+
+# Das Basisverzeichnis des Deployments sperrt alles (deploy/remote.sh), hier wird nur public/ wieder freigegeben
+<IfModule mod_authz_core.c>
+    Require all granted
+</IfModule>
 
 # Web App Manifest mit dem richtigen Typ, sonst ignoriert es iOS teilweise
 AddType application/manifest+json .webmanifest

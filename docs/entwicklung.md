@@ -1,7 +1,8 @@
 # Entwicklerdokumentation
 
 Kurzreferenz für die Arbeit am Code. Hintergründe und Entscheidungen: [architektur.md](architektur.md),
-aktueller Umfang: [spezifikation-phase-0-1.md](spezifikation-phase-0-1.md), Setup: [README](../README.md).
+aktueller Umfang: [spezifikation-phase-0-1.md](spezifikation-phase-0-1.md), Setup: [README](../README.md),
+Deployment: [betrieb.md](betrieb.md).
 
 ## Module
 
@@ -35,7 +36,7 @@ Jede Änderung landet dann automatisch im `change_log` (Doctrine-Listener, gleic
 
 ## Sync-API
 
-Alle Antworten sind JSON in snake_case. Schreibende Requests brauchen den Header `X-Requested-With: mealplanner`.
+Alle Antworten sind JSON in snake_case. Schreibende Requests brauchen den Header `X-Requested-With: mesia`.
 Ohne Anmeldung antwortet die API mit `401` statt mit einer Weiterleitung.
 
 | Endpunkt | Zweck |

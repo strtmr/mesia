@@ -1,6 +1,6 @@
 import Dexie from 'dexie';
 
-export const DATABASE_NAME = 'mealplanner';
+export const DATABASE_NAME = 'mesia';
 
 /**
  * Lokale Datenbank (IndexedDB):

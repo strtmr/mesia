@@ -8,7 +8,7 @@ export default class extends Controller {
     logout(event) {
         event.preventDefault();
         const target = this.element.href;
-        const request = indexedDB.deleteDatabase('mealplanner');
+        const request = indexedDB.deleteDatabase('mesia');
         const proceed = () => window.location.assign(target);
         request.onsuccess = proceed;
         request.onerror = proceed;

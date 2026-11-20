@@ -1,9 +1,10 @@
-# Mealplanner
+# Mesia
 
 Essensplanung und gemeinsame, offlinefähige Einkaufsliste als PWA. Lernprojekt mit Symfony.
 
 - Benutzerhandbuch: [docs/benutzerhandbuch.md](docs/benutzerhandbuch.md)
 - Entwicklerdokumentation (Module, Sync-API, Stolperfallen): [docs/entwicklung.md](docs/entwicklung.md)
+- Betrieb und Deployment (Hetzner, GitHub Actions): [docs/betrieb.md](docs/betrieb.md)
 - Architektur und Entscheidungen: [docs/architektur.md](docs/architektur.md)
 - Aktuelle Spezifikation (Phase 0 + 1): [docs/spezifikation-phase-0-1.md](docs/spezifikation-phase-0-1.md)
 

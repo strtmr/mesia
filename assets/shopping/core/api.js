@@ -27,7 +27,7 @@ export function createApi({ fetchFn = (...args) => fetch(...args), baseUrl = '' 
                 credentials: 'same-origin',
                 headers: {
                     Accept: 'application/json',
-                    'X-Requested-With': 'mealplanner',
+                    'X-Requested-With': 'mesia',
                     ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
                 },
                 body: body === undefined ? undefined : JSON.stringify(body),

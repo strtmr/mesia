@@ -1,6 +1,6 @@
 import { Controller } from '@hotwired/stimulus';
 
-const STORAGE_KEY = 'mealplanner.installHintDismissed';
+const STORAGE_KEY = 'mesia.installHintDismissed';
 
 /**
  * Zeigt auf iPhone/iPad in Safari einen Hinweis, die App zum Home-Bildschirm hinzuzufügen.

@@ -1,6 +1,6 @@
 # Benutzerhandbuch
 
-Mealplanner ist eine gemeinsame Einkaufsliste für euren Haushalt, später auch für die Essensplanung. Die App läuft im
+Mesia ist eine gemeinsame Einkaufsliste für euren Haushalt, später auch für die Essensplanung. Die App läuft im
 Browser und lässt sich auf dem iPhone wie eine normale App installieren.
 
 > **Stand:** Die gemeinsame Einkaufsliste funktioniert, auch ohne Verbindung. Noch nicht fertig: das Verwalten der

@@ -27,7 +27,7 @@ Historie und synchronisiert zuverlässig. Sie ersetzt damit iOS Erinnerungen.
 ## 2. Projektstruktur
 
 ```
-mealplanner/
+mesia/
 ├── .ddev/                      PHP + PostgreSQL in den Versionen von Hetzner
 ├── assets/
 │   ├── app.js                  Turbo + Stimulus (Verwaltungsseiten)
@@ -165,7 +165,7 @@ Mutationen. Der Client wendet nach jedem Pull die offenen Outbox-Mutationen erne
 | GET | `/api/me` | Wer bin ich, Haushalt. Antwortet mit `401` bei abgelaufener Sitzung |
 
 **Authentifizierung:** dieselbe Session wie die Webseiten (Cookie, `HttpOnly`, `Secure`, `SameSite=Lax`) plus
-langlebiges Remember-me (z. B. 1 Jahr). CSRF-Schutz für die JSON-API: Pflicht-Header `X-Requested-With: mealplanner`
+langlebiges Remember-me (z. B. 1 Jahr). CSRF-Schutz für die JSON-API: Pflicht-Header `X-Requested-With: mesia`
 und Prüfung des `Origin`-Headers.
 
 ### 4.3 Beispiel Push
@@ -385,6 +385,10 @@ Vitest. Später Playwright-E2E (WebKit). Plattform: **GitHub Actions** (privates
 ### Phase 0: Fundament
 
 > **Stand 2026-11-18:** 0.2–0.6 umgesetzt. Offen: 0.1 (PostgreSQL bei Hetzner prüfen), 0.7 (Deployment).
+>
+> **Stand 2026-11-19:** 0.1 und 0.7 vorbereitet: Hosting-Check-Skript, apache-pack mit `.htaccess`, Logs als Datei,
+> Deployment per GitHub Actions mit Release-Verzeichnissen und automatischem Rollback ([betrieb.md](betrieb.md)).
+> Offen: Einrichtung bei Hetzner und GitHub, erstes Deployment. Messenger-Cron erst, wenn es asynchrone Nachrichten gibt.
 >
 > Für 0.7 vormerken: `symfony/apache-pack` (.htaccess für Apache), dort `AddType application/manifest+json .webmanifest`
 > (lokal per `.ddev/nginx/pwa.conf` gelöst), `APP_SECRET` für prod setzen. `/sw.js` liefert seit 1.6 Symfony aus

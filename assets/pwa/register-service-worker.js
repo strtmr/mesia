@@ -7,9 +7,9 @@
  * Neue Version: Der Browser prüft /sw.js bei echten Seitenaufrufen. Turbo-Navigationen sind keine, und eine
  * Home-Bildschirm-App bleibt oft tagelang offen. Deshalb wird zusätzlich beim Zurückkehren in die App geprüft.
  * Übernimmt ein neuer Service Worker, erhält <html> das Attribut data-update-available und das Ereignis
- * "mealplanner:update-available" wird ausgelöst (Hinweis "Neue Version", controllers/app_update_controller.js).
+ * "mesia:update-available" wird ausgelöst (Hinweis "Neue Version", controllers/app_update_controller.js).
  */
-export const UPDATE_EVENT = 'mealplanner:update-available';
+export const UPDATE_EVENT = 'mesia:update-available';
 
 export function registerServiceWorker() {
     if (!('serviceWorker' in navigator)) {

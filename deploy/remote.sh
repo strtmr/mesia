@@ -22,6 +22,18 @@ fail() {
     exit 1
 }
 
+# <basis> liegt evtl. im Web-Verzeichnis einer anderen Domain (Hetzner: ~/public_html/…). Alles darunter sperren,
+# public/.htaccess des Releases gibt nur den eigenen Ordner wieder frei.
+protect_base() {
+    cat > "$1/.htaccess" <<'HTACCESS'
+# Verwaltet von deploy/remote.sh: kein Zugriff auf Releases, Zugangsdaten und Logs über eine andere Domain.
+# Die App selbst gibt in public/.htaccess ihren Ordner wieder frei.
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+HTACCESS
+}
+
 case "$command" in
 activate)
     release=${3:?Release fehlt}
@@ -32,6 +44,7 @@ activate)
     [ -f "$base/shared/.env.local" ] || fail "$base/shared/.env.local fehlt (siehe docs/betrieb.md)"
     grep -q '^APP_ENV=prod' "$base/shared/.env.local" || fail "APP_ENV=prod fehlt in $base/shared/.env.local"
     mkdir -p "$base/shared/log"
+    protect_base "$base"
 
     ln -sfn "$base/shared/.env.local" "$dir/.env.local"
     mkdir -p "$dir/var"
@@ -46,6 +59,12 @@ activate)
 
     echo "→ Live schalten: $release"
     cd "$base"
+    # Beim Einrichten wird current/public oft als leerer Ordner angelegt (die Hetzner-Verwaltung verlangt ein
+    # vorhandenes Document Root). Der Ordner muss dem Symlink weichen, aber nur wenn er leer ist.
+    if [ -d current ] && [ ! -L current ]; then
+        rmdir current/public 2>/dev/null || true
+        rmdir current || fail "$base/current ist ein Ordner mit Inhalt, bitte prüfen und entfernen"
+    fi
     [ -L current ] && ln -sfn "$(readlink current)" previous
     ln -sfn "releases/$release" current
 

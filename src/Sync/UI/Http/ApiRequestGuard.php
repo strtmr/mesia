@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * CSRF-Schutz für die JSON-API: Schreibende Requests unter /api/ brauchen den Header
- * "X-Requested-With: mealplanner". Ein Origin-Header muss, falls vorhanden, zur eigenen Domain passen.
+ * "X-Requested-With: mesia". Ein Origin-Header muss, falls vorhanden, zur eigenen Domain passen.
  *
  * Ein fremdes Formular kann keinen eigenen Header setzen, und fremde Skripte scheitern an CORS. Zusammen mit dem
  * SameSite=Lax-Cookie genügt das ohne Token.
@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 final readonly class ApiRequestGuard
 {
     public const string HEADER = 'X-Requested-With';
-    public const string HEADER_VALUE = 'mealplanner';
+    public const string HEADER_VALUE = 'mesia';
 
     public function __invoke(RequestEvent $event): void
     {

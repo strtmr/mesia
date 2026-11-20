@@ -70,7 +70,7 @@ final class SyncApiTest extends WebTestCase
 
         $this->client->request('POST', '/api/sync/push', server: [
             'CONTENT_TYPE' => 'application/json',
-            'HTTP_X_REQUESTED_WITH' => 'mealplanner',
+            'HTTP_X_REQUESTED_WITH' => 'mesia',
             'HTTP_ORIGIN' => 'https://evil.example',
         ], content: '{"device_id":"x","mutations":[]}');
         self::assertResponseStatusCodeSame(403);
@@ -337,7 +337,7 @@ final class SyncApiTest extends WebTestCase
     {
         $this->client->request('POST', '/api/sync/push', server: [
             'CONTENT_TYPE' => 'application/json',
-            'HTTP_X_REQUESTED_WITH' => 'mealplanner',
+            'HTTP_X_REQUESTED_WITH' => 'mesia',
         ], content: json_encode(['device_id' => 'test-device', 'mutations' => $mutations], \JSON_THROW_ON_ERROR));
 
         self::assertResponseIsSuccessful();

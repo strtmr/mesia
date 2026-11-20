@@ -9,11 +9,12 @@
 set -euo pipefail
 
 TARGET=${1:?Zielverzeichnis fehlt}
+REF=${REF:-HEAD}   # zum Ausprobieren ohne Commit: REF=$(git stash create) deploy/build.sh …
 
 rm -rf "$TARGET"
 mkdir -p "$TARGET"
-git archive --format=tar HEAD | tar -x -C "$TARGET"   # lässt die export-ignore-Pfade aus .gitattributes weg
-git rev-parse HEAD > "$TARGET/REVISION"
+git archive --format=tar "$REF" | tar -x -C "$TARGET"   # lässt die export-ignore-Pfade aus .gitattributes weg
+git rev-parse "$REF" > "$TARGET/REVISION"
 
 cd "$TARGET"
 export APP_ENV=prod APP_DEBUG=0
