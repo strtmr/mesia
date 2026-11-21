@@ -108,9 +108,8 @@ try {
     await waitForSync(page);
     await page.screenshot({ path: `${screenshotDir}/1-liste.png`, fullPage: true });
 
-    step('Abhaken mit Rückgängig-Hinweis');
+    step('Abhaken (Häkchen, Eintrag wandert nach "Erledigt")');
     await milk.locator('.item-check').click();
-    await expectVisible(page.locator('.toast', { hasText: 'erledigt' }), 'Toast');
     await expectVisible(page.locator('.shopping-done__toggle', { hasText: 'Erledigt (1)' }), 'Erledigt (1)');
     await page.screenshot({ path: `${screenshotDir}/2-abgehakt.png`, fullPage: true });
 

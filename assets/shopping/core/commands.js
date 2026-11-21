@@ -1,4 +1,5 @@
-import { parseQuickAdd } from './quickadd.js';
+import { NAME_MAX_LENGTH, NOTE_MAX_LENGTH, parseQuickAdd, textLength } from './quickadd.js';
+import { validateQuantity } from './quantity.js';
 import { matchArticle } from './matcher.js';
 import { activeList, fallbackCategory, findItemByArticle } from './state.js';
 import { compareKeys, keyBetween } from './sortkey.js';
@@ -22,6 +23,20 @@ export function createContext() {
  *
  * @returns {Array<object>} Mutationen (leer, wenn nichts Sinnvolles eingegeben wurde)
  */
+/**
+ * Text länger als erlaubt (field: "name" oder "note"). Die Eingabe zeigt das schon beim Tippen an,
+ * das hier verhindert nur, dass Unzulässiges in die Outbox gelangt.
+ */
+export class TextTooLongError extends Error {
+    constructor(field, length, max) {
+        super(`${field} zu lang: ${length} von höchstens ${max} Zeichen`);
+        this.name = 'TextTooLongError';
+        this.field = field;
+        this.length = length;
+        this.max = max;
+    }
+}
+
 export function addFromText(state, text, ctx) {
     const parsed = parseQuickAdd(text);
     if (!parsed.name) {
@@ -34,11 +49,19 @@ export function addFromText(state, text, ctx) {
 /**
  * @param {object|null} article bekannter Artikel oder null (dann wird er angelegt)
  * @param {{name: string, quantity: number|null, unit: string|null, note: string|null}} parsed
+ * @throws {QuantityError} unplausible Menge (≤ 0, zu groß, Division durch 0), dann wird nichts angelegt
  */
 export function addArticle(state, article, parsed, ctx) {
     const list = activeList(state);
     if (!list) {
         throw new Error('Keine Einkaufsliste vorhanden. Bitte zuerst synchronisieren.');
+    }
+    const quantity = parsed.quantity === null || parsed.quantity === undefined ? null : validateQuantity(parsed.quantity);
+    if (!article && textLength(parsed.name) > NAME_MAX_LENGTH) {
+        throw new TextTooLongError('name', textLength(parsed.name), NAME_MAX_LENGTH);
+    }
+    if (textLength(parsed.note) > NOTE_MAX_LENGTH) {
+        throw new TextTooLongError('note', textLength(parsed.note), NOTE_MAX_LENGTH);
     }
 
     const mutations = [];
@@ -62,7 +85,7 @@ export function addArticle(state, article, parsed, ctx) {
         category_id: categoryId,
         sort_key: existing?.sort_key ?? keyBetween(lastSortKey(state, list.id, categoryId), null),
         note: parsed.note ?? null,
-        contribution: { id: ctx.newId(), quantity: parsed.quantity ?? null, unit: parsed.unit ?? null },
+        contribution: { id: ctx.newId(), quantity, unit: quantity === null ? null : (parsed.unit ?? null) },
     }, ctx));
 
     return mutations;

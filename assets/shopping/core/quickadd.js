@@ -1,19 +1,38 @@
 import { unitFromToken } from './units.js';
+import { EXPRESSION, evaluateExpression } from './quantity.js';
 
-const NUMBER = /^\d+(?:[.,]\d+)?$/;
-const NUMBER_WITH_UNIT = /^(\d+(?:[.,]\d+)?)([a-zA-ZäöüÄÖÜß]+\.?)$/;
+// Menge = Zahl oder Rechenausdruck ("2x500"), optional direkt mit Einheit ("2x500g")
+const NUMBER = new RegExp(`^(${EXPRESSION})$`);
+const NUMBER_WITH_UNIT = new RegExp(`^(${EXPRESSION})([a-zA-ZäöüÄÖÜß]+\\.?)$`);
+/** Gleiche Grenzen wie auf dem Server (Spaltenlängen von Artikel und Eintrag) */
+export const NAME_MAX_LENGTH = 100;
+export const NOTE_MAX_LENGTH = 200;
+/** Ab hier zeigt die Eingabe an, wie viele Zeichen noch gehen */
+export const LENGTH_WARNING_AT = 90;
+
+/** Länge in Zeichen wie PHP mb_strlen (Emojis zählen als ein Zeichen) */
+export function textLength(text) {
+    return [...(text ?? '')].length;
+}
+
+/** "3x Brötchen": x direkt hinter der Zahl bedeutet Stück */
+const TIMES = ['x', 'X'];
 
 /**
  * Zerlegt die Schnelleingabe: "2 l Milch", "2l Milch", "Milch 2l", "Milch, 2 Liter", "3 Zwiebeln",
- * "Butter (die gute)".
+ * "Butter (die gute)", "2x500g Mehl", "3+2 Äpfel", "3x Brötchen".
  *
- * Ohne Einheit, aber mit Zahl gilt "Stück".
+ * Ohne Einheit, aber mit Zahl gilt "Stück". Die Menge wird hier nicht auf Grenzen geprüft (läuft auch beim Tippen),
+ * das macht addArticle() mit validateQuantity().
  *
  * @param {string} input
  * @returns {{name: string, quantity: number|null, unit: string|null, note: string|null}}
  */
 export function parseQuickAdd(input) {
-    let text = input.trim().replace(/\s+/g, ' ');
+    let text = input.trim().replace(/\s+/g, ' ')
+        // Leerzeichen um Rechenzeichen zwischen Zahlen entfernen: "2 x 500 g" → "2x500 g", "3 + 2" → "3+2"
+        .replace(/(\d) ?([+*/×:÷]) ?(?=\d)/g, '$1$2')
+        .replace(/(\d) ([xX-]) (?=\d)/g, '$1$2');
     let note = null;
 
     const noteMatch = text.match(/\(([^)]*)\)\s*$/);
@@ -45,7 +64,10 @@ function readQuantity(tokens, start) {
 
     const glued = first.match(NUMBER_WITH_UNIT);
     if (glued && unitFromToken(glued[2])) {
-        return { quantity: toNumber(glued[1]), unit: unitFromToken(glued[2]), consumed: start + 1 };
+        return { quantity: evaluateExpression(glued[1]), unit: unitFromToken(glued[2]), consumed: start + 1 };
+    }
+    if (glued && TIMES.includes(glued[2])) {
+        return { quantity: evaluateExpression(glued[1]), unit: null, consumed: start + 1 };
     }
 
     if (!NUMBER.test(first)) {
@@ -54,7 +76,7 @@ function readQuantity(tokens, start) {
 
     const unit = tokens[start + 1] !== undefined ? unitFromToken(tokens[start + 1]) : null;
 
-    return { quantity: toNumber(first), unit, consumed: start + (unit ? 2 : 1) };
+    return { quantity: evaluateExpression(first), unit, consumed: start + (unit ? 2 : 1) };
 }
 
 function readTrailingQuantity(tokens) {
@@ -86,8 +108,4 @@ function result(nameTokens, quantity, note) {
         unit: quantity ? (quantity.unit ?? 'stk') : null,
         note,
     };
-}
-
-function toNumber(value) {
-    return Number.parseFloat(value.replace(',', '.'));
 }

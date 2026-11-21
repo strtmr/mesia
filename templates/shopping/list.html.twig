@@ -26,7 +26,13 @@
 
 {% block content %}
     <div class="shopping" x-data="shoppingList" data-shopping-app
-         data-text-checked="{{ 'shopping.toast.checked'|trans }}">
+         data-text-rejected="{{ 'shopping.toast.rejected'|trans }}"
+         data-text-quantity-too-large="{{ 'shopping.quantity.too_large'|trans({'%max%': '99.999'}) }}"
+         data-text-quantity-not-positive="{{ 'shopping.quantity.not_positive'|trans }}"
+         data-text-quantity-invalid="{{ 'shopping.quantity.invalid'|trans }}"
+         data-text-length-remaining="{{ 'shopping.length.remaining'|trans }}"
+         data-text-length-over="{{ 'shopping.length.over'|trans }}"
+         data-text-note-over="{{ 'shopping.length.note_over'|trans }}">
 
         <p class="notice notice--warning" x-cloak x-show="$store.sync.state === 'unauthorized'">
             {{ 'shopping.unauthorized'|trans }}
@@ -92,6 +98,7 @@
 
         {# Schnelleingabe #}
         <form class="quick-add" @submit.prevent="add()" autocomplete="off">
+            <p class="quick-add__hint" :class="{ 'quick-add__hint--over': lengthHint?.over }" x-cloak x-show="lengthHint" x-text="lengthHint?.text" aria-live="polite"></p>
             <ul class="quick-add__suggestions" x-cloak x-show="suggestions.length > 0">
                 <template x-for="suggestion in suggestions" :key="suggestion.id">
                     <li>
@@ -103,19 +110,18 @@
                     </li>
                 </template>
             </ul>
-            <input class="quick-add__input" type="text" x-model="query" @input="updateSuggestions()"
+            <input class="quick-add__input" type="text" x-model="query"
                    @keydown.escape="query = ''; suggestions = []"
                    placeholder="{{ 'shopping.add_placeholder'|trans }}" aria-label="{{ 'shopping.add_placeholder'|trans }}"
                    enterkeyhint="done" autocapitalize="sentences" autocorrect="on" spellcheck="false" :disabled="!hasData">
-            <button type="submit" class="quick-add__submit" :disabled="!query.trim()" aria-label="{{ 'shopping.add'|trans }}">
+            <button type="submit" class="quick-add__submit" :disabled="!query.trim() || lengthHint?.over === true" aria-label="{{ 'shopping.add'|trans }}">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
             </button>
         </form>
 
-        {# Hinweis mit "Rückgängig" #}
-        <div class="toast" x-cloak x-show="toast" x-transition.opacity role="status" aria-live="polite">
+        {# Hinweise (Fehler, Ablehnungen) #}
+        <div class="toast" :class="{ 'toast--error': toast?.error }" x-cloak x-show="toast" x-transition.opacity role="status" aria-live="polite">
             <span class="toast__text" x-text="toast?.text"></span>
-            <button type="button" class="toast__action" x-show="toast?.undoItemId" @click="undoCheck()">{{ 'shopping.undo'|trans }}</button>
         </div>
 
         {# Bearbeiten-Sheet #}
@@ -131,11 +137,12 @@
                     <label class="field">
                         <span class="field__label">{{ 'shopping.editor.name'|trans }}</span>
                         <input class="field__input" type="text" x-model="editor.name" required maxlength="100" enterkeyhint="done">
+                        <span class="field__hint" x-show="editorNameHint()" x-text="editorNameHint()"></span>
                     </label>
                     <div class="field-row">
                         <label class="field">
                             <span class="field__label">{{ 'shopping.editor.quantity'|trans }}</span>
-                            <input class="field__input" type="text" inputmode="decimal" x-model="editor.quantity" enterkeyhint="done">
+                            <input class="field__input" type="text" inputmode="decimal" x-model="editor.quantity" @input="editor.quantityError = null" enterkeyhint="done">
                         </label>
                         <label class="field">
                             <span class="field__label">{{ 'shopping.editor.unit'|trans }}</span>
@@ -147,6 +154,7 @@
                             </select>
                         </label>
                     </div>
+                    <p class="form-error" x-show="editor.quantityError" x-text="editor.quantityError"></p>
                     <label class="field">
                         <span class="field__label">{{ 'shopping.editor.category'|trans }}</span>
                         <select class="field__input" x-model="editor.categoryId">

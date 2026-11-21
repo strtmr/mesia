@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { buildState } from '../../assets/shopping/core/state.js';
 import { buildListView } from '../../assets/shopping/core/view.js';
-import { addFromText, checkItem, editItem, moveItem, reactivateItem, uncheckItem } from '../../assets/shopping/core/commands.js';
+import { TextTooLongError, addFromText, checkItem, editItem, moveItem, reactivateItem, uncheckItem } from '../../assets/shopping/core/commands.js';
+import { QuantityError } from '../../assets/shopping/core/quantity.js';
 import { catalogEntities } from './support/fixtures.js';
 
 /** Hilfsfunktion: Kommandos nacheinander ausführen, wie die Outbox es tut. */
@@ -25,6 +26,30 @@ describe('Schnelleingabe → Liste', () => {
         expect(view.groups).toHaveLength(1);
         expect(view.groups[0].category.id).toBe('cat-dairy');
         expect(view.groups[0].items[0]).toMatchObject({ name: 'Milch', quantityLabel: '2 l', pending: true });
+    });
+
+    it('rechnet Mengen aus ("2x500g")', () => {
+        const ctx = testCtx();
+        const { outbox } = run(catalogEntities(), [(s) => addFromText(s, '2x500g Milch', ctx)]);
+
+        expect(outbox[0].payload.contribution).toMatchObject({ quantity: 1000, unit: 'g' });
+    });
+
+    it('legt bei unplausibler Menge nichts an', () => {
+        const ctx = testCtx();
+        const state = buildState(catalogEntities());
+
+        expect(() => addFromText(state, '1111111111 Milch', ctx)).toThrow(QuantityError);
+        expect(() => addFromText(state, '1/0 Milch', ctx)).toThrow(QuantityError);
+    });
+
+    it('lehnt zu lange Namen und Notizen ab (Grenzen wie auf dem Server)', () => {
+        const ctx = testCtx();
+        const state = buildState(catalogEntities());
+
+        expect(() => addFromText(state, 'x'.repeat(101), ctx)).toThrow(TextTooLongError);
+        expect(() => addFromText(state, `Milch (${'n'.repeat(201)})`, ctx)).toThrow(TextTooLongError);
+        expect(addFromText(state, `2 l ${'Ü'.repeat(100)}`, ctx).length).toBeGreaterThan(0); // Menge zählt nicht mit
     });
 
     it('legt Unbekanntes als neuen Artikel in "Sonstiges" an', () => {

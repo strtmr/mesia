@@ -99,6 +99,15 @@ export function formatNumber(value) {
     return numberFormat.format(value);
 }
 
+const inputNumberFormat = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 3, useGrouping: false });
+
+/**
+ * Für Eingabefelder: ohne Tausenderpunkt ("1000", "1,5"). Sonst würde "1.000" beim Speichern als 1 gelesen.
+ */
+export function formatInputNumber(value) {
+    return inputNumberFormat.format(value);
+}
+
 function format(quantity, unit) {
     const label = unitLabel(unit);
 

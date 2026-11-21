@@ -14,6 +14,7 @@
 /deploy              export-ignore
 /deptrac.yaml        export-ignore
 /docs                export-ignore
+/feature-ideas.md    export-ignore
 /grumphp.yml         export-ignore
 /package.json        export-ignore
 /package-lock.json   export-ignore

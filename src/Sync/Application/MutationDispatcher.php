@@ -14,6 +14,7 @@ use App\Sync\Domain\Model\ProcessedMutation;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Clock\ClockInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
 use Symfony\Component\Serializer\Exception\ExceptionInterface as SerializerException;
@@ -41,6 +42,7 @@ final readonly class MutationDispatcher
         private DenormalizerInterface $denormalizer,
         private ValidatorInterface $validator,
         private ClockInterface $clock,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -176,7 +178,9 @@ final readonly class MutationDispatcher
         $violations = $this->validator->validate($payload);
         if (\count($violations) > 0) {
             $violation = $violations->get(0);
-            throw new MutationRejected(\sprintf('Ungültige Daten für "%s": %s %s', $mutation->type, $violation->getPropertyPath(), (string) $violation->getMessage()));
+            // Die Meldung landet beim Benutzer (Hinweis in der App), der technische Kontext im Log
+            $this->logger->notice('Mutation abgelehnt: {type} {path}: {message}', ['type' => $mutation->type, 'path' => $violation->getPropertyPath(), 'message' => (string) $violation->getMessage()]);
+            throw new MutationRejected((string) $violation->getMessage());
         }
 
         $now = self::toSeconds($this->clock->now());

@@ -9,6 +9,7 @@ namespace App\Shopping\Domain;
  */
 final class Quantity
 {
+    /** Gleiche Grenze wie MAX_QUANTITY in assets/shopping/core/quantity.js. Beide gemeinsam ändern. */
     public const float MAX = 99999;
 
     public static function fromFloat(?float $value): ?string

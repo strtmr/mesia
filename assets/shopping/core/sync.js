@@ -259,7 +259,7 @@ export class SyncEngine {
             done.push(mutation.seq);
 
             if (result.status === 'rejected' || result.original_status === 'rejected') {
-                rejected.push({ type: mutation.type, error: result.error ?? 'Unbekannter Fehler' });
+                rejected.push({ type: mutation.type, name: mutation.payload?.name ?? null, error: result.error ?? 'Unbekannter Fehler' });
             }
         }
 

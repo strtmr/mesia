@@ -13,8 +13,8 @@ final readonly class ContributionPayload
 {
     public function __construct(
         public Uuid $id,
-        #[Assert\Positive]
-        #[Assert\LessThanOrEqual(Quantity::MAX)]
+        #[Assert\Positive(message: 'Die Menge muss größer als 0 sein.')]
+        #[Assert\LessThanOrEqual(Quantity::MAX, message: 'Die Menge darf höchstens {{ compared_value }} sein.')]
         public ?float $quantity = null,
         public ?Unit $unit = null,
     ) {

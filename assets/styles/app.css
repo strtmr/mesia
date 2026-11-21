@@ -669,14 +669,63 @@ a {
 
 /* ---------- Einkaufsliste ---------- */
 
+/*
+ * Feste App-Hülle in Größe des sichtbaren Bereichs (Werte setzt trackVisualViewport() in shopping/ui/list.js).
+ * Nur die Liste scrollt. Durch "transform" beziehen sich alle fixierten Elemente darin (Eingabeleiste, Tab-Leiste,
+ * Toast) auf die Hülle statt auf das Layout. Deshalb sitzen sie bei offener iOS-Tastatur direkt darüber.
+ */
+body.page-shopping {
+    overflow: hidden;
+}
+
+.page-shopping .app {
+    position: fixed;
+    inset: 0 0 auto 0;
+    display: flex;
+    flex-direction: column;
+    height: var(--vv-height, 100dvh);
+    min-height: 0;
+    overflow: hidden;
+    transform: translateY(var(--vv-offset, 0px));
+}
+
+.page-shopping .app-header {
+    position: relative;
+    flex: none;
+}
+
+.page-shopping .app-main {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    /* Platz für Eingabeleiste + Tab-Leiste */
+    padding-bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 96px);
+}
+
+/* Beim Hineinscrollen eines Eintrags nicht unter der Eingabeleiste landen */
+.page-shopping .item-row {
+    scroll-margin-bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 80px);
+}
+
 /* Hinweis "Zum Home-Bildschirm" über der Eingabeleiste statt darauf */
 .page-shopping .install-hint {
     bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 72px);
 }
 
-.page-shopping .app-main {
-    /* Platz für Eingabeleiste + Tab-Leiste */
-    padding-bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 96px);
+/* Tastatur offen: Tab-Leiste weg (wie bei iOS-Apps), Eingabeleiste direkt über der Tastatur */
+html[data-keyboard="open"] .page-shopping .tabbar,
+html[data-keyboard="open"] .page-shopping .install-hint {
+    display: none;
+}
+
+html[data-keyboard="open"] .page-shopping .app-main {
+    padding-bottom: 96px;
+}
+
+html[data-keyboard="open"] .page-shopping .item-row {
+    scroll-margin-bottom: 80px;
 }
 
 .shopping__loading {
@@ -760,6 +809,8 @@ a {
     background: color-mix(in srgb, var(--color-accent) 25%, transparent);
 }
 
+/* Abhaken: kurzes visuelles Feedback (Häkchen, Zeile blendet aus), dann wandert der Eintrag nach „Erledigt“ */
+.item-row--checking .item-check__circle,
 .item-check.is-checked .item-check__circle {
     border-color: var(--color-accent);
     background: var(--color-accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center / 16px no-repeat;
@@ -850,7 +901,7 @@ a {
 .quick-add {
     position: fixed;
     right: 0;
-    bottom: max(calc(var(--tabbar-height) + var(--safe-bottom)), var(--keyboard-inset, 0px));
+    bottom: calc(var(--tabbar-height) + var(--safe-bottom));
     left: 0;
     z-index: 15;
     display: flex;
@@ -940,12 +991,49 @@ a {
     background: var(--color-separator);
 }
 
+.toast.toast--error {
+    background: var(--color-danger);
+    color: #fff;
+}
+
+/* Längenhinweis über dem Eingabefeld ("Noch 8 Zeichen" / "3 Zeichen zu viel") */
+.quick-add {
+    flex-wrap: wrap;
+}
+
+.quick-add__hint {
+    flex-basis: 100%;
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 13px;
+    text-align: right;
+}
+
+.quick-add__hint--over {
+    color: var(--color-danger);
+    font-weight: 600;
+}
+
+.field__hint {
+    color: var(--color-text-muted);
+    font-size: 13px;
+    text-align: right;
+}
+
+html[data-keyboard="open"] .quick-add {
+    bottom: 0;
+}
+
+html[data-keyboard="open"] .toast {
+    bottom: 72px;
+}
+
 /* ---------- Toast ---------- */
 
 .toast {
     position: fixed;
     right: calc(var(--space-4) + var(--safe-right));
-    bottom: calc(max(calc(var(--tabbar-height) + var(--safe-bottom)), var(--keyboard-inset, 0px)) + 72px);
+    bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 72px);
     left: calc(var(--space-4) + var(--safe-left));
     z-index: 25;
     display: flex;
@@ -1044,4 +1132,19 @@ select.field__input {
     background-position: right 10px center;
     background-repeat: no-repeat;
     background-size: 18px;
+}
+
+.item-row--checking {
+    opacity: 0.45;
+    transition: opacity 0.3s ease;
+}
+
+.item-row--checking .item-check__circle {
+    animation: check-pop 0.3s ease;
+}
+
+@keyframes check-pop {
+    50% {
+        transform: scale(1.2);
+    }
 }

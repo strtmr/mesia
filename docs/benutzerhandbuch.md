@@ -44,14 +44,23 @@ Artikel eingeben. Mengen erkennt die App automatisch:
 | `3 Zwiebeln`, `3 Zwiebel` | Zwiebeln · 3 Stk |
 | `500g Hack` | Hackfleisch · 500 g |
 | `Butter (die gute)` | Butter mit Notiz „die gute“ |
+| `2x500g Mehl`, `2 x 500 g Mehl` | Mehl · 1.000 g |
+| `3+2 Äpfel`, `3x Äpfel` | Äpfel · 5 Stk bzw. 3 Stk |
+| `1/2 Zitrone` | Zitrone · 0,5 Stk |
+
+Mengen darf man ausrechnen lassen: `+`, `-`, `x` bzw. `*` und `/` bzw. `:` (Punkt- vor Strichrechnung). Erlaubt
+sind Mengen bis 99.999. Ist eine Menge unplausibel, erscheint ein Hinweis und der Text bleibt zum Korrigieren stehen.
+
+Ein Artikelname darf höchstens 100 Zeichen lang sein (eine Notiz in Klammern 200). Ab 90 Zeichen zeigt die Eingabe
+„Noch … Zeichen“, darüber wird der Hinweis rot und Hinzufügen ist gesperrt.
 
 - Artikel werden **automatisch einsortiert** (Obst & Gemüse, Milchprodukte …). Unbekanntes landet in „Sonstiges“.
   Der Katalog kennt auch laktosefreie und vegane Produkte (z. B. „Laktosefreie Milch“, „Hafersahne“, „Veggie-Hack“).
 - Beim Tippen erscheinen **Vorschläge**, zuerst Dinge, die ihr schon gekauft habt. Tippfehler werden verziehen.
 - Steht ein Artikel schon auf der Liste, kommt die Menge dazu statt eines zweiten Eintrags.
 
-**Abhaken:** auf den Kreis tippen. Der Artikel wandert nach **„Erledigt“** (unten, aufklappbar). Für ein paar Sekunden
-erscheint **„Rückgängig“**. Tippst du einen erledigten Artikel an, kommt er wieder auf die Liste.
+**Abhaken:** auf den Kreis tippen. Ein kurzes Häkchen bestätigt es, dann wandert der Artikel nach **„Erledigt“**
+(unten, aufklappbar). Versehentlich abgehakt? Den Artikel in „Erledigt“ antippen, dann kommt er wieder auf die Liste.
 
 **Bearbeiten:** auf den Namen tippen. Dort änderst du Name, Menge, Einheit, Kategorie und Notiz oder löschst den Artikel.
 Änderst du die Kategorie, merkt sich die App das für das nächste Mal.

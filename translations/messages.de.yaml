@@ -39,9 +39,16 @@ shopping:
     add_placeholder: Artikel hinzufügen …
     check_label: Abhaken
     reactivate_label: Wieder auf die Liste
-    undo: Rückgängig
     toast:
-        checked: '„%name%“ erledigt'
+        rejected: '„%name%“ wurde nicht gespeichert: %error%'
+    length:
+        remaining: 'Noch %count% Zeichen'
+        over: '%count% Zeichen zu viel, höchstens %max% sind möglich'
+        note_over: 'Notiz: %count% Zeichen zu viel, höchstens %max% sind möglich'
+    quantity:
+        too_large: 'Die Menge %value% ist zu groß, höchstens %max% sind möglich.'
+        not_positive: 'Die Menge muss größer als 0 sein.'
+        invalid: 'Diese Menge kann ich nicht ausrechnen. Erlaubt sind Zahlen und + − × ÷, z. B. 2x500.'
     suggestion:
         on_list: auf der Liste
         history: schon gekauft

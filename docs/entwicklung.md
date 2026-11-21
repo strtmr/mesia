@@ -87,6 +87,7 @@ core/   reines JavaScript ohne DOM, getestet mit Vitest (tests/js)
   state.js     buildState(server, outbox): Serverzustand + ausstehende Mutationen → Anzeigezustand (spiegelt die Server-Handler)
   commands.js  fachliche Aktionen → Mutationen (addFromText, checkItem, editItem, moveItem …)
   sync.js      SyncEngine: push → pull → Outbox bereinigen, Status, Timer
+  quantity.js  Mengen: Grundrechenarten auswerten, Grenzen prüfen (MAX_QUANTITY = PHP Quantity::MAX, gemeinsam ändern)
   quickadd.js, matcher.js, normalize.js, units.js, sortkey.js, view.js, api.js
 ui/     Alpine.js: app.js (Einstieg, Store "sync"), list.js (Komponente)
 ```
@@ -100,9 +101,23 @@ ui/     Alpine.js: app.js (Einstieg, Store "sync"), list.js (Komponente)
   setzt `turbo-cache-control: no-cache`, damit Turbo keine Alpine-Ausgabe wiederverwendet.
 - **Alpine:** `$refs`/`$root` sind in Methoden nach einem `await` nicht mehr verfügbar. Die Komponente merkt sich ihr
   Wurzelelement in `init()`.
+- **Alpine:** `@input` im Template läuft vor `x-model`, sieht also den alten Wert. Für Reaktionen auf Eingaben
+  `$watch('query', …)` nutzen. Bindungen wie `:disabled` immer boolesch machen (`=== true`), ein `undefined` entfernt
+  das Attribut nicht zuverlässig.
+- **Längen:** Name 100, Notiz 200 Zeichen (`NAME_MAX_LENGTH`/`NOTE_MAX_LENGTH` in `quickadd.js`, gleich den
+  Spaltenlängen und Payload-Constraints). Gezählt wird wie `mb_strlen` (`textLength()`).
+- **Layout der Listenseite (iOS-Tastatur):** Die Seite ist eine feste Hülle in Größe von `visualViewport`
+  (`trackVisualViewport()` in `ui/list.js` setzt `--vv-height`, `--vv-offset` und `html[data-keyboard]`). Nur
+  `.app-main` scrollt. Wegen `transform` beziehen sich fixierte Elemente darin (Eingabeleiste, Tab-Leiste, Toast) auf
+  die Hülle, sitzen also bei offener Tastatur direkt darüber. iOS ändert beim Öffnen der Tastatur nur den sichtbaren
+  Bereich, nicht das Layout. Mit Chromium lässt sich das nicht testen, nur auf dem iPhone.
 - **Drag & Drop:** SortableJS verschiebt DOM-Knoten. `onEnd` setzt das DOM zurück und löst nur eine Mutation aus,
   Alpine rendert die neue Reihenfolge.
 - UI-Texte stehen im Twig-Template bzw. in `translations/`, nicht im JavaScript.
+- **Mengen in Eingabefeldern** immer mit `formatInputNumber()` (ohne Tausenderpunkt) füllen, sonst wird „1.000“ beim
+  Speichern als 1 gelesen. `formatNumber()` nur für die Anzeige.
+- **Abgelehnte Mutationen** zeigt die App mit Artikelname und der Server-Meldung an. Meldungen in Payload-Constraints
+  deshalb deutsch und für Benutzer formulieren (der Dispatcher gibt sie unverändert weiter, Details ins Log).
 
 ## Service Worker (Offline-Start)
 

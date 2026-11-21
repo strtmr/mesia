@@ -280,6 +280,24 @@ final class SyncApiTest extends WebTestCase
         self::assertTrue($this->pulledEntity($cursor, 'category', $payload['category_id'])['deleted']);
     }
 
+    public function testImplausibleQuantityIsRejectedWithAReadableMessage(): void
+    {
+        $payload = $this->addItemPayload($this->uuid(), 'Schokolade', quantity: 1111111111);
+
+        $result = $this->pushOne('item.add', $payload);
+
+        self::assertSame('rejected', $result['status']);
+        self::assertSame('Die Menge darf höchstens 99999 sein.', $result['error']);
+    }
+
+    public function testTooLongNameIsRejectedWithAReadableMessage(): void
+    {
+        $result = $this->pushOne('article.create', ['article_id' => $this->uuid(), 'name' => str_repeat('ä', 101), 'category_id' => $this->fallbackCategoryId()]);
+
+        self::assertSame('rejected', $result['status']);
+        self::assertSame('Der Name darf höchstens 100 Zeichen lang sein.', $result['error']);
+    }
+
     public function testItemAddedOfflineInADeletedCategoryLandsInTheFallback(): void
     {
         $payload = $this->addItemPayload($this->uuid(), 'Apfelsaft');

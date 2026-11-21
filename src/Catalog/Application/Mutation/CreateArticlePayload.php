@@ -12,7 +12,7 @@ final readonly class CreateArticlePayload
     public function __construct(
         public Uuid $articleId,
         #[Assert\NotBlank]
-        #[Assert\Length(max: 100)]
+        #[Assert\Length(max: 100, maxMessage: 'Der Name darf höchstens {{ limit }} Zeichen lang sein.')]
         public string $name,
         public Uuid $categoryId,
     ) {

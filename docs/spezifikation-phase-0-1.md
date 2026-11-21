@@ -445,6 +445,10 @@ Vitest. Später Playwright-E2E (WebKit). Plattform: **GitHub Actions** (privates
 > Umbenennen, Symbol ändern, Anlegen und Löschen. Änderungen laufen über das Änderungsprotokoll zu allen Geräten.
 > Abweichung: Kategorien sind nicht offline bearbeitbar (keine Kategorie-Mutationen). Mutationen mit gelöschter
 > Kategorie weichen auf „Sonstiges“ aus.
+>
+> **Stand 2026-11-21:** Aus dem Alltagstest: Listenseite als feste Hülle über der iOS-Tastatur, Grundrechenarten in
+> Mengen, verständliche Hinweise bei unplausiblen Mengen. Abweichung von 6.2: Abhaken zeigt keinen „Rückgängig“-Toast
+> mehr, nur ein kurzes Häkchen (Wunsch aus dem Alltag). Rückgängig per Antippen in „Erledigt“.
 
 | # | Paket | Fertig, wenn … |
 |---|-------|----------------|

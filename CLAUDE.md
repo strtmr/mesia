@@ -12,6 +12,8 @@
   statt neu anlegen.
 - Deployment und Server: `docs/betrieb.md` (Skripte in `deploy/`). Was nicht aufs Live-System gehört, steht als
   `export-ignore` in `.gitattributes`.
+- Ideen und Bugs aus dem Alltag sammelt der Benutzer in `feature-ideas.md`. Vor jeder Planung lesen und einordnen
+  (Bugs zuerst), Erledigtes nach Rückfrage abhaken.
 - Planung und Entscheidungen: `docs/architektur.md` (Kapitel 0 hat Vorrang), aktuelle Phase: `docs/spezifikation-phase-0-1.md`.
 - Alle PHP-/Composer-/Console-/npm-Befehle laufen im DDEV-Container: `ddev exec bin/console …`, `ddev composer …`, `ddev npm …`.
 - Vor dem Abschluss einer Änderung: `ddev exec vendor/bin/grumphp run` und `ddev exec bin/phpunit` müssen grün sein.

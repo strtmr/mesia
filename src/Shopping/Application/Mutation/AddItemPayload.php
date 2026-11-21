@@ -15,7 +15,7 @@ final readonly class AddItemPayload
         public Uuid $itemId,
         public Uuid $listId,
         #[Assert\NotBlank]
-        #[Assert\Length(max: 100)]
+        #[Assert\Length(max: 100, maxMessage: 'Der Name darf höchstens {{ limit }} Zeichen lang sein.')]
         public string $name,
         public Uuid $categoryId,
         #[Assert\Callback([self::class, 'validateSortKey'])]
@@ -23,7 +23,7 @@ final readonly class AddItemPayload
         #[Assert\Valid]
         public ContributionPayload $contribution,
         public ?Uuid $articleId = null,
-        #[Assert\Length(max: 200)]
+        #[Assert\Length(max: 200, maxMessage: 'Die Notiz darf höchstens {{ limit }} Zeichen lang sein.')]
         public ?string $note = null,
     ) {
     }

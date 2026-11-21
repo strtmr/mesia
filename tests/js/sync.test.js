@@ -177,7 +177,8 @@ describe('SyncEngine', () => {
         await engine.sync();
 
         expect(engine.status.pending).toBe(0);
-        expect(engine.takeRejected()).toHaveLength(1);
+        const [rejected] = engine.takeRejected();
+        expect(rejected).toMatchObject({ type: 'item.check', error: 'Eintrag nicht gefunden' });
     });
 
     it('verwirft lokale Daten, wenn sich der Haushalt geändert hat', async () => {
