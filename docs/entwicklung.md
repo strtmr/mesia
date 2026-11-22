@@ -178,23 +178,22 @@ ausgeliefert. Nur so kennt er die versionierten AssetMapper-URLs.
 
 Gestaltungsregeln, Farben, Typografie, Komponenten und Kontrastwerte: [brand-book.md](brand-book.md) (lebende Fassung,
 Grundlage `MESIA_Brand_Book_v1.pdf`). Hier nur die technischen Punkte. Palette:
-`#01161e` Ink, `#124559` Deep, `#598392` Slate, `#aec3b0` Sage, `#eff6e0` Cream.
+`#01161e` Ink, `#124559` Deep, `#598392` Slate, `#aec3b0` Sage, `#eff6e0` Cream, `#ff6a2b` Signal-Orange.
 
 - **Farben nur über Tokens** in `assets/styles/app.css` (`--mesia-*` Palette, `--color-*` Rollen, hell und dunkel).
-  Gedämpfter Text ist aus Slate abgedunkelt (`#4a6b78`), damit er 4,5:1 erreicht (WCAG AA).
-- **Schrift:** Manrope (OFL), selbst ausgeliefert aus `assets/fonts/` (Quelle: npm `@fontsource-variable/manrope`,
-  Lizenz in `assets/fonts/MANROPE-LICENSE.txt`). Kein Google-Fonts-Abruf (Datenschutz, offline).
+  `--color-accent` (Deep/Sage) für Links und Überschriften, `--color-action` (Signal-Orange, Schrift Ink) für
+  Primärknöpfe, Plus und Häkchen. Gedämpfter Text ist aus Slate abgedunkelt (`#4a6b78`, 4,5:1).
+- **Schriften** (OFL, selbst ausgeliefert aus `assets/fonts/`, Quelle npm `@fontsource…`, Lizenzen daneben):
+  Manrope für die App, Archivo Black nur für die Wortmarke (`.wordmark`, Versalien per CSS). Kein Google-Fonts-Abruf.
 - **Radien:** Eingaben 8, Knöpfe 10, Karten 14, große Flächen 20 px.
 - **Dichte:** Grundschrift 16 px (Eingaben nie kleiner, sonst zoomt iOS), Zeilen und Trefferflächen 44 px
   (`--touch-target`), Seitentitel 28 px, Kategorie-Überschriften 16 px in Markenfarbe.
-- **Bildmarke:** `public/icons/icon.svg` (abgerundet) und `icon-maskable.svg` (randlos) sind die Quellen der PNG-Icons,
-  `templates/app/_brand_mark.html.twig` die Variante ohne Hintergrund (Farben per CSS, Dark Mode). Wortmarke immer
-  klein „mesia“ (`.wordmark`). PNGs neu erzeugen (im Container):
-  `cd public/icons && magick -background none -density 384 icon.svg -resize 512x512 icon-512.png` (analog 192,
-  maskable 512, `apple-touch-icon.png` 180 aus der randlosen Variante mit `-flatten`).
-- **Favicon:** `public/icons/favicon.svg` (ohne Dampf, größer) und `public/favicon.ico` (16/32/48 px, erzeugt mit
-  `magick -background none -density 384 icons/favicon.svg -define icon:auto-resize=48,32,16 favicon.ico` in `public/`).
-- Der Brand-Book-Entwurf hat eine orange Schüssel als Food-Akzent. Mit der eigenen Palette ist sie Sage/Slate.
+- **Bildmarke im Template:** `templates/app/_brand_mark.html.twig`, `variant: 'sticker'` (Standard, Login) oder
+  `'flat'` (Seitenkopf, Farben per CSS `.brand-mark__table` / `.brand-mark__bowl`).
+- **Icons:** Quellen sind `public/icons/icon.svg` (abgerundet), `icon-maskable.svg` (randlos, auch iOS) und
+  `favicon.svg` (Stufe Kontur). PNGs und `public/favicon.ico` erzeugt `ddev exec node scripts/render-icons.mjs`.
+  Es rendert mit Chromium (Playwright), weil ImageMagick SVG-Konturen nicht darstellt. ImageMagick fügt nur die
+  `favicon.ico` zusammen.
 
 ## Version und Neuigkeiten
 

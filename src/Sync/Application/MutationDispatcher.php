@@ -11,11 +11,11 @@ use App\Shared\Application\Sync\MutationOutcome;
 use App\Shared\Application\Sync\MutationRejected;
 use App\Shared\Infrastructure\Persistence\HouseholdWriteLock;
 use App\Sync\Domain\Model\ProcessedMutation;
+use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Psr\Clock\ClockInterface;
 use Psr\Container\ContainerInterface;
-use Doctrine\DBAL\Exception\DriverException;
-use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
@@ -247,9 +247,6 @@ final readonly class MutationDispatcher
     }
 
     /**
-     * @param array<string, mixed> $result
-     */
-    /**
      * SQLSTATE-Klasse 22 (Datenfehler, z. B. Wert zu lang) oder 23 (Integritätsverletzung): Ein neuer Versuch mit
      * denselben Daten scheitert wieder.
      */
@@ -258,6 +255,9 @@ final readonly class MutationDispatcher
         return $exception instanceof DriverException && \in_array(substr((string) $exception->getSQLState(), 0, 2), ['22', '23'], true);
     }
 
+    /**
+     * @param array<string, mixed> $result
+     */
     private function remember(Uuid $householdId, string $deviceId, IncomingMutation $mutation, array $result): void
     {
         $this->entityManager->persist(new ProcessedMutation(

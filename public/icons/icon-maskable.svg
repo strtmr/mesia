@@ -1,16 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- MESIA Bildmarke: M als Tisch mit Schüssel, randlos (Android maskable, iOS-Icon). Quelle für alle PNG-Icons (siehe docs/entwicklung.md) -->
+  <!-- MESIA App-Icon randlos (Android maskable, iOS), Zeichen in der sicheren Zone. Quelle der PNG-Icons: ddev exec node scripts/render-icons.mjs -->
   <rect width="512" height="512" fill="#124559"/>
-  <g transform="translate(256 256) scale(0.8) translate(-256 -270)">
-    <!-- Dampf -->
-    <path d="M214 176 C200 158 228 146 214 124 C210 118 222 112 226 120 C240 144 212 156 226 172 Z" fill="#aec3b0"/>
-    <path d="M250 176 C236 156 266 144 250 116 C246 110 258 104 262 112 C278 140 248 154 262 172 Z" fill="#aec3b0"/>
-    <path d="M286 176 C272 158 300 146 286 124 C282 118 294 112 298 120 C312 144 284 156 298 172 Z" fill="#aec3b0"/>
-    <!-- Schüssel -->
-    <path d="M164 192 H348 C348 232 306 252 256 252 C206 252 164 232 164 192 Z" fill="#aec3b0"/>
-    <!-- Tischplatte -->
-    <rect x="104" y="256" width="304" height="26" rx="13" fill="#eff6e0"/>
-    <!-- M als Tischgestell -->
-    <path fill="#eff6e0" stroke-linejoin="round" d="M124 428 V312 Q124 284 152 284 H196 Q206 284 212 292 L256 350 L300 292 Q306 284 316 284 H360 Q388 284 388 312 V428 H332 V352 L268 420 Q256 432 244 420 L180 352 V428 Z"/>
-  </g>
+  <svg x="68" y="98" width="376" height="327" viewBox="70 140 380 330"><g transform="rotate(-5 256 300)" stroke-width="22" stroke-linejoin="round" paint-order="stroke"><g transform="translate(14 14)" stroke="#01161e"><path d="M168 176 H344 C344 216 304 236 256 236 C208 236 168 216 168 176 Z" fill="#01161e"/><rect x="100" y="240" width="312" height="32" rx="16" fill="#01161e"/><path d="M124 428 V306 Q124 278 152 278 H200 Q210 278 216 286 L256 338 L296 286 Q302 278 312 278 H360 Q388 278 388 306 V428 H322 V364 L268 418 Q256 432 244 418 L190 364 V428 Z" fill="#01161e"/></g><g stroke="#01161e"><path d="M168 176 H344 C344 216 304 236 256 236 C208 236 168 216 168 176 Z" fill="#ff6a2b"/><rect x="100" y="240" width="312" height="32" rx="16" fill="#eff6e0"/><path d="M124 428 V306 Q124 278 152 278 H200 Q210 278 216 286 L256 338 L296 286 Q302 278 312 278 H360 Q388 278 388 306 V428 H322 V364 L268 418 Q256 432 244 418 L190 364 V428 Z" fill="#eff6e0"/></g></g></svg>
 </svg>

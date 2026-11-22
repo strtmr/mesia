@@ -18,6 +18,15 @@
     src: url("../fonts/manrope-latin-wght.woff2") format("woff2-variations"), url("../fonts/manrope-latin-wght.woff2") format("woff2");
 }
 
+/* Archivo Black (OFL-1.1, assets/fonts/ARCHIVO-LICENSE.txt): nur für die Wortmarke "MESIA" und Merch */
+@font-face {
+    font-family: "Archivo Black";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("../fonts/archivo-black-latin.woff2") format("woff2");
+}
+
 /* ---------- Design-Tokens (Brand Book MESIA, Farbpalette angepasst) ---------- */
 
 :root {
@@ -29,6 +38,8 @@
     --mesia-slate: #598392;
     --mesia-sage: #aec3b0;
     --mesia-cream: #eff6e0;
+    /* Signalfarbe: Aktionen, Häkchen, Schüssel der Bildmarke. Immer mit dunkler Schrift (Ink: 6,5:1) */
+    --mesia-orange: #ff6a2b;
 
     /* Rollen (helles Thema) */
     --color-bg: var(--mesia-cream);
@@ -40,6 +51,8 @@
     --color-accent: var(--mesia-deep);
     --color-accent-contrast: #ffffff;
     --color-accent-soft: var(--mesia-sage);
+    --color-action: var(--mesia-orange);
+    --color-action-contrast: var(--mesia-ink);
     --color-danger: #c84b45;
     /* Bernstein: mindestens 3:1 auf Weiß und Creme (WCAG, grafische Hinweise wie der Punkt "ausstehend") */
     --color-warning: #b0740f;
@@ -499,8 +512,8 @@ a {
 }
 
 .button--primary {
-    background: var(--color-accent);
-    color: var(--color-accent-contrast);
+    background: var(--color-action);
+    color: var(--color-action-contrast);
 }
 
 .button--primary:active {
@@ -525,41 +538,39 @@ a {
     text-align: left;
 }
 
-/* Bildmarke (templates/app/_brand_mark.html.twig): Tisch in Markenfarbe, Schüssel und Dampf als Akzent */
+/* Bildmarke, flache Variante (Seitenkopf): M in Akzentfarbe, Schüssel in Signalfarbe.
+   Die Sticker-Variante hat feste Farben im Template. */
 .brand-mark__table {
     fill: var(--color-accent);
-}
-
-.brand-mark__accent {
-    fill: var(--mesia-slate);
 }
 
 @media (prefers-color-scheme: dark) {
     .brand-mark__table {
         fill: var(--mesia-cream);
     }
-
-    .brand-mark__accent {
-        fill: var(--mesia-sage);
-    }
 }
 
-/* Wortmarke: immer klein geschrieben "mesia" */
+.brand-mark__bowl {
+    fill: var(--mesia-orange);
+}
+
+/* Wortmarke: "MESIA" in Archivo Black, Versalien */
 .wordmark {
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    text-transform: lowercase;
+    font-family: "Archivo Black", var(--font-system);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
 }
 
 .login__mark {
-    width: 88px;
+    width: 132px;
     height: auto;
 }
 
 .login__title {
-    margin: var(--space-2) 0 0;
-    color: var(--color-accent);
-    font-size: 40px;
+    margin: var(--space-3) 0 0;
+    color: var(--color-text);
+    font-size: 44px;
     line-height: 1;
 }
 
@@ -770,8 +781,8 @@ a {
     padding: 0 var(--space-4);
     border: 0;
     border-radius: var(--radius-m);
-    background: var(--color-accent);
-    color: var(--color-accent-contrast);
+    background: var(--color-action);
+    color: var(--color-action-contrast);
     font: inherit;
     font-weight: 600;
 }
@@ -995,8 +1006,9 @@ html[data-keyboard="open"] .page-shopping .item-row {
 /* Abhaken: kurzes visuelles Feedback (Häkchen, Zeile blendet aus), dann wandert der Eintrag nach „Erledigt“ */
 .item-row--checking .item-check__circle,
 .item-check.is-checked .item-check__circle {
-    border-color: var(--color-accent);
-    background: var(--color-accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center / 16px no-repeat;
+    border-color: var(--color-action);
+    /* Häkchen in Ink: auf Orange 6,5:1 (Weiß hätte nur 2,9:1) */
+    background: var(--color-action) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2301161e' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center / 16px no-repeat;
 }
 
 .item-body {
@@ -1122,8 +1134,8 @@ html[data-keyboard="open"] .page-shopping .item-row {
     height: var(--touch-target);
     border: 0;
     border-radius: 50%;
-    background: var(--color-accent);
-    color: var(--color-accent-contrast);
+    background: var(--color-action);
+    color: var(--color-action-contrast);
     cursor: pointer;
 }
 

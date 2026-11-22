@@ -12,6 +12,7 @@
 /README.md           export-ignore
 /bin/phpunit         export-ignore
 /deploy              export-ignore
+/scripts             export-ignore
 /deptrac.yaml        export-ignore
 /docs                export-ignore
 /feature-ideas.md    export-ignore

@@ -13,6 +13,7 @@ werden (und umgekehrt).
 | Version | Datum | Änderung |
 |---|---|---|
 | 1.0 | – | PDF: Markenidee, Logo-Konzept, Startpalette, Typografie, Tokens |
+| 1.3 | 2026-11-22 | Streetstyle: Signal-Orange als Aktionsfarbe, Sticker-Bildmarke mit Größenstufen, Wortmarke „MESIA“ in Archivo Black |
 | 1.2 | 2026-11-22 | Warnfarbe hell auf `#b0740f` (Kontrast 3:1) |
 | 1.1 | 2026-11-22 | Eigene Farbpalette, Bildmarke als SVG nachgebaut, Manrope eingebunden, Abstände und Dichte der App, Kontrastwerte gemessen |
 
@@ -32,12 +33,12 @@ Einstieg liegt bei Einkauf, Rezepten und Planung, die Markenidee bleibt offen f�
 
 | Element | Stand |
 |---|---|
-| Name | MESIA, Wortmarke klein „mesia“ |
+| Name | MESIA, Wortmarke in Versalien „MESIA“ **(geändert)** |
 | Claim | „Life, intelligently connected.“ (exakt so) |
-| Bildmarke | M als Tisch mit Schüssel, **(geändert)** als SVG nachgebaut, siehe Kapitel 3 |
-| App-Icon | Dunkler Grund (Deep), helles Symbol, Schüssel in Sage |
-| Farben | **(geändert)** eigene Palette, siehe Kapitel 5, in der App umgesetzt |
-| Typografie | Manrope, **(neu)** in der App umgesetzt (selbst ausgeliefert) |
+| Bildmarke | M als Tisch mit Schüssel, **(geändert)** kräftiges Sticker-M mit Kontur und Versatz, siehe Kapitel 3 |
+| App-Icon | Deep, Sticker-M in Creme, Schüssel in Signal-Orange |
+| Farben | **(geändert)** eigene Palette plus Signal-Orange, siehe Kapitel 5 |
+| Typografie | Manrope für die App, **(neu)** Archivo Black für Wortmarke und Merch |
 | Markenrecht, Domain | noch nicht geprüft (App läuft unter mesia.strtmr.de) |
 
 ---
@@ -75,40 +76,41 @@ Kurz, klar, freundlich und lösungsorientiert. Wie ein kompetenter Begleiter: hi
 
 ## 3. Logo-System
 
-Die Bildmarke verbindet drei Ebenen: Das M bildet das Tischgestell, die Schüssel steht für Mahlzeiten, die reduzierte
-Formensprache für die digitale Produktwelt.
+Die Bildmarke verbindet drei Ebenen: Das M bildet das Tischgestell, die Schüssel steht für Mahlzeiten, die
+**(neu)** Sticker-Anmutung (Kontur, Versatz, leichte Drehung) bringt Streetstyle für die Zielgruppe Eltern 30–45.
 
-### Bildmarke (geändert: als SVG nachgebaut)
+### Bildmarke (geändert: Sticker-M)
 
-- **Aufbau:** kräftiges M als Tischgestell (zwei Beine, V-Kerbe von oben, Tischplatte liegt auf den Schultern),
-  schmale gerade Tischplatte mit runden Enden, mittige Schüssel, darüber drei Dampflinien.
-- **Proportionen** (Koordinaten im 512er-Raster): Tischplatte 304 × 26, M 264 × 144, Schüssel 184 × 60,
-  Dampf 3 Linien à ca. 60 hoch. Die Schüssel dominiert das M nicht.
-- **Varianten:**
+- **Aufbau:** kräftiges M als Tischgestell (breite Beine, V-Kerbe von oben, die Tischplatte liegt auf den
+  Schultern), dicke gerade Tischplatte mit runden Enden, darauf eine Schüssel. **Kein Dampf mehr:** Dampflinien
+  erinnerten zu sehr an das Java-Logo. Die Wärme trägt jetzt die Farbe der Schüssel (Signal-Orange).
+- **Sticker:** Creme mit Kontur in Ink, Versatz (Schatten) in Deep nach rechts unten, um 5° gegen den Uhrzeigersinn
+  gedreht. Auf dunklem Grund ist der Versatz Ink.
+- **Proportionen** (512er-Raster): Tischplatte 312 × 32, M 264 × 150, Schüssel 176 × 60, Kontur 11, Versatz 14.
 
-| Variante | Einsatz | Datei |
-|---|---|---|
-| Voll (mit Dampf) | Login, App-Icon, große Darstellungen | `templates/app/_brand_mark.html.twig` |
-| Kompakt (ohne Dampf) | ab ca. 32 px und kleiner: Seitenkopf, Favicon | `_brand_mark.html.twig` mit `compact: true`, `public/icons/favicon.svg` |
-| Auf dunklem Grund | App-Icon, Favicon | `public/icons/icon.svg`, `icon-maskable.svg` |
+### Größenstufen
 
-- **Farben der Bildmarke:** Auf hellem Grund Tisch/M in Deep, Schüssel und Dampf in Slate. Auf dunklem Grund Tisch/M
-  in Cream, Schüssel und Dampf in Sage. In der App über CSS gesteuert (`.brand-mark__table`, `.brand-mark__accent`),
-  der Dark Mode wechselt automatisch.
-- **Im Seitenkopf (neu):** kompakte Variante, 30 px hoch, links neben dem Seitentitel. Der Fuß des M steht auf der
-  Grundlinie des Titels, die Oberkante auf Höhe der Großbuchstaben.
+| Stufe | Größe | Gestaltung | Einsatz | Datei |
+|---|---|---|---|---|
+| Sticker | ab ca. 80 px | Kontur, Versatz, Drehung | Login, App-Icon, Merch | `templates/app/_brand_mark.html.twig` (Standard), `public/icons/icon.svg` |
+| Kontur | 32–80 px | Kontur ohne Versatz und Drehung | Favicon | `public/icons/favicon.svg` |
+| Flach | bis ca. 40 px in der App | ohne Kontur: M in Akzentfarbe (Deep, dunkel: Creme), Schüssel Signal-Orange | Seitenkopf | `_brand_mark.html.twig` mit `variant: 'flat'` |
+
+Im Seitenkopf steht die flache Bildmarke 30 px hoch links neben dem Titel, der Fuß des M auf der Grundlinie.
 
 ### Wortmarke und Claim
 
-- Immer klein: **mesia**. In der App Manrope ExtraBold (800), Laufweite −0,03 em, in Deep (hell) bzw. Sage (dunkel).
-- Die PDF-Idee eines orangen i-Punkts entfällt mit der neuen Palette (siehe Kapitel 5).
+- **(geändert)** **MESIA** in **Archivo Black**, Versalien, Laufweite +0,01 em. Im HTML steht „mesia“, die Versalien
+  kommen aus CSS (`.wordmark`), damit Screenreader den Namen normal vorlesen.
+- Farbe: Ink auf hellem, Creme auf dunklem Grund. Auf Signal-Orange immer Ink.
 - Claim exakt: „Life, intelligently connected.“, Manrope Medium, gedämpfte Textfarbe.
 
 ### Schutzraum und Verwendung
 
 - Rund um das Logo mindestens die Höhe der Schüssel frei lassen.
-- Nicht stauchen, kippen, mit Illustrationen kombinieren, mit Effekten (Schatten, Verläufe) versehen oder umfärben
-  außerhalb der Palette.
+- Nicht stauchen, mit Illustrationen kombinieren, mit zusätzlichen Effekten (Verläufe, weiche Schatten) versehen oder
+  außerhalb der Palette umfärben. Die Drehung ist Teil des Zeichens, nicht weiter drehen.
+- Sticker-Look nur für Marke und Merch, nicht für Bedienelemente der App.
 
 ---
 
@@ -117,15 +119,16 @@ Formensprache für die digitale Produktwelt.
 | Datei | Größe | Hinweis |
 |---|---|---|
 | `public/icons/icon.svg` | Vektor | abgerundetes Quadrat (Radius 112/512), Quelle für die PNGs |
-| `public/icons/icon-maskable.svg` | Vektor | randlos, Symbol auf 80 % verkleinert (sichere Zone für Android) |
+| `public/icons/icon-maskable.svg` | Vektor | randlos, Zeichen in der sicheren Zone für Android |
 | `public/icons/icon-192.png`, `icon-512.png` | 192, 512 | aus `icon.svg` |
 | `public/icons/icon-maskable-512.png` | 512 | aus `icon-maskable.svg` |
 | `public/icons/apple-touch-icon.png` | 180 | randlos, ohne Transparenz (iOS rundet selbst ab) |
-| `public/icons/favicon.svg` | Vektor | ohne Dampf, Symbol vergrößert |
+| `public/icons/favicon.svg` | Vektor | Stufe Kontur (ohne Versatz und Drehung), Zeichen vergrößert |
 | `public/favicon.ico` | 16, 32, 48 | aus `favicon.svg` |
 
-**Regeln:** nur das Symbol, ohne Wortmarke und Claim. Das M muss in kleinen Größen klar erkennbar bleiben, unter
-ca. 32 px ohne Dampf. Neu erzeugen im DDEV-Container (ImageMagick), siehe [entwicklung.md](entwicklung.md#design-brand-book).
+**Regeln:** nur das Symbol, ohne Wortmarke und Claim. Hintergrund Deep. Das M muss in kleinen Größen klar
+erkennbar bleiben (Größenstufen in Kapitel 3). PNGs und `favicon.ico` neu erzeugen: `ddev exec node
+scripts/render-icons.mjs` (rendert mit Chromium, weil ImageMagick die Kontur nicht darstellt).
 
 **Offen:** Masterdatei 1024 × 1024 px für App-Stores, Monochrom-Varianten (dunkel, weiß), Social-Preview-Bild.
 
@@ -134,17 +137,19 @@ ca. 32 px ohne Dampf. Neu erzeugen im DDEV-Container (ImageMagick), siehe [entwi
 ## 5. Farbwelt (geändert)
 
 Die Startpalette des PDFs (Forest Green, Warm Cream, Fresh Orange, Sage) ist durch eine eigene Palette ersetzt.
-Sie ist ruhiger und kühler, behält aber Grün-Blau als Marke und Creme als warmen Grund.
+Sie ist ruhig und kühl mit Grün-Blau als Marke und Creme als warmem Grund. **(neu)** Für Streetstyle und Wärme kommt
+genau eine Signalfarbe dazu: Signal-Orange.
 
 ### Markenpalette
 
 | Name | Hex | Token | Rolle |
 |---|---|---|---|
 | Ink | `#01161e` | `--mesia-ink` | Text (hell), Hintergrund (dunkel) |
-| Deep | `#124559` | `--mesia-deep` | Primäre Markenfarbe: Knöpfe, Links, Überschriften, App-Icon-Grund |
-| Slate | `#598392` | `--mesia-slate` | Sekundär: Schüssel in der Bildmarke, Dekor, nicht für kleinen Text auf hellem Grund |
-| Sage | `#aec3b0` | `--mesia-sage` | Akzent: Schüssel auf dunklem Grund, Primärfarbe im Dark Mode |
-| Cream | `#eff6e0` | `--mesia-cream` | Hintergrund (hell), Text (dunkel) |
+| Deep | `#124559` | `--mesia-deep` | Primäre Markenfarbe: Links, Überschriften, Bildmarke im Kopf, Versatz des Stickers, App-Icon-Grund |
+| Slate | `#598392` | `--mesia-slate` | Sekundär: Dekor, nicht für kleinen Text auf hellem Grund |
+| Sage | `#aec3b0` | `--mesia-sage` | Akzentfarbe im Dark Mode (Links, Überschriften) |
+| Cream | `#eff6e0` | `--mesia-cream` | Hintergrund (hell), Text (dunkel), Fläche der Sticker-Bildmarke |
+| Signal-Orange | `#ff6a2b` | `--mesia-orange` | **(neu)** Aktionen (Knöpfe, Plus, Häkchen), Schüssel der Bildmarke, Merch |
 
 ### Rollen (Tokens in der App)
 
@@ -154,8 +159,10 @@ Sie ist ruhiger und kühler, behält aber Grün-Blau als Marke und Creme als war
 | `--color-surface` Flächen, Karten | `#ffffff` | `#072633` (zwischen Ink und Deep) |
 | `--color-text` Text | Ink | Cream |
 | `--color-text-muted` gedämpfter Text | `#4a6b78` (Slate abgedunkelt) | Sage |
-| `--color-accent` Primäraktion, Links | Deep | Sage |
+| `--color-accent` Links, Überschriften, Fokus | Deep | Sage |
 | `--color-accent-contrast` Text auf Akzent | `#ffffff` | Ink |
+| `--color-action` Primärknopf, Plus, Häkchen | Signal-Orange | Signal-Orange |
+| `--color-action-contrast` Schrift und Häkchen auf Aktion | Ink | Ink |
 | `--color-separator` Trennlinien | Deep 16 % | Sage 18 % |
 | `--color-toast-bg` / `-text` Hinweise | Ink / Cream | Cream / Ink |
 
@@ -171,23 +178,25 @@ Statusfarben dürfen nicht mit der Markenfarbe verwechselt werden.
 
 ### Einsatzprinzip
 
-- Deep trägt die Marke und alle primären Aktionen (im Dark Mode übernimmt Sage).
+- Deep trägt die Marke (Links, Überschriften, Bildmarke), im Dark Mode übernimmt Sage.
+- **Signal-Orange nur für Aktionen und die Schüssel**, sparsam: ein Primärknopf pro Ansicht, Plus, Häkchen.
+  Darauf immer Ink (6,5:1), nie Weiß (2,9:1). Nicht für Text auf hellem Grund (2,6:1).
 - Slate und Sage sind Akzente, nicht für Fließtext auf hellem Grund.
 - Cream bringt Wärme in die Flächen, Weiß hebt Karten davon ab.
-- **(geändert)** Kein Orange mehr: Die Schüssel ist Slate bzw. Sage. Orange war im PDF Food-Akzent.
 
 ---
 
 ## 6. Typografie
 
-UI-Schrift: **Manrope** (variabel, Schnitte 200–800), Alternative Inter. **(neu)** Selbst ausgeliefert aus
-`assets/fonts/` (Lizenz OFL-1.1), kein Abruf bei Google: Datenschutz und offline verfügbar.
+UI-Schrift: **Manrope** (variabel, Schnitte 200–800), Alternative Inter. **(neu)** Wortmarke und Merch:
+**Archivo Black**. Beide selbst ausgeliefert aus `assets/fonts/` (Lizenz OFL-1.1, Quelle npm `@fontsource`), kein
+Abruf bei Google: Datenschutz und offline verfügbar. Archivo Black nur für „MESIA“ und Merch, nie für Fließtext.
 
 ### Skala in der App (geändert: kompakter als im PDF)
 
 | Stil | Größe | Schnitt | Einsatz |
 |---|---|---|---|
-| Wortmarke | 40 px | 800 | Login |
+| Wortmarke „MESIA“ | 44 px | Archivo Black | Login |
 | H1 Seitentitel | 28 px | 700 | „Einkauf“, „Mehr“ (PDF: 30–32 px) |
 | H2 Abschnitt | 17–18 px | 700 | Hilfe (18), Neuigkeiten (17) |
 | Kategorie-Überschrift | 16 px | 700, Akzentfarbe | Gruppen der Einkaufsliste |
@@ -251,12 +260,12 @@ nicht benötigt.
 
 | Komponente | Gestaltung |
 |---|---|
-| Primärknopf | Akzentfläche, Text in Akzent-Kontrast, 44 px hoch, Radius 10 |
+| Primärknopf | Signal-Orange, Schrift Ink, 44 px hoch, Radius 10 |
 | Destruktiver Knopf | Fehlerfarbe, bei kritischen Aktionen Rückfrage (Kategorie löschen) |
 | Listengruppe | weiße Karte (Radius 14), Zeilen 44 px, Trennlinie ab der Textspalte |
 | Kategorie-Überschrift | Emoji + Name, 16 px fett in Akzentfarbe, 6 px über der Gruppe |
-| Eingabeleiste | unten fixiert, über der Tastatur, Feld rund, Plus-Knopf rund in Akzentfarbe |
-| Abhaken | Kreis füllt sich in Akzentfarbe mit Häkchen, Zeile blendet aus, dann „Erledigt“ |
+| Eingabeleiste | unten fixiert, über der Tastatur, Feld rund, Plus-Knopf rund in Signal-Orange (Plus in Ink) |
+| Abhaken | Kreis füllt sich in Signal-Orange mit Häkchen in Ink, Zeile blendet aus, dann „Erledigt“ |
 | Wischen zum Entfernen | Zeile nach links schieben, roter Knopf „Entfernen“ rastet ein |
 | Hinweis (Toast) | dunkle Fläche (Radius 14, 15 px Text) über der Eingabeleiste, Fehler in Fehlerfarbe |
 | Sheet | von unten, Radius 20 oben, für Bearbeiten |
@@ -292,11 +301,15 @@ respektieren, Trefferflächen mindestens 44 × 44 px.
 | Gedämpft `#4a6b78` auf Cream / Weiß | 5,2:1 / 5,7:1 | ✓ |
 | Slate auf Cream | 3,7:1 | nur große Schrift und Grafik |
 | Deep auf Cream (Links, Überschriften) | 9,4:1 | ✓ |
-| Weiß auf Deep (Primärknopf) | 10,4:1 | ✓ |
+| Weiß auf Deep | 10,4:1 | ✓ |
+| Ink auf Signal-Orange (Primärknopf, Häkchen) | 6,5:1 | ✓ |
+| Weiß auf Signal-Orange | 2,9:1 | ✗, deshalb nicht verwenden |
+| Signal-Orange auf Cream (als Text) | 2,6:1 | ✗, nur Flächen und Grafik |
+| Creme auf Deep (App-Icon, Sticker) | 9,4:1 | ✓ |
 | Fehlerfarbe auf Weiß, Weiß auf Fehlerfarbe | 4,6:1 | ✓ |
 | Dunkel: Cream auf Ink / auf Surface | 16,7:1 / 14,2:1 | ✓ |
 | Dunkel: Sage auf Ink / auf Surface | 9,9:1 / 8,4:1 | ✓ |
-| Dunkel: Ink auf Sage (Primärknopf) | 9,9:1 | ✓ |
+| Dunkel: Ink auf Sage | 9,9:1 | ✓ |
 | Dunkel: Fehlerfarbe auf Surface | 5,8:1 | ✓ |
 | Warnpunkt hell `#b0740f` auf Weiß / Cream | 3,9:1 / 3,5:1 | ✓ (Grafik) |
 | Warnpunkt dunkel `#e6a23c` auf Surface | 7,2:1 | ✓ |
@@ -315,6 +328,7 @@ Tokens, keine eigenen Farben, Radien oder Abstände. Auszug (helles Thema):
     --mesia-slate: #598392;
     --mesia-sage: #aec3b0;
     --mesia-cream: #eff6e0;
+    --mesia-orange: #ff6a2b;
 
     --color-bg: var(--mesia-cream);
     --color-surface: #ffffff;
@@ -322,6 +336,8 @@ Tokens, keine eigenen Farben, Radien oder Abstände. Auszug (helles Thema):
     --color-text-muted: #4a6b78;
     --color-accent: var(--mesia-deep);
     --color-accent-contrast: #ffffff;
+    --color-action: var(--mesia-orange);
+    --color-action-contrast: var(--mesia-ink);
     --color-danger: #c84b45;
     --color-warning: #b0740f;
     --color-success: #32845d;
@@ -357,3 +373,4 @@ Das dunkle Thema überschreibt die Rollen unter `@media (prefers-color-scheme: d
 | – | Design Tokens umgesetzt | erledigt (1.1) |
 | – | Kontraste geprüft | erledigt (1.1) |
 | – | Warnpunkt auf mindestens 3:1 (`#b0740f` hell) | erledigt (1.2) |
+| – | Streetstyle: Signal-Orange, Sticker-Bildmarke, Archivo Black | erledigt (1.3) |

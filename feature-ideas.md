@@ -6,6 +6,7 @@ _keine_
 ## Funktion
 + Häufigkeit statt Datum: oft Gekauftes zuerst. Das passt besser zum Zweck „Wiederaktivieren“.
 + Einzelne Einträge aus „Erledigt“ entfernen: etwa per Wischen, für Einmalkäufe wie „Geschenkpapier“.
++ Weitere Listen hinzufügen, Vorlagen für Todo, Geschenke, ...
 + Push-Nachrichten beim Hinzufügen durch eine andere Person, sollen in der App an- und abgeschaltet werden können. Können wir auch die Frequenz konfigurieren, so dass nicht jede Meldung sondern z.B. nur alle paar Minuten eine Nachricht ausgelöst wird?
 + Auswertung für Admins
     + Welche Artikel werden häufig manuell hinzugefügt

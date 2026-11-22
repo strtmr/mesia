@@ -1,15 +1,35 @@
 {#
-    MESIA Bildmarke ohne Hintergrund. Farben: .brand-mark__table / .brand-mark__accent in app.css
-    compact: ohne Dampf für kleine Größen (laut Brand Book erlaubt), z. B. im Seitenkopf
+    MESIA Bildmarke: M als Tisch, darauf eine Schüssel (Brand Book Kapitel 3).
+
+    variant:
+      "sticker" (Standard)  große Darstellungen (Login): Creme mit Ink-Kontur, Versatz in Deep, leicht gedreht
+      "flat"                kleine Darstellungen (Seitenkopf): ohne Kontur und Versatz, M in Akzentfarbe
+
+    Farben der flachen Variante: .brand-mark__table / .brand-mark__bowl in app.css (Dark Mode automatisch).
+    Die Formen sind dieselben wie in public/icons/*.svg.
 #}
-<svg class="brand-mark{{ class is defined ? ' ' ~ class : '' }}" viewBox="{{ compact|default(false) ? '104 188 304 240' : '104 100 304 340' }}" aria-hidden="true" focusable="false">
-    {% if not compact|default(false) %}
-    <path d="M214 176 C200 158 228 146 214 124 C210 118 222 112 226 120 C240 144 212 156 226 172 Z" class="brand-mark__accent"/>
-    <path d="M250 176 C236 156 266 144 250 116 C246 110 258 104 262 112 C278 140 248 154 262 172 Z" class="brand-mark__accent"/>
-    <path d="M286 176 C272 158 300 146 286 124 C282 118 294 112 298 120 C312 144 284 156 298 172 Z" class="brand-mark__accent"/>
-    {% endif %}
-    <path d="M164 192 H348 C348 232 306 252 256 252 C206 252 164 232 164 192 Z" class="brand-mark__accent"/>
-    <rect x="104" y="256" width="304" height="26" rx="13" class="brand-mark__table"/>
-    <path class="brand-mark__table" stroke-linejoin="round" d="M124 428 V312 Q124 284 152 284 H196 Q206 284 212 292 L256 350 L300 292 Q306 284 316 284 H360 Q388 284 388 312 V428 H332 V352 L268 420 Q256 432 244 420 L180 352 V428 Z"/>
-  
+{% set bowl = 'M168 176 H344 C344 216 304 236 256 236 C208 236 168 216 168 176 Z' %}
+{% set m = 'M124 428 V306 Q124 278 152 278 H200 Q210 278 216 286 L256 338 L296 286 Q302 278 312 278 H360 Q388 278 388 306 V428 H322 V364 L268 418 Q256 432 244 418 L190 364 V428 Z' %}
+{% set css_class = 'brand-mark' ~ (class is defined ? ' ' ~ class : '') %}
+{% if variant|default('sticker') == 'flat' %}
+<svg class="{{ css_class }} brand-mark--flat" viewBox="100 172 312 256" aria-hidden="true" focusable="false">
+    <path class="brand-mark__bowl" d="{{ bowl }}"/>
+    <rect class="brand-mark__table" x="100" y="240" width="312" height="32" rx="16"/>
+    <path class="brand-mark__table" d="{{ m }}"/>
 </svg>
+{% else %}
+<svg class="{{ css_class }} brand-mark--sticker" viewBox="70 140 380 330" aria-hidden="true" focusable="false">
+    <g transform="rotate(-5 256 300)" stroke-width="22" stroke-linejoin="round" paint-order="stroke">
+        {# Versatz (Schatten) #}
+        <g transform="translate(14 14)" fill="#124559" stroke="#124559">
+            <path d="{{ bowl }}"/>
+            <rect x="100" y="240" width="312" height="32" rx="16"/>
+            <path d="{{ m }}"/>
+        </g>
+        {# Zeichen mit Kontur #}
+        <path d="{{ bowl }}" fill="#ff6a2b" stroke="#01161e"/>
+        <rect x="100" y="240" width="312" height="32" rx="16" fill="#eff6e0" stroke="#01161e"/>
+        <path d="{{ m }}" fill="#eff6e0" stroke="#01161e"/>
+    </g>
+</svg>
+{% endif %}
