@@ -46,6 +46,10 @@ class Article implements Syncable
     #[ORM\Column(length: 16, enumType: ArticleSource::class, options: ['default' => 'user'])]
     private ArticleSource $source;
 
+    /** Wie oft der Artikel abgehakt (gekauft) wurde. Sortiert „Erledigt“ nach Häufigkeit. */
+    #[ORM\Column(options: ['default' => 0])]
+    private int $purchaseCount = 0;
+
     /**
      * @param string $nameNormalized Ergebnis von {@see \App\Catalog\Domain\TextNormalizer::normalize()}
      */
@@ -108,6 +112,26 @@ class Article implements Syncable
         }
     }
 
+    public function recordPurchase(\DateTimeImmutable $now): void
+    {
+        ++$this->purchaseCount;
+        $this->touch($now);
+    }
+
+    /** Abhaken zurückgenommen ("Wieder auf die Liste" direkt nach dem Abhaken) */
+    public function revokePurchase(\DateTimeImmutable $now): void
+    {
+        if ($this->purchaseCount > 0) {
+            --$this->purchaseCount;
+            $this->touch($now);
+        }
+    }
+
+    public function getPurchaseCount(): int
+    {
+        return $this->purchaseCount;
+    }
+
     public function changeDefaultUnit(?Unit $unit, \DateTimeImmutable $now): void
     {
         $this->defaultUnit = $unit;
@@ -122,6 +146,7 @@ class Article implements Syncable
             'name_normalized' => $this->nameNormalized,
             'category_id' => $this->categoryId->toRfc4122(),
             'default_unit' => $this->defaultUnit?->value,
+            'purchase_count' => $this->purchaseCount,
         ] + $this->syncMeta();
     }
 }

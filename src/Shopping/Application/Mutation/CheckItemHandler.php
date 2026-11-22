@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shopping\Application\Mutation;
 
+use App\Catalog\Infrastructure\Doctrine\ArticleRepository;
 use App\Shared\Application\Sync\MutationContext;
 use App\Shared\Application\Sync\MutationHandler;
 use App\Shared\Application\Sync\MutationOutcome;
@@ -22,6 +23,7 @@ final readonly class CheckItemHandler implements MutationHandler
     public function __construct(
         private ItemLookup $lookup,
         private EntityManagerInterface $entityManager,
+        private ArticleRepository $articles,
     ) {
     }
 
@@ -44,6 +46,9 @@ final readonly class CheckItemHandler implements MutationHandler
         }
 
         $this->entityManager->persist(PurchaseEvent::fromCheckedItem($item, $context->actorId, $context->at));
+        if (null !== $item->getArticleId()) {
+            $this->articles->findActive($context->householdId, $item->getArticleId())?->recordPurchase($context->now);
+        }
 
         return MutationOutcome::applied();
     }

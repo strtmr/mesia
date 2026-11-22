@@ -159,6 +159,18 @@ try {
     if ((await page.locator('.item-row', { hasText: 'Brot' }).count()) !== 1) throw new Error('Brot doppelt nach Tab-Wechsel');
     await page.screenshot({ path: `${screenshotDir}/5-tabwechsel.png`, fullPage: true });
 
+    step('Aus "Erledigt" entfernen (Wischen)');
+    await page.locator('.item-row:not(.item-row--done)', { hasText: 'Drachenfrucht' }).locator('.item-check').click();
+    if ((await page.locator('.shopping-done__toggle').getAttribute('aria-expanded')) !== 'true') {
+        await page.click('.shopping-done__toggle');
+    }
+    const doneRow = page.locator('.item-swipe', { hasText: 'Drachenfrucht' });
+    await expectVisible(doneRow, 'Drachenfrucht in Erledigt');
+    await doneRow.evaluate((row) => row.scrollTo({ left: row.scrollWidth }));
+    await doneRow.locator('.item-swipe__action').click();
+    await page.locator('.item-swipe', { hasText: 'Drachenfrucht' }).waitFor({ state: 'detached', timeout: 5000 });
+    await waitForSync(page);
+
     step('Service Worker hat die Listenseite gespeichert');
     await page.waitForFunction(async () => {
         await navigator.serviceWorker.ready;

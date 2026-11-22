@@ -94,12 +94,14 @@ const HANDLERS = {
             return;
         }
         edit(state.items, p.item_id).checked_at = at;
+        countPurchase(state, item.article_id, +1);
     },
 
     'item.uncheck'(state, p) {
         const item = state.items.get(p.item_id);
         if (item && !item.deleted && item.checked_at) {
             edit(state.items, p.item_id).checked_at = null;
+            countPurchase(state, item.article_id, -1);
         }
     },
 
@@ -173,6 +175,14 @@ const HANDLERS = {
         }
     },
 };
+
+/** Kaufzähler des Artikels wie auf dem Server (Abhaken +1, Zurücknehmen −1) */
+function countPurchase(state, articleId, delta) {
+    if (articleId && state.articles.has(articleId)) {
+        const article = edit(state.articles, articleId);
+        article.purchase_count = Math.max(0, (article.purchase_count ?? 0) + delta);
+    }
+}
 
 export function findItemByArticle(state, listId, articleId) {
     for (const item of state.items.values()) {

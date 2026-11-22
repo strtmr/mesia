@@ -449,6 +449,10 @@ Vitest. Später Playwright-E2E (WebKit). Plattform: **GitHub Actions** (privates
 > **Stand 2026-11-21:** Aus dem Alltagstest: Listenseite als feste Hülle über der iOS-Tastatur, Grundrechenarten in
 > Mengen, verständliche Hinweise bei unplausiblen Mengen. Abweichung von 6.2: Abhaken zeigt keinen „Rückgängig“-Toast
 > mehr, nur ein kurzes Häkchen (Wunsch aus dem Alltag). Rückgängig per Antippen in „Erledigt“.
+>
+> **Stand 2026-11-22:** „Erledigt“ ist nach Häufigkeit sortiert (Kaufzähler `purchase_count` am Artikel, aus der
+> Kaufhistorie nachgetragen), nicht mehr nach Erledigt-Zeitpunkt wie in 6.2 skizziert. Wischen zum Entfernen ist
+> für „Erledigt“ umgesetzt (horizontales Scrollen mit Scroll Snap, `item.delete`).
 
 | # | Paket | Fertig, wenn … |
 |---|-------|----------------|

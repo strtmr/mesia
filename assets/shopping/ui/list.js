@@ -204,6 +204,14 @@ export function shoppingList(engine) {
             await this.run(reactivateItem(item.id, ctx));
         },
 
+        /**
+         * Aus „Erledigt“ entfernen (z. B. Einmalkäufe). Der Artikel bleibt im Katalog und wird beim nächsten
+         * Eintippen wieder erkannt, die Kaufhistorie bleibt erhalten.
+         */
+        async removeDone(item) {
+            await this.run(deleteItem(item.id, ctx));
+        },
+
         // ------------------------------------------------------------ Bearbeiten
 
         openEditor(item) {

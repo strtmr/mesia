@@ -62,6 +62,13 @@ Ein Artikelname darf höchstens 100 Zeichen lang sein (eine Notiz in Klammern 20
 **Abhaken:** auf den Kreis tippen. Ein kurzes Häkchen bestätigt es, dann wandert der Artikel nach **„Erledigt“**
 (unten, aufklappbar). Versehentlich abgehakt? Den Artikel in „Erledigt“ antippen, dann kommt er wieder auf die Liste.
 
+**„Erledigt“** ist euer Vorrat an schon Gekauftem: Jeder Artikel steht dort einmal, **oft Gekauftes oben** (bei
+gleich vielen Käufen das zuletzt Gekaufte). Ein Tipp setzt ihn wieder auf die Liste.
+
+**Aus „Erledigt“ entfernen:** nach links wischen und „Entfernen“ tippen, gedacht für Einmalkäufe wie
+„Geschenkpapier“. Der Artikel bleibt im Katalog und wird beim nächsten Eintippen wieder erkannt, er steht nur nicht
+mehr in „Erledigt“.
+
 **Bearbeiten:** auf den Namen tippen. Dort änderst du Name, Menge, Einheit, Kategorie und Notiz oder löschst den Artikel.
 Änderst du die Kategorie, merkt sich die App das für das nächste Mal.
 

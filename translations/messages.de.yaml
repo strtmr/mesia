@@ -35,6 +35,9 @@ shopping:
     unauthorized: Deine Anmeldung ist abgelaufen. Deine Änderungen bleiben gespeichert und werden nach dem Anmelden übertragen.
     login: Jetzt anmelden
     done: Erledigt
+    done_hint: Antippen setzt einen Artikel wieder auf die Liste, nach links wischen entfernt ihn.
+    remove: Entfernen
+    remove_label: Aus „Erledigt“ entfernen
     add: Hinzufügen
     add_placeholder: Artikel hinzufügen …
     check_label: Abhaken

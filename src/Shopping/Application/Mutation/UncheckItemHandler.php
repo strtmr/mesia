@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shopping\Application\Mutation;
 
+use App\Catalog\Infrastructure\Doctrine\ArticleRepository;
 use App\Shared\Application\Sync\MutationContext;
 use App\Shared\Application\Sync\MutationHandler;
 use App\Shared\Application\Sync\MutationOutcome;
@@ -21,6 +22,7 @@ final readonly class UncheckItemHandler implements MutationHandler
         private ItemLookup $lookup,
         private PurchaseEventRepository $purchases,
         private EntityManagerInterface $entityManager,
+        private ArticleRepository $articles,
     ) {
     }
 
@@ -45,6 +47,9 @@ final readonly class UncheckItemHandler implements MutationHandler
         $purchase = $this->purchases->findLatestForItem($item->getId());
         if (null !== $purchase) {
             $this->entityManager->remove($purchase);
+            if (null !== $item->getArticleId()) {
+                $this->articles->findActive($context->householdId, $item->getArticleId())?->revokePurchase($context->now);
+            }
         }
 
         return MutationOutcome::applied();

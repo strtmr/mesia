@@ -5,6 +5,12 @@
 # Kurz und aus Sicht der Benutzer schreiben, ohne Technik. Einträge immer in '…' setzen (ein „: “ im Text würde sonst
 # als Schlüssel gelesen).
 
+- version: 0.6.1
+  date: 2026-11-22
+  changes:
+    - '„Erledigt“ zeigt oft Gekauftes zuerst, so lässt es sich schneller wieder auf die Liste setzen'
+    - 'Einmalkäufe lassen sich aus „Erledigt“ entfernen: nach links wischen, dann „Entfernen“'
+
 - version: 0.6.0
   date: 2026-11-21
   changes:

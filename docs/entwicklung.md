@@ -63,8 +63,8 @@ Status im Push-Ergebnis: `applied`, `merged` (auf bestehendes Objekt umgelenkt, 
 |-----|---------|--------------|
 | `item.add` | `item_id, list_id, name, category_id, sort_key, contribution{id, quantity?, unit?}, article_id?, note?` | gleicher Artikel schon auf der Liste → `merged`, erledigter Eintrag wird reaktiviert |
 | `item.reactivate` | `item_id, contribution{…}` | alte Beiträge archiviert, manuelle Menge zurückgesetzt |
-| `item.check` | `item_id` | `ignored`, wenn `at` vor dem letzten Reaktivieren liegt; erzeugt Kaufhistorie |
-| `item.uncheck` | `item_id` | entfernt den letzten Kaufhistorien-Eintrag |
+| `item.check` | `item_id` | `ignored`, wenn `at` vor dem letzten Reaktivieren liegt; erzeugt Kaufhistorie, `article.purchase_count` +1 |
+| `item.uncheck` | `item_id` | entfernt den letzten Kaufhistorien-Eintrag, `article.purchase_count` −1 |
 | `item.update` | `item_id, fields{name?, note?, qty_override?, unit_override?}` | fehlendes Feld = unverändert, `null` = leeren |
 | `item.move` | `item_id, category_id, sort_key` | Kategoriewechsel wird vom Artikel übernommen |
 | `item.delete` | `item_id` | Soft Delete |

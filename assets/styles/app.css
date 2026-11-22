@@ -1148,3 +1148,53 @@ select.field__input {
         transform: scale(1.2);
     }
 }
+
+/* ---------- Wischen zum Entfernen (Erledigt) ---------- */
+
+.shopping-done__hint {
+    margin: 0 var(--space-1) var(--space-2);
+    color: var(--color-text-muted);
+    font-size: 13px;
+}
+
+/* Die Zeile ist horizontal scrollbar und rastet ein: links der Inhalt, rechts der Knopf */
+.item-swipe {
+    position: relative;
+    display: flex;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    background: var(--color-danger);
+}
+
+.item-swipe::-webkit-scrollbar {
+    display: none;
+}
+
+.item-swipe + .item-swipe::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 52px;
+    z-index: 1;
+    border-top: 0.5px solid var(--color-separator);
+}
+
+.item-swipe__content {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+}
+
+.item-swipe__action {
+    flex: 0 0 auto;
+    min-width: 96px;
+    padding: 0 var(--space-4);
+    border: 0;
+    background: var(--color-danger);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    scroll-snap-align: end;
+}

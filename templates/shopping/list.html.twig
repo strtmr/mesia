@@ -81,16 +81,21 @@
                 <span class="shopping-done__chevron" :class="{ 'is-open': showDone }" aria-hidden="true">›</span>
                 <span>{{ 'shopping.done'|trans }} (<span x-text="view.done.length"></span>)</span>
             </button>
+            <p class="shopping-done__hint" x-show="showDone">{{ 'shopping.done_hint'|trans }}</p>
             <ul class="shopping-items shopping-items--done" x-show="showDone">
                 <template x-for="item in view.done" :key="item.id">
-                    <li class="item-row item-row--done">
-                        <button type="button" class="item-check is-checked" @click="reactivate(item)" :aria-label="'{{ 'shopping.reactivate_label'|trans|e('js') }} ' + item.name">
-                            <span class="item-check__circle"></span>
-                        </button>
-                        <button type="button" class="item-body" @click="reactivate(item)">
-                            <span class="item-body__name" x-text="item.name"></span>
-                        </button>
-                        <span class="item-qty" x-text="item.quantityLabel"></span>
+                    {# Nach links wischen zeigt "Entfernen" (horizontales Scrollen mit Einrasten, ohne Gesten-JavaScript) #}
+                    <li class="item-swipe">
+                        <div class="item-row item-row--done item-swipe__content">
+                            <button type="button" class="item-check is-checked" @click="reactivate(item)" :aria-label="'{{ 'shopping.reactivate_label'|trans|e('js') }} ' + item.name">
+                                <span class="item-check__circle"></span>
+                            </button>
+                            <button type="button" class="item-body" @click="reactivate(item)">
+                                <span class="item-body__name" x-text="item.name"></span>
+                            </button>
+                            <span class="item-qty" x-text="item.quantityLabel"></span>
+                        </div>
+                        <button type="button" class="item-swipe__action" @click="removeDone(item)" :aria-label="'{{ 'shopping.remove_label'|trans|e('js') }} ' + item.name">{{ 'shopping.remove'|trans }}</button>
                     </li>
                 </template>
             </ul>

@@ -41,8 +41,18 @@ export function buildListView(state, { doneLimit = 100 } = {}) {
         categories,
         groups,
         openCount: groups.reduce((sum, group) => sum + group.items.length, 0),
-        done: done.sort((a, b) => time(b.checked_at) - time(a.checked_at)).slice(0, doneLimit).map(toViewItem),
+        done: done.sort(byFrequency(state)).slice(0, doneLimit).map(toViewItem),
     };
+}
+
+/**
+ * „Erledigt“: oft Gekauftes zuerst (Kaufzähler am Artikel), bei Gleichstand das zuletzt Gekaufte.
+ * Erledigt dient vor allem zum schnellen Wiederaktivieren.
+ */
+function byFrequency(state) {
+    const purchases = (item) => state.articles.get(item.article_id)?.purchase_count ?? 0;
+
+    return (a, b) => purchases(b) - purchases(a) || time(b.checked_at) - time(a.checked_at);
 }
 
 function toViewItem(item) {

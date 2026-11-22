@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildState } from '../../assets/shopping/core/state.js';
+import { buildState, findItemByArticle } from '../../assets/shopping/core/state.js';
 import { buildListView } from '../../assets/shopping/core/view.js';
 import { TextTooLongError, addFromText, checkItem, editItem, moveItem, reactivateItem, uncheckItem } from '../../assets/shopping/core/commands.js';
 import { QuantityError } from '../../assets/shopping/core/quantity.js';
@@ -86,6 +86,40 @@ describe('Schnelleingabe → Liste', () => {
 });
 
 describe('Abhaken, Rückgängig, Reaktivieren', () => {
+    it('sortiert "Erledigt" nach Häufigkeit, bei Gleichstand das zuletzt Gekaufte zuerst', () => {
+        const ctx = testCtx();
+        const id = (s, articleId) => findItemByArticle(s, 'list-1', articleId).id;
+        const at = (minute) => () => {
+            ctx.setNow(`2026-11-20T10:0${minute}:00.000Z`);
+            return [];
+        };
+        const { view, state } = run(catalogEntities(), [
+            (s) => addFromText(s, 'Milch', ctx),
+            (s) => addFromText(s, 'Butter', ctx),
+            (s) => addFromText(s, 'Apfel', ctx),
+            at(1), (s) => checkItem(id(s, 'art-milch'), ctx),
+            at(2), (s) => reactivateItem(id(s, 'art-milch'), ctx),
+            at(3), (s) => checkItem(id(s, 'art-milch'), ctx),
+            at(4), (s) => checkItem(id(s, 'art-apfel'), ctx),
+            at(5), (s) => checkItem(id(s, 'art-butter'), ctx),
+        ]);
+
+        expect(view.done.map((item) => item.name)).toEqual(['Milch', 'Butter', 'Apfel']);
+        expect(state.articles.get('art-milch').purchase_count).toBe(2);
+    });
+
+    it('nimmt den Kauf beim direkten Zurücknehmen wieder aus der Zählung', () => {
+        const ctx = testCtx();
+        const id = (s) => findItemByArticle(s, 'list-1', 'art-milch').id;
+        const { state } = run(catalogEntities(), [
+            (s) => addFromText(s, 'Milch', ctx),
+            (s) => checkItem(id(s), ctx),
+            (s) => uncheckItem(id(s), ctx),
+        ]);
+
+        expect(state.articles.get('art-milch').purchase_count).toBe(0);
+    });
+
     it('verschiebt Abgehaktes nach "Erledigt" und zurück', () => {
         const ctx = testCtx();
         let itemId;

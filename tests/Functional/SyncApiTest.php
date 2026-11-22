@@ -280,6 +280,20 @@ final class SyncApiTest extends WebTestCase
         self::assertTrue($this->pulledEntity($cursor, 'category', $payload['category_id'])['deleted']);
     }
 
+    public function testCheckingCountsPurchasesOnTheArticle(): void
+    {
+        $itemId = $this->uuid();
+        $payload = $this->addItemPayload($itemId, 'Milch');
+        $this->pushOne('item.add', $payload);
+        $cursor = $this->snapshot()['cursor'];
+
+        $this->pushOne('item.check', ['item_id' => $itemId]);
+        self::assertSame(1, $this->pulledEntity($cursor, 'article', $payload['article_id'])['purchase_count']);
+
+        $this->pushOne('item.uncheck', ['item_id' => $itemId]);
+        self::assertSame(0, $this->pulledEntity($cursor, 'article', $payload['article_id'])['purchase_count']);
+    }
+
     public function testImplausibleQuantityIsRejectedWithAReadableMessage(): void
     {
         $payload = $this->addItemPayload($this->uuid(), 'Schokolade', quantity: 1111111111);
