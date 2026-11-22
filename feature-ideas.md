@@ -17,6 +17,7 @@ _keine_
 + Optimierte Ansicht fürs Web
 + Unterhalb des Logins Erklärungen
 + Made with :heart and AI by strtmr als Abbinder unterhalb des Menus in "Mehr"
++ Dark mode / System unterstützen
 + Hilfe-Seite
 + Impressum
 

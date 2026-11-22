@@ -36,6 +36,9 @@
     <section class="list-section">
         <h2 class="list-section__title">{{ 'more.app.section'|trans }}</h2>
         <div class="list-group">
+            <a class="list-group__row list-group__row--link" href="{{ path('app_help') }}">
+                <span>{{ 'more.app.help'|trans }}</span>
+            </a>
             <a class="list-group__row list-group__row--link" href="{{ path('app_release_notes') }}">
                 <span>{{ 'more.app.version'|trans }}</span>
                 <span class="list-group__value">{{ app_version }} · {{ 'more.app.release_notes'|trans }}</span>
@@ -57,4 +60,6 @@
             </a>
         </div>
     </section>
+
+    <p class="made-with">Made with <span class="made-with__heart" aria-label="Liebe">♥</span> and AI by strtmr</p>
 {% endblock %}

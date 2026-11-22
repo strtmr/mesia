@@ -26,6 +26,12 @@ final class AppController extends AbstractController
         return $this->render('app/more.html.twig');
     }
 
+    #[Route('/hilfe', name: 'app_help', methods: ['GET'])]
+    public function help(): Response
+    {
+        return $this->render('app/help.html.twig');
+    }
+
     #[Route('/neuigkeiten', name: 'app_release_notes', methods: ['GET'])]
     public function releaseNotes(ReleaseNotes $releaseNotes): Response
     {

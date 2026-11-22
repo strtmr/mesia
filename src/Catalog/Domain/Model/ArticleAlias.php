@@ -32,7 +32,8 @@ class ArticleAlias implements Syncable
         Uuid $householdId,
         #[ORM\Column(type: UuidType::NAME)]
         private Uuid $articleId,
-        #[ORM\Column(length: 100)]
+        /** Bis zu doppelt so lang wie der eingegebene Begriff (ä → ae usw.) */
+        #[ORM\Column(length: 200)]
         private string $aliasNormalized,
         #[ORM\Column(length: 16, enumType: AliasSource::class)]
         private AliasSource $source,

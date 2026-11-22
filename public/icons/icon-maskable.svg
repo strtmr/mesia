@@ -1,13 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" fill="#2e7d4f"/>
-  <g transform="translate(51.2 51.2) scale(0.8)">
-    <polygon points="170.7,217.1 197.3,230.9 245.3,138.9 218.7,125.1" fill="#ffffff"/>
-    <polygon points="314.7,230.9 341.3,217.1 293.3,125.1 266.7,138.9" fill="#ffffff"/>
-    <circle cx="232" cy="132" r="15" fill="#ffffff"/>
-    <circle cx="280" cy="132" r="15" fill="#ffffff"/>
-    <path d="M104 224 H408 L374 396 Q370 416 350 416 H162 Q142 416 138 396 Z" fill="#ffffff"/>
-    <rect x="196" y="264" width="24" height="112" rx="12" fill="#2e7d4f"/>
-    <rect x="244" y="264" width="24" height="112" rx="12" fill="#2e7d4f"/>
-    <rect x="292" y="264" width="24" height="112" rx="12" fill="#2e7d4f"/>
+  <!-- MESIA Bildmarke: M als Tisch mit Schüssel, randlos (Android maskable, iOS-Icon). Quelle für alle PNG-Icons (siehe docs/entwicklung.md) -->
+  <rect width="512" height="512" fill="#124559"/>
+  <g transform="translate(256 256) scale(0.8) translate(-256 -270)">
+    <!-- Dampf -->
+    <path d="M214 176 C200 158 228 146 214 124 C210 118 222 112 226 120 C240 144 212 156 226 172 Z" fill="#aec3b0"/>
+    <path d="M250 176 C236 156 266 144 250 116 C246 110 258 104 262 112 C278 140 248 154 262 172 Z" fill="#aec3b0"/>
+    <path d="M286 176 C272 158 300 146 286 124 C282 118 294 112 298 120 C312 144 284 156 298 172 Z" fill="#aec3b0"/>
+    <!-- Schüssel -->
+    <path d="M164 192 H348 C348 232 306 252 256 252 C206 252 164 232 164 192 Z" fill="#aec3b0"/>
+    <!-- Tischplatte -->
+    <rect x="104" y="256" width="304" height="26" rx="13" fill="#eff6e0"/>
+    <!-- M als Tischgestell -->
+    <path fill="#eff6e0" stroke-linejoin="round" d="M124 428 V312 Q124 284 152 284 H196 Q206 284 212 292 L256 350 L300 292 Q306 284 316 284 H360 Q388 284 388 312 V428 H332 V352 L268 420 Q256 432 244 420 L180 352 V428 Z"/>
   </g>
 </svg>

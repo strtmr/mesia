@@ -9,7 +9,10 @@
 {% block body %}
     <div class="app">
         <header class="app-header">
-            <h1 class="app-header__title">{% block page_title %}{% endblock %}</h1>
+            <div class="app-header__brand">
+                {{ include('app/_brand_mark.html.twig', {class: 'app-header__mark', compact: true}) }}
+                <h1 class="app-header__title">{% block page_title %}{% endblock %}</h1>
+            </div>
             <div class="app-header__actions">{% block header_actions %}{% endblock %}</div>
         </header>
 
@@ -27,7 +30,7 @@
                 </svg>
                 <span>{{ 'nav.shopping'|trans }}</span>
             </a>
-            <a class="tabbar__item" href="{{ path('app_more') }}"{% if current_route in ['app_more', 'app_release_notes'] or current_route starts with 'catalog_' %} aria-current="page"{% endif %}>
+            <a class="tabbar__item" href="{{ path('app_more') }}"{% if current_route in ['app_more', 'app_release_notes', 'app_help'] or current_route starts with 'catalog_' %} aria-current="page"{% endif %}>
                 <svg class="tabbar__icon" viewBox="0 0 24 24" aria-hidden="true">
                     <circle cx="5" cy="12" r="1.6"/>
                     <circle cx="12" cy="12" r="1.6"/>

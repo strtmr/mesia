@@ -30,7 +30,7 @@ startet sie auch im Funkloch. iOS bewahrt die Daten installierter Apps zuverläs
 | Tab | Inhalt |
 |-----|--------|
 | **Einkauf** | eure gemeinsame Einkaufsliste |
-| **Mehr** | Kategorien, Konto, Haushalt, App-Version mit **Neuigkeiten** (was sich in welcher Version geändert hat), Verbindungsstatus, Abmelden |
+| **Mehr** | Kategorien, Hilfe, Konto, Haushalt, App-Version mit **Neuigkeiten** (was sich in welcher Version geändert hat), Verbindungsstatus, Abmelden |
 
 ## Einkaufsliste
 

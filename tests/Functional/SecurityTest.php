@@ -57,6 +57,9 @@ final class SecurityTest extends WebTestCase
         self::assertSelectorExists('link[rel="manifest"][href="/manifest.webmanifest"]');
         self::assertSelectorExists('link[rel="apple-touch-icon"]');
         self::assertSelectorExists('meta[name="viewport"][content*="viewport-fit=cover"]');
+        self::assertSelectorTextContains('h1.wordmark', 'mesia');
+        self::assertSelectorTextContains('.login__claim', 'Life, intelligently connected.');
+        self::assertSelectorTextContains('.login__about', 'Was ist Mesia?');
     }
 
     public function testWrongPasswordShowsAnError(): void
@@ -122,6 +125,14 @@ final class SecurityTest extends WebTestCase
         self::assertAnySelectorTextContains('.list-group', 'Familie Muster');
         self::assertAnySelectorTextContains('.list-group', (string) self::getContainer()->getParameter('app.version'));
 
+        self::assertSelectorTextContains('.made-with', 'Made with');
+        $client->clickLink('Hilfe');
+        self::assertResponseIsSuccessful();
+        self::assertSelectorTextContains('h1', 'Hilfe');
+        self::assertSelectorTextContains('.help', 'Hinzufügen');
+        self::assertSelectorExists('nav.tabbar a[aria-current="page"][href="/mehr"]');
+
+        $client->request('GET', '/mehr');
         $client->clickLink('Neuigkeiten');
         self::assertResponseIsSuccessful();
         self::assertSelectorTextContains('h1', 'Neuigkeiten');

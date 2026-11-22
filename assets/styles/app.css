@@ -7,24 +7,53 @@
  * - Trefferflächen mindestens 44×44pt
  */
 
-/* ---------- Design-Tokens ---------- */
+/* ---------- Schrift ---------- */
+
+/* Manrope (OFL-1.1, assets/fonts/MANROPE-LICENSE.txt), selbst ausgeliefert statt von Google (Datenschutz, offline) */
+@font-face {
+    font-family: "Manrope";
+    font-style: normal;
+    font-weight: 200 800;
+    font-display: swap;
+    src: url("../fonts/manrope-latin-wght.woff2") format("woff2-variations"), url("../fonts/manrope-latin-wght.woff2") format("woff2");
+}
+
+/* ---------- Design-Tokens (Brand Book MESIA, Farbpalette angepasst) ---------- */
 
 :root {
     color-scheme: light dark;
 
-    --color-bg: #f5f6f2;
-    --color-surface: #ffffff;
-    --color-text: #1b1f1c;
-    --color-text-muted: #6b716c;
-    --color-separator: rgb(60 67 61 / 0.14);
-    --color-accent: #2e7d4f;
-    --color-accent-contrast: #ffffff;
-    --color-danger: #c4382f;
-    --color-tabbar-bg: rgb(250 251 248 / 0.88);
+    /* Markenpalette */
+    --mesia-ink: #01161e;
+    --mesia-deep: #124559;
+    --mesia-slate: #598392;
+    --mesia-sage: #aec3b0;
+    --mesia-cream: #eff6e0;
 
+    /* Rollen (helles Thema) */
+    --color-bg: var(--mesia-cream);
+    --color-surface: #ffffff;
+    --color-text: var(--mesia-ink);
+    /* aus --mesia-slate abgedunkelt: erreicht 4,5:1 auf Creme und Weiß (WCAG AA) */
+    --color-text-muted: #4a6b78;
+    --color-separator: rgb(18 69 89 / 0.16);
+    --color-accent: var(--mesia-deep);
+    --color-accent-contrast: #ffffff;
+    --color-accent-soft: var(--mesia-sage);
+    --color-danger: #c84b45;
+    /* Bernstein: mindestens 3:1 auf Weiß und Creme (WCAG, grafische Hinweise wie der Punkt "ausstehend") */
+    --color-warning: #b0740f;
+    --color-success: #32845d;
+    --color-tabbar-bg: rgb(239 246 224 / 0.88);
+    --color-toast-bg: var(--mesia-ink);
+    --color-toast-text: var(--mesia-cream);
+    --color-toast-action: var(--mesia-sage);
+
+    /* Radien: Eingaben 8, Knöpfe 10, Karten 14, große Flächen 20 */
     --radius-s: 8px;
-    --radius-m: 12px;
-    --radius-l: 18px;
+    --radius-button: 10px;
+    --radius-m: 14px;
+    --radius-l: 20px;
 
     --space-1: 4px;
     --space-2: 8px;
@@ -36,7 +65,7 @@
     --touch-target: 44px;
     --tabbar-height: 50px;
 
-    --font-system: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-system: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-right: env(safe-area-inset-right, 0px);
@@ -46,15 +75,21 @@
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --color-bg: #141815;
-        --color-surface: #1f2420;
-        --color-text: #eef1ed;
-        --color-text-muted: #9aa29b;
-        --color-separator: rgb(220 230 222 / 0.14);
-        --color-accent: #5cbf85;
-        --color-accent-contrast: #0e1a12;
-        --color-danger: #ff6b5f;
-        --color-tabbar-bg: rgb(28 33 29 / 0.88);
+        --color-bg: var(--mesia-ink);
+        /* zwischen Ink und Deep */
+        --color-surface: #072633;
+        --color-text: var(--mesia-cream);
+        --color-text-muted: var(--mesia-sage);
+        --color-separator: rgb(174 195 176 / 0.18);
+        --color-accent: var(--mesia-sage);
+        --color-accent-contrast: var(--mesia-ink);
+        --color-accent-soft: var(--mesia-slate);
+        --color-danger: #ef7a73;
+        --color-warning: #e6a23c;
+        --color-tabbar-bg: rgb(7 38 51 / 0.88);
+        --color-toast-bg: var(--mesia-cream);
+        --color-toast-text: var(--mesia-ink);
+        --color-toast-action: var(--mesia-deep);
     }
 }
 
@@ -77,8 +112,8 @@ body {
     background: var(--color-bg);
     color: var(--color-text);
     font-family: var(--font-system);
-    font-size: 17px;
-    line-height: 1.4;
+    font-size: 16px;
+    line-height: 1.35;
     -webkit-font-smoothing: antialiased;
     -webkit-tap-highlight-color: transparent;
     overscroll-behavior-y: none;
@@ -124,13 +159,28 @@ a {
     align-items: flex-end;
     justify-content: space-between;
     gap: var(--space-3);
-    padding: calc(var(--safe-top) + var(--space-3)) var(--space-4) var(--space-2);
+    padding: calc(var(--safe-top) + var(--space-2)) var(--space-4) var(--space-1);
     background: var(--color-bg);
+}
+
+.app-header__brand {
+    display: flex;
+    /* Unterkante der Bildmarke (Fuß des M) steht auf der Grundlinie des Titels */
+    align-items: baseline;
+    gap: var(--space-2);
+    min-width: 0;
+}
+
+/* Bildmarke neben dem Seitentitel: ohne Dampf, das M etwa so hoch wie die Großbuchstaben */
+.app-header__mark {
+    flex: none;
+    width: auto;
+    height: 30px;
 }
 
 .app-header__title {
     margin: 0;
-    font-size: 34px;
+    font-size: 28px;
     font-weight: 700;
     letter-spacing: -0.02em;
 }
@@ -417,7 +467,7 @@ a {
     background: var(--color-surface);
     color: var(--color-text);
     font: inherit;
-    font-size: 17px; /* >= 16px, sonst zoomt iOS Safari beim Fokus */
+    font-size: 16px; /* >= 16px, sonst zoomt iOS Safari beim Fokus */
 }
 
 .field__input:focus {
@@ -441,7 +491,7 @@ a {
     min-height: var(--touch-target);
     padding: var(--space-2) var(--space-4);
     border: 0;
-    border-radius: var(--radius-m);
+    border-radius: var(--radius-button);
     font: inherit;
     font-weight: 600;
     text-decoration: none; /* auch für Links im Knopf-Stil */
@@ -475,13 +525,49 @@ a {
     text-align: left;
 }
 
-.login__logo {
-    border-radius: 22%;
+/* Bildmarke (templates/app/_brand_mark.html.twig): Tisch in Markenfarbe, Schüssel und Dampf als Akzent */
+.brand-mark__table {
+    fill: var(--color-accent);
+}
+
+.brand-mark__accent {
+    fill: var(--mesia-slate);
+}
+
+@media (prefers-color-scheme: dark) {
+    .brand-mark__table {
+        fill: var(--mesia-cream);
+    }
+
+    .brand-mark__accent {
+        fill: var(--mesia-sage);
+    }
+}
+
+/* Wortmarke: immer klein geschrieben "mesia" */
+.wordmark {
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    text-transform: lowercase;
+}
+
+.login__mark {
+    width: 88px;
+    height: auto;
 }
 
 .login__title {
-    margin: var(--space-3) 0 var(--space-1);
-    font-size: 28px;
+    margin: var(--space-2) 0 0;
+    color: var(--color-accent);
+    font-size: 40px;
+    line-height: 1;
+}
+
+.login__claim {
+    margin: var(--space-1) 0 var(--space-5);
+    color: var(--color-text-muted);
+    font-size: 15px;
+    font-weight: 500;
 }
 
 .login__intro,
@@ -494,6 +580,102 @@ a {
 .login__hint {
     margin-top: var(--space-4);
     font-size: 13px;
+}
+
+/* Erklärung unter dem Login */
+.login__about {
+    margin-top: var(--space-6);
+    padding-top: var(--space-5);
+    border-top: 0.5px solid var(--color-separator);
+    text-align: left;
+}
+
+.login__about-title {
+    margin: 0 0 var(--space-3);
+    font-size: 17px;
+}
+
+.login__about-list {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--color-text-muted);
+    font-size: 15px;
+}
+
+.login__about-list strong {
+    color: var(--color-text);
+}
+
+.login__about-account {
+    margin: var(--space-4) 0 0;
+    color: var(--color-text-muted);
+    font-size: 13px;
+}
+
+/* ---------- Hilfe ---------- */
+
+.help__section {
+    margin-bottom: var(--space-4);
+    padding: var(--space-4);
+    border-radius: var(--radius-m);
+    background: var(--color-surface);
+}
+
+.help__section h2 {
+    margin: 0 0 var(--space-2);
+    font-size: 18px;
+}
+
+.help__section p,
+.help__section ul {
+    margin: 0 0 var(--space-2);
+}
+
+.help__section p:last-child,
+.help__section ul:last-child {
+    margin-bottom: 0;
+}
+
+.help__section ul {
+    padding-left: 1.2em;
+}
+
+.help__examples {
+    display: grid;
+    gap: var(--space-1);
+    margin: 0 0 var(--space-2);
+    font-size: 15px;
+}
+
+.help__examples div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
+.help__examples dt {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.help__examples dd {
+    margin: 0;
+    color: var(--color-text-muted);
+}
+
+/* ---------- Abbinder unter "Mehr" ---------- */
+
+.made-with {
+    margin: var(--space-6) 0 var(--space-2);
+    color: var(--color-text-muted);
+    font-size: 13px;
+    text-align: center;
+}
+
+.made-with__heart {
+    color: var(--color-danger);
 }
 
 /* ---------- Leerzustand ---------- */
@@ -611,7 +793,7 @@ a {
 }
 
 .notice--warning {
-    background: color-mix(in srgb, #e3a008 16%, var(--color-surface));
+    background: color-mix(in srgb, var(--color-warning) 16%, var(--color-surface));
 }
 
 .badge {
@@ -655,7 +837,7 @@ a {
 
 .sync-status[data-state="syncing"]::before,
 .sync-status[data-state="pending"]::before {
-    background: #e3a008;
+    background: var(--color-warning);
 }
 
 .sync-status[data-state="offline"]::before {
@@ -734,15 +916,16 @@ html[data-keyboard="open"] .page-shopping .item-row {
 }
 
 .shopping-group {
-    margin-bottom: var(--space-5);
+    margin-bottom: var(--space-4);
 }
 
 .shopping-group__title {
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    margin: 0 0 var(--space-2) var(--space-1);
-    font-size: 20px;
+    margin: 0 0 6px var(--space-1);
+    color: var(--color-accent);
+    font-size: 16px;
     font-weight: 700;
 }
 
@@ -759,7 +942,7 @@ html[data-keyboard="open"] .page-shopping .item-row {
     position: relative;
     display: flex;
     align-items: center;
-    min-height: 48px;
+    min-height: var(--touch-target);
     padding-right: var(--space-4);
     background: var(--color-surface);
     -webkit-user-select: none;
@@ -773,7 +956,7 @@ html[data-keyboard="open"] .page-shopping .item-row {
     position: absolute;
     top: 0;
     right: 0;
-    left: 52px;
+    left: var(--touch-target);
     border-top: 0.5px solid var(--color-separator);
 }
 
@@ -789,8 +972,8 @@ html[data-keyboard="open"] .page-shopping .item-row {
     flex-shrink: 0;
     display: grid;
     place-items: center;
-    width: 52px;
-    min-height: 48px;
+    width: var(--touch-target);
+    min-height: var(--touch-target);
     padding: 0;
     border: 0;
     background: none;
@@ -798,8 +981,8 @@ html[data-keyboard="open"] .page-shopping .item-row {
 }
 
 .item-check__circle {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     border: 1.5px solid var(--color-text-muted);
     border-radius: 50%;
     transition: background-color 0.15s, border-color 0.15s;
@@ -820,9 +1003,9 @@ html[data-keyboard="open"] .page-shopping .item-row {
     flex: 1;
     display: grid;
     min-width: 0;
-    min-height: 48px;
+    min-height: var(--touch-target);
     align-content: center;
-    padding: var(--space-2) var(--space-2) var(--space-2) 0;
+    padding: 6px var(--space-2) 6px 0;
     border: 0;
     background: none;
     color: inherit;
@@ -846,7 +1029,7 @@ html[data-keyboard="open"] .page-shopping .item-row {
 .item-qty {
     flex-shrink: 0;
     color: var(--color-text-muted);
-    font-size: 15px;
+    font-size: 14px;
     font-variant-numeric: tabular-nums;
 }
 
@@ -858,7 +1041,7 @@ html[data-keyboard="open"] .page-shopping .item-row {
     height: 6px;
     margin-left: var(--space-2);
     border-radius: 50%;
-    background: #e3a008;
+    background: var(--color-warning);
     vertical-align: middle;
 }
 
@@ -923,7 +1106,7 @@ html[data-keyboard="open"] .page-shopping .item-row {
     background: var(--color-surface);
     color: var(--color-text);
     font: inherit;
-    font-size: 17px; /* >= 16px: kein Zoom in iOS Safari */
+    font-size: 16px; /* >= 16px: kein Zoom in iOS Safari */
 }
 
 .quick-add__input:focus {
@@ -1041,8 +1224,8 @@ html[data-keyboard="open"] .toast {
     gap: var(--space-3);
     padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
     border-radius: var(--radius-m);
-    background: #2a302b;
-    color: #f2f4f1;
+    background: var(--color-toast-bg);
+    color: var(--color-toast-text);
     box-shadow: 0 8px 30px rgb(0 0 0 / 0.25);
     font-size: 15px;
 }
@@ -1056,7 +1239,7 @@ html[data-keyboard="open"] .toast {
     padding: 0 var(--space-3);
     border: 0;
     background: none;
-    color: #8fe0ad;
+    color: var(--color-toast-action);
     font: inherit;
     font-weight: 600;
 }
@@ -1177,7 +1360,7 @@ select.field__input {
     position: absolute;
     top: 0;
     right: 0;
-    left: 52px;
+    left: var(--touch-target);
     z-index: 1;
     border-top: 0.5px solid var(--color-separator);
 }

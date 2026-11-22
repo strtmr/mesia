@@ -24,6 +24,7 @@ final class ServiceWorkerController extends AbstractController
         '/offline.html',
         '/manifest.webmanifest',
         '/icons/icon.svg',
+        '/icons/favicon.svg',
         '/icons/icon-192.png',
         '/icons/apple-touch-icon.png',
     ];

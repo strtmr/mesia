@@ -14,6 +14,8 @@ use App\Sync\Domain\Model\ProcessedMutation;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Clock\ClockInterface;
 use Psr\Container\ContainerInterface;
+use Doctrine\DBAL\Exception\DriverException;
+use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
@@ -43,6 +45,7 @@ final readonly class MutationDispatcher
         private ValidatorInterface $validator,
         private ClockInterface $clock,
         private LoggerInterface $logger,
+        private ManagerRegistry $doctrine,
     ) {
     }
 
@@ -149,8 +152,20 @@ final readonly class MutationDispatcher
             if ($connection->isTransactionActive()) {
                 $connection->rollBack();
             }
+            if (!self::isDataError($exception)) {
+                throw $exception; // z. B. Datenbank nicht erreichbar: Push scheitert, das Gerät versucht es später erneut
+            }
 
-            throw $exception;
+            // Datenfehler (Wert zu lang, Eindeutigkeit verletzt): Ein neuer Versuch hilft nicht. Ablehnen, damit diese
+            // eine Mutation nicht den ganzen Abgleich des Geräts blockiert. Es ist ein Programmfehler, daher ins Log.
+            $this->logger->error('Mutation wegen Datenfehler abgelehnt: {type}', ['type' => $mutation->type, 'exception' => $exception]);
+            if (!$this->entityManager->isOpen()) {
+                $this->doctrine->resetManager(); // Doctrine schließt den EntityManager nach einem Fehler beim Speichern
+            }
+            $this->entityManager->clear();
+            $result = self::result($mutation->id, 'rejected', error: 'Diese Änderung konnte nicht gespeichert werden.');
+            $this->remember($householdId, $deviceId, $mutation, $result);
+            $this->entityManager->flush();
         } finally {
             $this->entityManager->clear();
         }
@@ -234,6 +249,15 @@ final readonly class MutationDispatcher
     /**
      * @param array<string, mixed> $result
      */
+    /**
+     * SQLSTATE-Klasse 22 (Datenfehler, z. B. Wert zu lang) oder 23 (Integritätsverletzung): Ein neuer Versuch mit
+     * denselben Daten scheitert wieder.
+     */
+    private static function isDataError(\Throwable $exception): bool
+    {
+        return $exception instanceof DriverException && \in_array(substr((string) $exception->getSQLState(), 0, 2), ['22', '23'], true);
+    }
+
     private function remember(Uuid $householdId, string $deviceId, IncomingMutation $mutation, array $result): void
     {
         $this->entityManager->persist(new ProcessedMutation(

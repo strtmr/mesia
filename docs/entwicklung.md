@@ -163,11 +163,38 @@ ausgeliefert. Nur so kennt er die versionierten AssetMapper-URLs.
   nichts löschen, Eigenes nicht anfassen). Ob ein Artikel aus dem Startkatalog stammt, steht in `article.source`.
   Nach Änderungen die Anzahlen in `HouseholdInitializationTest` und `SyncApiTest` anpassen, `SeedCatalogTest` prüft
   auf Dubletten.
+- **Normalform ist länger als das Original:** ä/ö/ü/ß werden zu ae/oe/ue/ss. Spalten für Normalformen
+  (`name_normalized`, `alias_normalized`) sind deshalb doppelt so lang wie die Eingabegrenze (200 statt 100).
+- **Datenfehler beim Speichern** (SQLSTATE 22/23) lehnt der Dispatcher nur für die betroffene Mutation ab und
+  protokolliert sie als Fehler. Andere Fehler (z. B. Datenbank weg) lassen den Push scheitern, damit das Gerät es
+  später erneut versucht. So kann eine einzelne fehlerhafte Mutation den Abgleich nicht dauerhaft blockieren.
 - **Normalisierung** gibt es in PHP und JS. Beide gemeinsam ändern und `tests/fixtures/normalize.json` ergänzen.
 - **Test-Container:** private Services nur über `self::getContainer()` in KernelTestCase/WebTestCase holen
   (Trait `CreatesUsers` für Testbenutzer).
 - **DAMA-Testbundle:** Jeder Test läuft in einer Transaktion, die für DBAL unsichtbar ist. Code, der eine Transaktion
   voraussetzt, muss sie im Test selbst öffnen.
+
+## Design (Brand Book)
+
+Gestaltungsregeln, Farben, Typografie, Komponenten und Kontrastwerte: [brand-book.md](brand-book.md) (lebende Fassung,
+Grundlage `MESIA_Brand_Book_v1.pdf`). Hier nur die technischen Punkte. Palette:
+`#01161e` Ink, `#124559` Deep, `#598392` Slate, `#aec3b0` Sage, `#eff6e0` Cream.
+
+- **Farben nur über Tokens** in `assets/styles/app.css` (`--mesia-*` Palette, `--color-*` Rollen, hell und dunkel).
+  Gedämpfter Text ist aus Slate abgedunkelt (`#4a6b78`), damit er 4,5:1 erreicht (WCAG AA).
+- **Schrift:** Manrope (OFL), selbst ausgeliefert aus `assets/fonts/` (Quelle: npm `@fontsource-variable/manrope`,
+  Lizenz in `assets/fonts/MANROPE-LICENSE.txt`). Kein Google-Fonts-Abruf (Datenschutz, offline).
+- **Radien:** Eingaben 8, Knöpfe 10, Karten 14, große Flächen 20 px.
+- **Dichte:** Grundschrift 16 px (Eingaben nie kleiner, sonst zoomt iOS), Zeilen und Trefferflächen 44 px
+  (`--touch-target`), Seitentitel 28 px, Kategorie-Überschriften 16 px in Markenfarbe.
+- **Bildmarke:** `public/icons/icon.svg` (abgerundet) und `icon-maskable.svg` (randlos) sind die Quellen der PNG-Icons,
+  `templates/app/_brand_mark.html.twig` die Variante ohne Hintergrund (Farben per CSS, Dark Mode). Wortmarke immer
+  klein „mesia“ (`.wordmark`). PNGs neu erzeugen (im Container):
+  `cd public/icons && magick -background none -density 384 icon.svg -resize 512x512 icon-512.png` (analog 192,
+  maskable 512, `apple-touch-icon.png` 180 aus der randlosen Variante mit `-flatten`).
+- **Favicon:** `public/icons/favicon.svg` (ohne Dampf, größer) und `public/favicon.ico` (16/32/48 px, erzeugt mit
+  `magick -background none -density 384 icons/favicon.svg -define icon:auto-resize=48,32,16 favicon.ico` in `public/`).
+- Der Brand-Book-Entwurf hat eine orange Schüssel als Food-Akzent. Mit der eigenen Palette ist sie Sage/Slate.
 
 ## Version und Neuigkeiten
 

@@ -34,7 +34,8 @@ class Article implements Syncable
     #[ORM\Column(length: 100)]
     private string $name;
 
-    #[ORM\Column(length: 100)]
+    /** Bis zu doppelt so lang wie der Name: Die Normalisierung schreibt ä/ö/ü/ß als ae/oe/ue/ss */
+    #[ORM\Column(length: 200)]
     private string $nameNormalized;
 
     #[ORM\Column(type: UuidType::NAME)]

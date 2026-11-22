@@ -304,6 +304,29 @@ final class SyncApiTest extends WebTestCase
         self::assertSame('Die Menge darf höchstens 99999 sein.', $result['error']);
     }
 
+    public function testNameWithUmlautsUpToTheLimitIsAccepted(): void
+    {
+        // 100 Zeichen sind erlaubt, die Normalform ("oe" statt "ö") ist doppelt so lang und muss trotzdem passen
+        $result = $this->pushOne('article.create', ['article_id' => $this->uuid(), 'name' => str_repeat('ö', 100), 'category_id' => $this->fallbackCategoryId()]);
+
+        self::assertSame('applied', $result['status']);
+    }
+
+    public function testDatabaseDataErrorRejectsOnlyThatMutation(): void
+    {
+        // Programmfehler nachstellen: Regel, die neue lange Artikelnamen verletzen (SQLSTATE 23514, mit dem Test zurückgerollt)
+        self::getContainer()->get(Connection::class)->executeStatement('ALTER TABLE article ADD CONSTRAINT test_kurz CHECK (length(name_normalized) < 15) NOT VALID');
+
+        $results = $this->push([
+            $this->mutation('article.create', ['article_id' => $this->uuid(), 'name' => 'Schokoladenpudding', 'category_id' => $this->fallbackCategoryId()]),
+            $this->mutation('item.add', $this->addItemPayload($this->uuid(), 'Milch')),
+        ]);
+
+        self::assertSame('rejected', $results[0]['status']);
+        self::assertSame('Diese Änderung konnte nicht gespeichert werden.', $results[0]['error']);
+        self::assertSame('applied', $results[1]['status'], 'Die übrigen Mutationen laufen weiter');
+    }
+
     public function testTooLongNameIsRejectedWithAReadableMessage(): void
     {
         $result = $this->pushOne('article.create', ['article_id' => $this->uuid(), 'name' => str_repeat('ä', 101), 'category_id' => $this->fallbackCategoryId()]);

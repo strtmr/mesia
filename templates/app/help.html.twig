@@ -1,0 +1,56 @@
+{% extends 'app/layout.html.twig' %}
+
+{# Hilfe: Kurzfassung von docs/benutzerhandbuch.md. Bei neuen Funktionen beides aktualisieren. #}
+
+{% block page_title %}{{ 'help.title'|trans }}{% endblock %}
+
+{% block header_actions %}
+    <a class="header-link" href="{{ path('app_more') }}">‹ {{ 'more.title'|trans }}</a>
+{% endblock %}
+
+{% block content %}
+    <article class="help">
+        <section class="help__section">
+            <h2>Hinzufügen</h2>
+            <p>Unten ins Feld tippen und mit Return bestätigen. Das Feld bleibt offen für den nächsten Artikel.</p>
+            <dl class="help__examples">
+                <div><dt>2 l Milch</dt><dd>Milch · 2 l</dd></div>
+                <div><dt>3 Zwiebeln</dt><dd>Zwiebeln · 3 Stk</dd></div>
+                <div><dt>2x500g Mehl</dt><dd>Mehl · 1.000 g</dd></div>
+                <div><dt>Butter (die gute)</dt><dd>mit Notiz „die gute“</dd></div>
+            </dl>
+            <p>Mengen darf man ausrechnen lassen (+ − × ÷). Steht ein Artikel schon auf der Liste, kommt die Menge dazu.</p>
+        </section>
+
+        <section class="help__section">
+            <h2>Abhaken und „Erledigt“</h2>
+            <p>Auf den Kreis tippen: Der Artikel wandert nach „Erledigt“. Dort steht oft Gekauftes oben.</p>
+            <ul>
+                <li><strong>Antippen</strong> setzt einen Artikel wieder auf die Liste.</li>
+                <li><strong>Nach links wischen</strong> entfernt ihn aus „Erledigt“, etwa nach einem Einmalkauf.</li>
+            </ul>
+        </section>
+
+        <section class="help__section">
+            <h2>Bearbeiten und Sortieren</h2>
+            <ul>
+                <li><strong>Auf den Namen tippen:</strong> Name, Menge, Einheit, Kategorie und Notiz ändern oder löschen.</li>
+                <li><strong>Lange drücken und ziehen:</strong> umsortieren, auch in eine andere Kategorie. Mesia merkt sich das.</li>
+                <li><strong>Mehr → Kategorien:</strong> Reihenfolge wie im Laden, Namen und Symbole anpassen.</li>
+            </ul>
+        </section>
+
+        <section class="help__section">
+            <h2>Gemeinsam und offline</h2>
+            <p>Änderungen gleichen sich zwischen euren Geräten nach wenigen Sekunden ab. Ohne Netz arbeitest du normal
+                weiter, übertragen wird, sobald wieder Verbindung besteht.</p>
+            <p>Oben rechts siehst du den Stand: <em>Synchron</em>, <em>ausstehend</em>, <em>Offline</em> oder <em>Abgemeldet</em>.</p>
+        </section>
+
+        <section class="help__section">
+            <h2>Als App auf dem iPhone</h2>
+            <p>In Safari auf <strong>Teilen</strong> tippen, dann <strong>„Zum Home-Bildschirm“</strong>. In der installierten
+                App einmal anmelden und die Liste mit Verbindung öffnen, danach startet sie auch im Funkloch.</p>
+        </section>
+    </article>
+{% endblock %}

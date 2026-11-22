@@ -2,6 +2,7 @@
 
 app:
     name: Mesia
+    claim: Life, intelligently connected.
 
 nav:
     label: Hauptnavigation
@@ -15,6 +16,15 @@ login:
     password: Passwort
     submit: Anmelden
     stay_signed_in: Du bleibst auf diesem Gerät angemeldet.
+    about:
+        title: Was ist Mesia?
+        shared_title: Gemeinsam.
+        shared: Eure Einkaufsliste für den ganzen Haushalt. Was einer einträgt, sehen alle.
+        offline_title: Auch ohne Netz.
+        offline: Die Liste funktioniert im Keller und im Supermarkt, abgeglichen wird später.
+        smart_title: Mitdenkend.
+        smart: Artikel landen in der richtigen Kategorie, oft Gekauftes ist schnell wieder auf der Liste.
+        account: Mesia ist im Moment nur auf Einladung nutzbar.
 
 shopping:
     title: Einkauf
@@ -82,6 +92,7 @@ more:
         section: App
         version: Version
         release_notes: Neuigkeiten
+        help: Hilfe
         connection: Verbindung
         online: Online
         offline: Offline
@@ -107,6 +118,9 @@ categories:
         name: Name
         create: Anlegen
         save: Speichern
+
+help:
+    title: Hilfe
 
 release_notes:
     title: Neuigkeiten

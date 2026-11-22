@@ -7,6 +7,8 @@
 - Sprache im Projekt: Deutsch (Doku, Kommentare, UI-Texte). Code-Bezeichner Englisch.
 - Doku pflegen: `docs/entwicklung.md` (Entwickler) und `docs/benutzerhandbuch.md` (Benutzer) bei jeder sichtbaren
   oder strukturellen Änderung mitziehen.
+- Gestaltung: `docs/brand-book.md` (Farben, Typografie, Abstände, Komponenten). Werte stehen als Tokens in
+  `assets/styles/app.css`, beides gemeinsam ändern.
 - Sichtbare Änderungen: Version in `config/services.yaml` (`app.version`) erhöhen und kurz aus Benutzersicht in
   `data/release-notes.yaml` beschreiben (erscheint unter „Mehr → Neuigkeiten“). Noch nicht deployte Version ergänzen
   statt neu anlegen.

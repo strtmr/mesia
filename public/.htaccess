@@ -23,7 +23,7 @@ AddType application/manifest+json .webmanifest
         Header set Cache-Control "public, max-age=31536000, immutable"
     </If>
     # Manifest, Icons und Offline-Seite haben feste Namen: immer kurz beim Server nachfragen
-    <If "%{REQUEST_URI} =~ m#^/(manifest\.webmanifest|offline\.html|icons/)#">
+    <If "%{REQUEST_URI} =~ m#^/(manifest\.webmanifest|offline\.html|favicon\.ico|icons/)#">
         Header set Cache-Control "no-cache"
     </If>
     Header always set X-Content-Type-Options "nosniff"

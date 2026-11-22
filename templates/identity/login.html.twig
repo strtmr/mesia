@@ -5,8 +5,9 @@
 
 {% block body %}
     <main class="login">
-        <img class="login__logo" src="/icons/icon.svg" alt="" width="72" height="72">
-        <h1 class="login__title">{{ 'app.name'|trans }}</h1>
+        {{ include('app/_brand_mark.html.twig', {class: 'login__mark'}) }}
+        <h1 class="login__title wordmark">mesia</h1>
+        <p class="login__claim">{{ 'app.claim'|trans }}</p>
         <p class="login__intro">{{ 'login.intro'|trans }}</p>
 
         {% if error %}
@@ -32,5 +33,16 @@
         </form>
 
         <p class="login__hint">{{ 'login.stay_signed_in'|trans }}</p>
+
+        {# Erklärung für Besucher ohne Konto #}
+        <section class="login__about" aria-labelledby="login-about-title">
+            <h2 id="login-about-title" class="login__about-title">{{ 'login.about.title'|trans }}</h2>
+            <ul class="login__about-list">
+                <li><strong>{{ 'login.about.shared_title'|trans }}</strong> {{ 'login.about.shared'|trans }}</li>
+                <li><strong>{{ 'login.about.offline_title'|trans }}</strong> {{ 'login.about.offline'|trans }}</li>
+                <li><strong>{{ 'login.about.smart_title'|trans }}</strong> {{ 'login.about.smart'|trans }}</li>
+            </ul>
+            <p class="login__about-account">{{ 'login.about.account'|trans }}</p>
+        </section>
     </main>
 {% endblock %}
