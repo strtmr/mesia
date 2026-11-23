@@ -10,6 +10,9 @@ DELETE FROM category WHERE household_id IN (SELECT id FROM e2e_h);
 DELETE FROM purchase_event WHERE household_id IN (SELECT id FROM e2e_h);
 DELETE FROM processed_mutation WHERE household_id IN (SELECT id FROM e2e_h);
 DELETE FROM change_log WHERE household_id IN (SELECT id FROM e2e_h);
+-- Rezepte und Zutaten hängen per ON DELETE CASCADE am Gericht
+DELETE FROM dish WHERE household_id IN (SELECT id FROM e2e_h);
+DELETE FROM push_subscription WHERE household_id IN (SELECT id FROM e2e_h);
 DELETE FROM app_user WHERE household_id IN (SELECT id FROM e2e_h);
 DELETE FROM household WHERE id IN (SELECT id FROM e2e_h);
 COMMIT;

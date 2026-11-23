@@ -1,0 +1,54 @@
+{% extends 'app/layout.html.twig' %}
+
+{# Tab „Gerichte“ (DishController::index). Suche und Schlagwort-Filter ohne Server: controllers/dish_filter_controller.js #}
+
+{% block page_title %}{{ 'recipe.title'|trans }}{% endblock %}
+
+{% block header_actions %}
+    <a class="header-link header-link--add" href="{{ path('recipe_dishes_new') }}" aria-label="{{ 'recipe.new'|trans }}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+    </a>
+{% endblock %}
+
+{% block content %}
+    {% for message in app.flashes('success') %}
+        <p class="notice notice--success" role="status">{{ message }}</p>
+    {% endfor %}
+
+    {% if dishes is empty %}
+        <div class="empty-state">
+            <h2 class="empty-state__headline">{{ 'recipe.empty.headline'|trans }}</h2>
+            <p class="empty-state__text">{{ 'recipe.empty.text'|trans }}</p>
+            <a class="button button--primary" href="{{ path('recipe_dishes_new') }}">{{ 'recipe.new'|trans }}</a>
+        </div>
+    {% else %}
+        <div class="dishes" data-controller="dish-filter">
+            <input type="search" class="field__input dishes__search" placeholder="{{ 'recipe.search'|trans }}" aria-label="{{ 'recipe.search'|trans }}"
+                   data-dish-filter-target="query" data-action="input->dish-filter#filter" enterkeyhint="search" autocomplete="off">
+
+            {% if tags %}
+                <div class="chips" role="group" aria-label="{{ 'recipe.tags'|trans }}">
+                    {% for tag in tags %}
+                        <button type="button" class="chip" aria-pressed="false" data-dish-filter-target="tag" data-tag="{{ tag|lower }}" data-action="dish-filter#toggleTag">{{ tag }}</button>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <section class="list-section">
+                <div class="list-group">
+                    {% for dish in dishes %}
+                        <a class="list-group__row list-group__row--link" href="{{ path('recipe_dishes_show', {id: dish.id}) }}"
+                           data-dish-filter-target="item" data-search="{{ dish.name }} {{ dish.tags|join(' ') }}" data-tags="{{ dish.tags|map(tag => tag|lower)|join('|') }}">
+                            <span class="list-group__label">
+                                {{ dish.name }}
+                                {% set meta = include('recipe/_dish_meta.html.twig', {dish: dish}) %}
+                                {% if meta %}<small>{{ meta }}</small>{% endif %}
+                            </span>
+                        </a>
+                    {% endfor %}
+                </div>
+            </section>
+            <p class="page-hint" data-dish-filter-target="empty" hidden>{{ 'recipe.no_results'|trans }}</p>
+        </div>
+    {% endif %}
+{% endblock %}

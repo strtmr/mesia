@@ -16,6 +16,9 @@ deptrac:
         - name: Shopping
           collectors:
               - { type: classLike, value: '^App\\Shopping\\.*' }
+        - name: Recipe
+          collectors:
+              - { type: classLike, value: '^App\\Recipe\\.*' }
         - name: Notification
           collectors:
               - { type: classLike, value: '^App\\Notification\\.*' }
@@ -30,6 +33,7 @@ deptrac:
         Identity: [Shared]
         Catalog: [Shared]
         Shopping: [Shared, Catalog]
+        Recipe: [Shared, Catalog]
         Notification: [Shared]
         Admin: [Shared, Identity]
         Sync: [Shared, Identity, Catalog, Shopping]

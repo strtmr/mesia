@@ -188,6 +188,19 @@ try {
     await page.locator('.item-swipe', { hasText: 'Drachenfrucht' }).waitFor({ state: 'detached', timeout: 5000 });
     await waitForSync(page);
 
+    step('Gerichte: anlegen und ansehen');
+    await page.click('nav.tabbar a[href="/gerichte"]');
+    await expectVisible(page.getByText('Noch keine Gerichte'), 'Leere Gerichte-Übersicht');
+    await page.click('.header-link--add');
+    await page.fill('input[name="dish[name]"]', 'Lasagne');
+    await page.fill('textarea[name="dish[ingredients]"]', '500 g Hackfleisch\n1 Dose Tomaten');
+    await page.click('form.dish-form button[type=submit]');
+    await expectVisible(page.locator('.dish-ingredients li', { hasText: '500 g Hackfleisch' }), 'Lasagne mit Zutaten');
+    await page.click('nav.tabbar a[href="/gerichte"]');
+    await expectVisible(page.locator('.list-group__row', { hasText: 'Lasagne' }), 'Lasagne in der Übersicht');
+    await page.click('nav.tabbar a[href="/einkauf"]');
+    await expectVisible(page.locator('.item-row', { hasText: 'Brot' }), 'Zurück auf der Liste');
+
     step('Service Worker hat die Listenseite gespeichert');
     await page.waitForFunction(async () => {
         await navigator.serviceWorker.ready;

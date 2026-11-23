@@ -13,6 +13,7 @@ werden (und umgekehrt).
 | Version | Datum | Änderung |
 |---|---|---|
 | 1.0 | – | PDF: Markenidee, Logo-Konzept, Startpalette, Typografie, Tokens |
+| 1.6 | 2026-11-23 | Gerichte: Tab-Symbol, Filter-Chips, Sekundärknopf, mehrzeiliges Textfeld, Zubereitungsschritte |
 | 1.5 | 2026-11-23 | Auswahlfelder: Chip in der Zeile, Pfeil auf/ab im Formular |
 | 1.4 | 2026-11-23 | Komponente Schalter (Mitteilungen), Abhaken bleibt stehen, Metazeile im Sheet |
 | 1.3 | 2026-11-22 | Streetstyle: Signal-Orange als Aktionsfarbe, Sticker-Bildmarke mit Größenstufen, Wortmarke „MESIA“ in Archivo Black |
@@ -268,6 +269,11 @@ nicht benötigt.
 | Kategorie-Überschrift | Emoji + Name, 16 px fett in Akzentfarbe, 6 px über der Gruppe |
 | Eingabeleiste | unten fixiert, über der Tastatur, Feld rund, Plus-Knopf rund in Signal-Orange (Plus in Ink) |
 | Abhaken | Kreis füllt sich in Signal-Orange mit Häkchen in Ink, Name durchgestrichen in gedämpfter Farbe; die Zeile bleibt stehen, bis 3 s nichts mehr abgehakt wurde, dann wandert alles nach „Erledigt“ |
+| Sekundärknopf | 10 % Akzent als Fläche, Schrift Akzentfarbe, z. B. „Bearbeiten“ |
+| Filter-Chip | 32 px hoch, Radius voll, Rahmen 35 % Akzent, Schrift Akzent halbfett; gewählt: Fläche Akzent, Schrift Kontrastfarbe |
+| Mehrzeiliges Textfeld | wie Eingabefeld, mindestens 96 px hoch, Zeilenhöhe 1,45, in der Höhe ziehbar |
+| Zubereitungsschritte | Karte (Radius 14), nummeriert, Nummern fett in Akzentfarbe, Zeilenhöhe 1,5 |
+| Tab „Gerichte“ | Schüssel auf dem Tisch mit Dampf, Linienstil wie die übrigen Tab-Symbole |
 | Hinweis Erfolg | `.notice--success`: Fläche mit 16 % Erfolgsfarbe, z. B. nach dem Anlegen im Admin-Bereich |
 | Metazeile im Sheet | 13 px gedämpft über dem Löschen-Knopf („Hinzugefügt von … heute um …“) |
 | Wischen zum Entfernen | Zeile nach links schieben, roter Knopf „Entfernen“ rastet ein |

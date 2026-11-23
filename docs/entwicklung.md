@@ -12,6 +12,7 @@ Deployment: [betrieb.md](betrieb.md).
 | `Identity` | Haushalt, Benutzer, Login, `/api/me`, Konsolenbefehle | Shared |
 | `Catalog` | Kategorien, Artikel, Aliase, Startkatalog, `TextNormalizer`, `Unit` | Shared |
 | `Shopping` | Liste, Einträge mit Beiträgen, Kaufhistorie | Shared, Catalog |
+| `Recipe` | Gerichte, Rezepte, Zutatenzeilen (`/gerichte`, Phase 2) | Shared, Catalog |
 | `Notification` | Web-Push-Abos, Versand der Mitteilungen (`/api/push`, `app:push:send`) | Shared |
 | `Admin` | Admin-Bereich `/admin`: Überblick, Auswertungen, Haushalte und Personen anlegen | Shared, Identity |
 | `Sync` | `/api/sync/*`, Mutation-Dispatcher, Change-Feed | alle |
@@ -184,6 +185,23 @@ nicht synchronisiert.
   Versand tut nichts. Lokal liegen Schlüssel in `.env.local`.
 - **Testen am Gerät:** Headless-Chromium meldet `Notification.permission` immer als `denied`. Echte Zustellung nur
   auf einem Gerät mit HTTPS prüfbar (iPhone: installierte App, iOS 16.4+).
+
+## Gerichte (Modul Recipe)
+
+Phase 2, Spezifikation: [spezifikation-phase-2.md](spezifikation-phase-2.md). Normale Turbo-Seiten mit Verbindung,
+**nicht synchronisiert** (kein `Syncable`, kein Änderungsprotokoll).
+
+- **Aggregat:** `Dish` ist die Wurzel, `Recipe` (Variante, immer genau ein Standardrezept) und `IngredientLine` hängen
+  daran (Cascade, Orphan Removal). Gelöscht wird nur das Gericht, und zwar weich (`deleted_at`), weil Listen-Beiträge
+  später darauf verweisen.
+- **Zutaten** werden als Text gespeichert (`raw_text`, eine Zeile je Zutat). Unveränderte Zeilen behalten beim
+  Speichern ihre ID (`Recipe::replaceIngredients()`), damit spätere Korrekturen (Artikel-Zuordnung ab 2.2) erhalten
+  bleiben. Menge, Einheit, Artikel füllt ab Paket 2.2 der Parser.
+- **Zubereitung:** ein Textfeld, Schritte durch Leerzeilen getrennt, sonst eine Zeile je Schritt (`getStepList()`).
+- **Haushalt:** `DishEditor` arbeitet immer mit der Haushalts-ID des Aufrufers (`CurrentUser`). Fremde Gerichte
+  liefern `DishNotFound` → 404.
+- **Suche und Schlagwort-Filter** laufen im Browser (`controllers/dish_filter_controller.js`), ohne Groß-/Klein-
+  schreibung und Akzente.
 
 ## Admin-Bereich
 

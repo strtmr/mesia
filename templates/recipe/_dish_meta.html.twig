@@ -1,0 +1,7 @@
+{# Kurzinfo zu einem Gericht: "schnell · 45 min · Pasta, vegetarisch". Erwartet: dish #}
+{%- set recipe = dish.recipe -%}
+{%- set parts = [] -%}
+{%- if dish.effort -%}{%- set parts = parts|merge([('recipe.effort.' ~ dish.effort.value)|trans]) -%}{%- endif -%}
+{%- if recipe.totalMinutes -%}{%- set parts = parts|merge(['recipe.minutes'|trans({'%count%': recipe.totalMinutes})]) -%}{%- endif -%}
+{%- if dish.tags -%}{%- set parts = parts|merge([dish.tags|join(', ')]) -%}{%- endif -%}
+{{- parts|join(' · ') -}}

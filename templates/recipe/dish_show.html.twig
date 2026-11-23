@@ -1,0 +1,59 @@
+{% extends 'app/layout.html.twig' %}
+
+{# Detail eines Gerichts (DishController::show) #}
+
+{% block page_title %}{{ dish.name }}{% endblock %}
+
+{% block header_actions %}
+    <a class="header-link" href="{{ path('recipe_dishes') }}">‹ {{ 'recipe.title'|trans }}</a>
+{% endblock %}
+
+{% block content %}
+    {% set recipe = dish.recipe %}
+    {% set meta = include('recipe/_dish_meta.html.twig', {dish: dish}) %}
+
+    <div class="dish-head">
+        {% if meta %}<p class="dish-head__meta">{{ meta }}</p>{% endif %}
+        <a class="button button--secondary" href="{{ path('recipe_dishes_edit', {id: dish.id}) }}">{{ 'recipe.edit'|trans }}</a>
+    </div>
+
+    {% if not dish.hasRecipe %}
+        <p class="notice">{{ 'recipe.no_recipe'|trans }}</p>
+    {% endif %}
+
+    {% if recipe.ingredients %}
+        <section class="list-section">
+            <h2 class="list-section__title">{{ 'recipe.ingredients'|trans }} · {{ 'recipe.servings'|trans({'%count%': recipe.servings}) }}</h2>
+            <ul class="list-group dish-ingredients">
+                {% for line in recipe.ingredients %}
+                    <li class="list-group__row">{{ line.rawText }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+    {% endif %}
+
+    {% if recipe.stepList %}
+        <section class="list-section">
+            <h2 class="list-section__title">{{ 'recipe.steps'|trans }}</h2>
+            <ol class="dish-steps">
+                {% for step in recipe.stepList %}
+                    <li>{{ step|nl2br }}</li>
+                {% endfor %}
+            </ol>
+        </section>
+    {% endif %}
+
+    {% if dish.note %}
+        <section class="list-section">
+            <h2 class="list-section__title">{{ 'recipe.note'|trans }}</h2>
+            <p class="dish-note">{{ dish.note|nl2br }}</p>
+        </section>
+    {% endif %}
+
+    {% if dish.sourceUrl %}
+        <p class="page-hint">
+            {{ 'recipe.source'|trans }}
+            <a href="{{ dish.sourceUrl }}" target="_blank" rel="noopener noreferrer nofollow">{{ dish.sourceUrl|split('/')[2] ?? dish.sourceUrl }}</a>
+        </p>
+    {% endif %}
+{% endblock %}

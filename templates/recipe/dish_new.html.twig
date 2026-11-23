@@ -1,0 +1,11 @@
+{% extends 'app/layout.html.twig' %}
+
+{% block page_title %}{{ 'recipe.new'|trans }}{% endblock %}
+
+{% block header_actions %}
+    <a class="header-link" href="{{ path('recipe_dishes') }}">‹ {{ 'recipe.title'|trans }}</a>
+{% endblock %}
+
+{% block content %}
+    {{ include('recipe/_dish_form.html.twig', {submit: 'recipe.form.create'}) }}
+{% endblock %}

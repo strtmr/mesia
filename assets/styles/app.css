@@ -585,6 +585,16 @@ a {
     font-size: 16px; /* >= 16px, sonst zoomt iOS Safari beim Fokus */
 }
 
+textarea.field__input {
+    min-height: 96px;
+    line-height: 1.45;
+    resize: vertical;
+}
+
+.field__hint.field__hint--left {
+    text-align: left;
+}
+
 .field__input:focus {
     outline: 2px solid var(--color-accent);
     outline-offset: 1px;
@@ -1538,3 +1548,101 @@ select.field__input {
     font-weight: 600;
     scroll-snap-align: end;
 }
+
+/* ---------- Gerichte (Phase 2) ---------- */
+
+/* "+" in der Kopfzeile */
+.header-link--add svg {
+    width: 26px;
+    height: 26px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.dishes__search {
+    margin-bottom: var(--space-3);
+}
+
+/* Filter-Chips (Schlagworte): an = Akzentfarbe gefüllt */
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+}
+
+.chip {
+    min-height: 32px;
+    padding: 0 var(--space-3);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-accent);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.chip[aria-pressed="true"] {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-accent-contrast);
+}
+
+.button--secondary {
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    color: var(--color-accent);
+}
+
+.dish-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.dish-head__meta {
+    margin: 0;
+    color: var(--color-text-muted);
+}
+
+.dish-ingredients .list-group__row {
+    min-height: 40px;
+}
+
+/* Zubereitung: nummerierte Schritte auf einer Karte */
+.dish-steps {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: var(--space-4) var(--space-4) var(--space-4) calc(var(--space-4) + 1.4em);
+    background: var(--color-surface);
+    border-radius: var(--radius-m);
+    line-height: 1.5;
+}
+
+.dish-steps li::marker {
+    color: var(--color-accent);
+    font-weight: 700;
+}
+
+.dish-note {
+    margin: 0;
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-surface);
+    border-radius: var(--radius-m);
+}
+
+.page-hint--flush {
+    margin: calc(var(--space-2) * -1) 0 0;
+}
+
+.dish-delete {
+    margin-top: var(--space-5);
+}
+

@@ -1,0 +1,31 @@
+{# Formular „Gericht anlegen/bearbeiten“. Erwartet: form, submit (Übersetzungsschlüssel des Knopfs) #}
+{% macro field(field, label, hint = null) %}
+    <label class="field">
+        <span class="field__label">{{ label|trans }}</span>
+        {{ form_widget(field) }}
+        {% if hint %}<span class="field__hint field__hint--left">{{ hint|trans }}</span>{% endif %}
+        {% for error in field.vars.errors %}<span class="form-error">{{ error.message }}</span>{% endfor %}
+    </label>
+{% endmacro %}
+
+{{ form_start(form, {attr: {class: 'form-group dish-form', novalidate: 'novalidate'}}) }}
+    {{ _self.field(form.name, 'recipe.form.name') }}
+    <p class="page-hint page-hint--flush">{{ 'recipe.form.name_hint'|trans }}</p>
+
+    <div class="field-row">
+        {{ _self.field(form.servings, 'recipe.form.servings') }}
+        {{ _self.field(form.effort, 'recipe.form.effort') }}
+    </div>
+    <div class="field-row">
+        {{ _self.field(form.prepMinutes, 'recipe.form.prep_minutes') }}
+        {{ _self.field(form.cookMinutes, 'recipe.form.cook_minutes') }}
+    </div>
+
+    {{ _self.field(form.ingredients, 'recipe.form.ingredients', 'recipe.form.ingredients_hint') }}
+    {{ _self.field(form.steps, 'recipe.form.steps', 'recipe.form.steps_hint') }}
+    {{ _self.field(form.tags, 'recipe.form.tags') }}
+    {{ _self.field(form.note, 'recipe.form.note') }}
+    {{ _self.field(form.sourceUrl, 'recipe.form.source_url') }}
+
+    <button type="submit" class="button button--primary button--block">{{ submit|trans }}</button>
+{{ form_end(form) }}

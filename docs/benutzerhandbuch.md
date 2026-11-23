@@ -30,6 +30,7 @@ startet sie auch im Funkloch. iOS bewahrt die Daten installierter Apps zuverläs
 | Tab | Inhalt |
 |-----|--------|
 | **Einkauf** | eure gemeinsame Einkaufsliste |
+| **Gerichte** | was ihr kocht, mit Zutaten und Zubereitung |
 | **Mehr** | Kategorien, Mitteilungen, Hilfe, Konto, Haushalt, App-Version mit **Neuigkeiten** (was sich in welcher Version geändert hat), Verbindungsstatus, Abmelden |
 
 ## Einkaufsliste
@@ -100,6 +101,24 @@ Verbindung.
 **Neue Version:** Erscheint oben „Neue Version verfügbar“, tippe auf „Neu laden“. Dabei geht nichts verloren.
 
 **Abmelden** löscht die Liste von diesem Gerät. Noch nicht übertragene Änderungen gehen dabei verloren.
+
+## Gerichte
+
+Im Tab **Gerichte** sammelt ihr, was ihr kocht (oder bestellt). Alle im Haushalt sehen dieselben Gerichte.
+
+- **Neues Gericht:** oben rechts auf **+**. Ein Name reicht, z. B. „Pizza bestellen“. Alles andere ist freiwillig
+  und lässt sich später ergänzen.
+- **Zutaten:** eine pro Zeile, am besten mit Menge und Einheit („500 g Hackfleisch“, „1 Dose Tomaten“).
+- **Zubereitung:** Schritte durch eine Leerzeile trennen. Ohne Leerzeile gilt jede Zeile als ein Schritt. In der
+  Ansicht erscheinen sie nummeriert.
+- **Portionen, Zeiten, Aufwand** (schnell, normal, aufwendig), **Schlagworte** (kommagetrennt, z. B. „Pasta,
+  vegetarisch“), **Notiz** und **Link** zum Originalrezept.
+- **Finden:** Das Suchfeld durchsucht Namen und Schlagworte. Die Schlagworte darunter filtern, mehrere zusammen
+  zeigen Gerichte, die alle davon haben.
+- **Ändern oder löschen:** Gericht öffnen → **Bearbeiten**. Ganz unten steht „Gericht löschen“.
+
+Gerichte brauchen eine Internetverbindung. Bald lassen sich die Zutaten eines Gerichts mit einem Tipp auf die
+Einkaufsliste setzen.
 
 ## Kategorien
 

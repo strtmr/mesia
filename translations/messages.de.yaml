@@ -7,6 +7,7 @@ app:
 nav:
     label: Hauptnavigation
     shopping: Einkauf
+    dishes: Gerichte
     more: Mehr
 
 login:
@@ -216,4 +217,49 @@ admin:
         password_repeat: Passwort wiederholen
         password_hint: 'Mindestens 10 Zeichen. Das Passwort persönlich weitergeben, ändern lässt es sich mit app:user:set-password.'
         create: Anlegen
+
+# Gerichte und Rezepte (Phase 2)
+recipe:
+    title: Gerichte
+    new: Neues Gericht
+    edit: Bearbeiten
+    search: Gerichte suchen …
+    tags: Schlagworte
+    no_results: Keine Gerichte gefunden.
+    empty:
+        headline: Noch keine Gerichte
+        text: 'Sammle hier, was ihr gerne kocht. Ein Name reicht für den Anfang, Zutaten und Zubereitung lassen sich jederzeit ergänzen.'
+    effort:
+        none: –
+        quick: schnell
+        normal: normal
+        elaborate: aufwendig
+    minutes: '%count% min'
+    servings: '{1} für 1 Portion|]1,Inf[ für %count% Portionen'
+    ingredients: Zutaten
+    steps: Zubereitung
+    note: Notiz
+    source: 'Quelle:'
+    no_recipe: 'Noch ohne Rezept. Unter „Bearbeiten“ lassen sich Zutaten und Zubereitung ergänzen.'
+    delete: Gericht löschen
+    delete_confirm: '„%name%“ löschen?'
+    form:
+        name: Name
+        name_hint: 'Ein Name reicht, z. B. „Pizza bestellen“. Alles andere ist freiwillig.'
+        servings: Portionen
+        effort: Aufwand
+        prep_minutes: Vorbereitung (Min.)
+        cook_minutes: Kochen/Backen (Min.)
+        ingredients: Zutaten
+        ingredients_placeholder: "500 g Hackfleisch\n1 Dose Tomaten\n2 Zwiebeln"
+        ingredients_hint: Eine Zutat pro Zeile, mit Menge und Einheit.
+        steps: Zubereitung
+        steps_placeholder: "Zwiebeln würfeln und anbraten.\n\nHackfleisch dazugeben …"
+        steps_hint: Schritte durch eine Leerzeile trennen (oder ein Schritt pro Zeile).
+        tags: Schlagworte
+        tags_placeholder: 'z. B. Pasta, vegetarisch'
+        note: Notiz
+        source_url: Link zum Rezept
+        create: Anlegen
+        save: Speichern
 
