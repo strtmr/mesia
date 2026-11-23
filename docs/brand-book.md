@@ -13,6 +13,7 @@ werden (und umgekehrt).
 | Version | Datum | Änderung |
 |---|---|---|
 | 1.0 | – | PDF: Markenidee, Logo-Konzept, Startpalette, Typografie, Tokens |
+| 1.5 | 2026-11-23 | Auswahlfelder: Chip in der Zeile, Pfeil auf/ab im Formular |
 | 1.4 | 2026-11-23 | Komponente Schalter (Mitteilungen), Abhaken bleibt stehen, Metazeile im Sheet |
 | 1.3 | 2026-11-22 | Streetstyle: Signal-Orange als Aktionsfarbe, Sticker-Bildmarke mit Größenstufen, Wortmarke „MESIA“ in Archivo Black |
 | 1.2 | 2026-11-22 | Warnfarbe hell auf `#b0740f` (Kontrast 3:1) |
@@ -273,7 +274,8 @@ nicht benötigt.
 | Hinweis (Toast) | dunkle Fläche (Radius 14, 15 px Text) über der Eingabeleiste, Fehler in Fehlerfarbe |
 | Sheet | von unten, Radius 20 oben, für Bearbeiten |
 | Schalter | in einer Listengruppen-Zeile rechts, 51 × 31 px, aus: Trennlinienfarbe, an: Signal-Orange, Knopf weiß |
-| Auswahl in Zeile | Wert rechtsbündig in gedämpfter Farbe ohne Rahmen (z. B. Häufigkeit) |
+| Auswahl in Zeile | Chip rechts: Wert 16 px halbfett in Akzentfarbe auf 10 % Akzent, Radius voll, Pfeil auf/ab; so breit wie der Wert (z. B. Häufigkeit) |
+| Auswahlfeld im Formular | wie Eingabefeld, rechts Pfeil auf/ab in gedämpfter Farbe (Token `--icon-select`, je Thema) |
 
 ---
 

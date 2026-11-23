@@ -4,10 +4,7 @@
 _keine_
 
 ## Funktion
-+ Auswertung für Admins
-    + Welche Artikel werden häufig manuell hinzugefügt
-    + Was wird oft gekauft 
-    + Haushalte und Nutzer anlegen (später self-service mit Abo) 
+_keine_
 
 ## Design
 + Optimierte Ansicht fürs Web

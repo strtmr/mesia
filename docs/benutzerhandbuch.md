@@ -123,7 +123,7 @@ Mitteilungen senden darf: mit „Erlauben“ bestätigen.
 
 - **Pro Gerät:** Die Einstellung gilt nur für das Gerät, auf dem du sie triffst. Handy und Tablet schaltest du
   getrennt ein.
-- **Häufigkeit:** „Sofort“ meldet sich innerhalb weniger Minuten. „Höchstens alle 15 Minuten“ sammelt und schickt
+- **Häufigkeit:** „Sofort“ meldet sich innerhalb weniger Minuten. „Alle 15 Minuten“ sammelt und schickt
   eine Nachricht für alles, was in der Zwischenzeit dazugekommen ist, z. B. „Anna hat Milch, Brot und 2 weitere auf
   die Liste gesetzt.“
 - **Antippen** der Mitteilung öffnet die Einkaufsliste.
