@@ -16,6 +16,9 @@ deptrac:
         - name: Shopping
           collectors:
               - { type: classLike, value: '^App\\Shopping\\.*' }
+        - name: Notification
+          collectors:
+              - { type: classLike, value: '^App\\Notification\\.*' }
         - name: Sync
           collectors:
               - { type: classLike, value: '^App\\Sync\\.*' }
@@ -24,4 +27,5 @@ deptrac:
         Identity: [Shared]
         Catalog: [Shared]
         Shopping: [Shared, Catalog]
+        Notification: [Shared]
         Sync: [Shared, Identity, Catalog, Shopping]

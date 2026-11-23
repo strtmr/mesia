@@ -11,7 +11,7 @@
   `assets/styles/app.css`, beides gemeinsam ändern.
 - Sichtbare Änderungen: Version in `config/services.yaml` (`app.version`) erhöhen und kurz aus Benutzersicht in
   `data/release-notes.yaml` beschreiben (erscheint unter „Mehr → Neuigkeiten“). Noch nicht deployte Version ergänzen
-  statt neu anlegen.
+  statt neu anlegen. Reine Admin-Funktionen (z. B. Admin-Dashboard): keine neue Version, kein Eintrag.
 - Deployment und Server: `docs/betrieb.md` (Skripte in `deploy/`). Was nicht aufs Live-System gehört, steht als
   `export-ignore` in `.gitattributes`.
 - Ideen und Bugs aus dem Alltag sammelt der Benutzer in `feature-ideas.md`. Vor jeder Planung lesen und einordnen

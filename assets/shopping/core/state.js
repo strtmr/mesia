@@ -19,8 +19,10 @@ const COLLECTIONS = {
 /**
  * @param {Iterable<{type: string, data: object}>} serverEntities
  * @param {Array<{type: string, at: string, payload: object}>} outbox
+ * @param {{actorId?: string|null}} options actorId: angemeldeter Benutzer, für „Hinzugefügt von“/„Erledigt von“ an
+ *        lokalen Änderungen (der Server setzt es selbst)
  */
-export function buildState(serverEntities, outbox = []) {
+export function buildState(serverEntities, outbox = [], { actorId = null } = {}) {
     const state = {
         categories: new Map(),
         articles: new Map(),
@@ -37,7 +39,7 @@ export function buildState(serverEntities, outbox = []) {
     }
 
     for (const mutation of outbox) {
-        applyMutation(state, mutation);
+        applyMutation(state, mutation, actorId);
     }
 
     return state;
@@ -46,22 +48,22 @@ export function buildState(serverEntities, outbox = []) {
 /**
  * Wendet eine Mutation an. Objekte werden vor dem Ändern kopiert, der Serverzustand bleibt unberührt.
  */
-export function applyMutation(state, mutation) {
+export function applyMutation(state, mutation, actorId = null) {
     const handler = HANDLERS[mutation.type];
     if (handler) {
-        handler(state, mutation.payload, mutation.at);
+        handler(state, mutation.payload, mutation.at, actorId);
     }
 }
 
 const HANDLERS = {
-    'item.add'(state, p, at) {
+    'item.add'(state, p, at, actorId) {
         if (state.items.has(p.item_id)) {
             return;
         }
         if (p.article_id) {
             const existing = findItemByArticle(state, p.list_id, p.article_id);
             if (existing) {
-                addContribution(state, existing.id, p.contribution, at);
+                addContribution(state, existing.id, p.contribution, at, actorId);
                 return;
             }
         }
@@ -78,29 +80,33 @@ const HANDLERS = {
             checked_at: null,
             checked_by: null,
             activated_at: at,
-            contributions: [contribution(p.contribution, at)],
+            contributions: [contribution(p.contribution, at, actorId)],
             deleted: false,
             pending: true,
         });
     },
 
-    'item.reactivate'(state, p, at) {
-        addContribution(state, p.item_id, p.contribution, at);
+    'item.reactivate'(state, p, at, actorId) {
+        addContribution(state, p.item_id, p.contribution, at, actorId);
     },
 
-    'item.check'(state, p, at) {
+    'item.check'(state, p, at, actorId) {
         const item = state.items.get(p.item_id);
         if (!item || item.deleted || item.checked_at || time(at) < time(item.activated_at)) {
             return;
         }
-        edit(state.items, p.item_id).checked_at = at;
+        const changed = edit(state.items, p.item_id);
+        changed.checked_at = at;
+        changed.checked_by = actorId;
         countPurchase(state, item.article_id, +1);
     },
 
     'item.uncheck'(state, p) {
         const item = state.items.get(p.item_id);
         if (item && !item.deleted && item.checked_at) {
-            edit(state.items, p.item_id).checked_at = null;
+            const changed = edit(state.items, p.item_id);
+            changed.checked_at = null;
+            changed.checked_by = null;
             countPurchase(state, item.article_id, -1);
         }
     },
@@ -224,7 +230,7 @@ export function time(iso) {
     return iso ? Date.parse(iso) : 0;
 }
 
-function addContribution(state, itemId, payload, at) {
+function addContribution(state, itemId, payload, at, actorId) {
     const item = state.items.get(itemId);
     if (!item || item.deleted) {
         return;
@@ -239,16 +245,17 @@ function addContribution(state, itemId, payload, at) {
         changed.qty_override = null;
         changed.unit_override = null;
     }
-    changed.contributions = [...changed.contributions, contribution(payload, at)];
+    changed.contributions = [...changed.contributions, contribution(payload, at, actorId)];
 }
 
-function contribution(payload, at) {
+function contribution(payload, at, actorId) {
     return {
         id: payload.id,
         source: 'manual',
         source_ref: null,
         quantity: payload.quantity ?? null,
         unit: payload.unit ?? null,
+        created_by: actorId,
         created_at: at,
     };
 }

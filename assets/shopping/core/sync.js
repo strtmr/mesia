@@ -5,6 +5,11 @@ import { HttpError, NetworkError, UnauthorizedError } from './api.js';
 const SYNC_INTERVAL_MS = 8000;
 const DEBOUNCE_MS = 1000;
 const MAX_BACKOFF_MS = 60000;
+/**
+ * Erhöhen, wenn der Snapshot neue Felder bekommt, die schon vorhandene Objekte brauchen. Jedes Gerät lädt dann einmal
+ * einen frischen Snapshot (2: created_by an den Beiträgen für „Hinzugefügt von“).
+ */
+export const SNAPSHOT_VERSION = 2;
 
 /**
  * Hält den lokalen Zustand und gleicht ihn mit dem Server ab (Spezifikation Kapitel 4).
@@ -24,6 +29,8 @@ export class SyncEngine {
         this.server = new Map();
         this.outbox = [];
         this.state = buildState([]);
+        /** Angemeldeter Benutzer und Haushaltsmitglieder (ID → Name), gespeichert für den Offline-Start */
+        this.people = { userId: null, names: new Map() };
         this.status = { state: 'idle', pending: 0, lastSyncAt: null };
         this.rejected = [];
 
@@ -96,7 +103,7 @@ export class SyncEngine {
 
         try {
             await this.ensureHousehold();
-            if ((await getMeta(this.db, 'cursor')) === null) {
+            if ((await getMeta(this.db, 'cursor')) === null || (await getMeta(this.db, 'snapshotVersion')) !== SNAPSHOT_VERSION) {
                 await this.loadSnapshot();
             }
 
@@ -179,6 +186,10 @@ export class SyncEngine {
             });
         }
         await setMeta(this.db, 'householdId', me.household.id);
+        await setMeta(this.db, 'people', {
+            userId: me.id ?? null,
+            members: (me.household.members ?? []).map((member) => ({ id: member.id, name: member.display_name })),
+        });
         this.householdChecked = true;
     }
 
@@ -190,6 +201,7 @@ export class SyncEngine {
             await this.db.table('entities').clear();
             await this.db.table('entities').bulkPut(rows);
             await setMeta(this.db, 'cursor', snapshot.cursor);
+            await setMeta(this.db, 'snapshotVersion', SNAPSHOT_VERSION);
         });
     }
 
@@ -286,11 +298,13 @@ export class SyncEngine {
         const rows = await this.db.table('entities').toArray();
         this.server = new Map(rows.map((row) => [row.key, row]));
         this.outbox = await this.db.table('outbox').orderBy('seq').toArray();
+        const people = await getMeta(this.db, 'people', { userId: null, members: [] });
+        this.people = { userId: people.userId, names: new Map(people.members.map((member) => [member.id, member.name])) };
         this.recompute();
     }
 
     recompute() {
-        this.state = buildState(this.server.values(), this.outbox);
+        this.state = buildState(this.server.values(), this.outbox, { actorId: this.people.userId });
         this.status.pending = this.outbox.length;
         // Lokale Änderung seit dem letzten Sync → "ausstehend" statt "synchron" anzeigen
         if (this.outbox.length > 0 && ['synced', 'idle'].includes(this.status.state)) {

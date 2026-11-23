@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { buildState, findItemByArticle } from '../../assets/shopping/core/state.js';
-import { buildListView } from '../../assets/shopping/core/view.js';
+import { buildListView, itemStatus } from '../../assets/shopping/core/view.js';
 import { TextTooLongError, addFromText, checkItem, editItem, moveItem, reactivateItem, uncheckItem } from '../../assets/shopping/core/commands.js';
 import { QuantityError } from '../../assets/shopping/core/quantity.js';
-import { catalogEntities } from './support/fixtures.js';
+import { LIST_ID as LIST, catalogEntities } from './support/fixtures.js';
 
 /** Hilfsfunktion: Kommandos nacheinander ausführen, wie die Outbox es tut. */
 function run(entities, steps) {
@@ -166,6 +166,50 @@ describe('Abhaken, Rückgängig, Reaktivieren', () => {
         ]);
 
         expect(view.openCount).toBe(1);
+    });
+});
+
+describe('Abgehakt an ihrem Platz, Statuszeile', () => {
+    it('lässt gerade Abgehaktes an seinem Platz, bis es nicht mehr festgehalten wird', () => {
+        const ctx = testCtx();
+        const { state } = run(catalogEntities(), [
+            (s) => addFromText(s, 'Milch', ctx),
+            (s) => addFromText(s, 'Butter', ctx),
+            (s) => checkItem(findItemByArticle(s, LIST, 'art-milch').id, ctx),
+        ]);
+        const milk = findItemByArticle(state, LIST, 'art-milch');
+
+        const kept = buildListView(state, { keepInPlace: new Set([milk.id]) });
+        expect(kept.groups[0].items.map((i) => [i.name, i.checked])).toEqual([['Milch', true], ['Butter', false]]);
+        expect(kept.done).toHaveLength(0);
+
+        const settled = buildListView(state);
+        expect(settled.groups[0].items.map((i) => i.name)).toEqual(['Butter']);
+        expect(settled.done.map((i) => i.name)).toEqual(['Milch']);
+    });
+
+    it('merkt sich, wer hinzugefügt und wer abgehakt hat', () => {
+        const ctx = testCtx();
+        // Anna hat Milch auf die Liste gesetzt (schon beim Server), Marco gibt auf seinem Gerät 1 l dazu
+        const annasState = buildState(catalogEntities(), addFromText(buildState(catalogEntities()), '1 l Milch', ctx), { actorId: 'anna' });
+        const annasMilk = { ...findItemByArticle(annasState, LIST, 'art-milch'), pending: false };
+        const server = [...catalogEntities(), { type: 'shopping_item', data: annasMilk }];
+
+        ctx.setNow('2026-11-20T10:05:00.000Z');
+        let outbox = addFromText(buildState(server), '1 l Milch', ctx);
+        let state = buildState(server, outbox, { actorId: 'marco' });
+        expect(itemStatus(state.items.get(annasMilk.id))).toEqual({
+            added: { kind: 'added', userIds: ['anna', 'marco'], at: '2026-11-20T10:00:00.000Z' },
+            checked: null,
+        });
+
+        ctx.setNow('2026-11-20T10:30:00.000Z');
+        outbox = [...outbox, ...checkItem(annasMilk.id, ctx)];
+        state = buildState(server, outbox, { actorId: 'marco' });
+        expect(itemStatus(state.items.get(annasMilk.id))).toEqual({
+            added: { kind: 'added', userIds: ['anna', 'marco'], at: '2026-11-20T10:00:00.000Z' },
+            checked: { kind: 'checked', userIds: ['marco'], at: '2026-11-20T10:30:00.000Z' },
+        });
     });
 });
 

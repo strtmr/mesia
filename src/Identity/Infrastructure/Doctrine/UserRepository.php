@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Identity\Infrastructure\Doctrine;
 
+use App\Identity\Domain\Model\Household;
 use App\Identity\Domain\Model\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -33,6 +34,14 @@ final class UserRepository extends ServiceEntityRepository implements PasswordUp
     public function findOneByEmail(string $email): ?User
     {
         return $this->findOneBy(['email' => mb_strtolower(trim($email))]);
+    }
+
+    /**
+     * @return list<User>
+     */
+    public function findByHousehold(Household $household): array
+    {
+        return $this->findBy(['household' => $household], ['displayName' => 'ASC']);
     }
 
     /**

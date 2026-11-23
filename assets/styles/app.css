@@ -454,6 +454,75 @@ a {
     margin-top: var(--space-5);
 }
 
+/* ---------- Einstellungen unter "Mehr" (Mitteilungen) ---------- */
+
+.list-group__label {
+    display: grid;
+    gap: 2px;
+}
+
+.list-group__label small {
+    color: var(--color-text-muted);
+    font-size: 13px;
+}
+
+.list-group__select {
+    min-height: var(--touch-target);
+    padding: 0 var(--space-2);
+    border: 0;
+    background: transparent;
+    color: var(--color-text-muted);
+    font: inherit;
+    font-size: 16px;
+    text-align: right;
+}
+
+.list-section__hint {
+    margin: var(--space-2) var(--space-4) 0;
+    color: var(--color-text-muted);
+    font-size: 13px;
+}
+
+/* Schalter wie bei iOS, an = Signalfarbe */
+.switch {
+    position: relative;
+    flex: none;
+    width: 51px;
+    height: 31px;
+    margin: 0;
+    border-radius: 999px;
+    background: var(--color-separator);
+    cursor: pointer;
+    appearance: none;
+    transition: background 0.2s ease;
+}
+
+.switch::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 0.2);
+    transition: transform 0.2s ease;
+}
+
+.switch:checked {
+    background: var(--color-action);
+}
+
+.switch:checked::after {
+    transform: translateX(20px);
+}
+
+.switch:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
 /* ---------- Formulare ---------- */
 
 .form-group {
@@ -1003,8 +1072,7 @@ html[data-keyboard="open"] .page-shopping .item-row {
     background: color-mix(in srgb, var(--color-accent) 25%, transparent);
 }
 
-/* Abhaken: kurzes visuelles Feedback (Häkchen, Zeile blendet aus), dann wandert der Eintrag nach „Erledigt“ */
-.item-row--checking .item-check__circle,
+/* Abgehakt: Kreis in Signal-Orange mit Häkchen (auch in „Erledigt“) */
 .item-check.is-checked .item-check__circle {
     border-color: var(--color-action);
     /* Häkchen in Ink: auf Orange 6,5:1 (Weiß hätte nur 2,9:1) */
@@ -1315,6 +1383,15 @@ html[data-keyboard="open"] .toast {
     font-weight: 600;
 }
 
+/* "Hinzugefügt von Anna heute um 9:05" / "Erledigt von …" über dem Löschen-Knopf */
+.sheet__meta {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 13px;
+}
+
 .field-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1329,13 +1406,20 @@ select.field__input {
     background-size: 18px;
 }
 
-.item-row--checking {
-    opacity: 0.45;
-    transition: opacity 0.3s ease;
+/* Gerade abgehakt: bleibt kurz an seinem Platz, durchgestrichen (danach nach „Erledigt“) */
+.item-row--checked .item-body__name {
+    color: var(--color-text-muted);
+    text-decoration: line-through;
 }
 
-.item-row--checking .item-check__circle {
+.item-row--checked .item-check__circle {
     animation: check-pop 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .item-row--checked .item-check__circle {
+        animation: none;
+    }
 }
 
 @keyframes check-pop {

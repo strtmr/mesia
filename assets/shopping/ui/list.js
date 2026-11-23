@@ -1,15 +1,23 @@
 import Sortable from 'sortablejs';
 import { buildListView, formatInputNumber, formatNumber } from '../core/view.js';
-import { TextTooLongError, addArticle, addFromText, checkItem, createContext, deleteItem, editItem, moveItem, reactivateItem } from '../core/commands.js';
+import { TextTooLongError, addArticle, addFromText, checkItem, createContext, deleteItem, editItem, moveItem, reactivateItem, uncheckItem } from '../core/commands.js';
 import { suggest } from '../core/matcher.js';
 import { LENGTH_WARNING_AT, NAME_MAX_LENGTH, NOTE_MAX_LENGTH, parseQuickAdd, textLength } from '../core/quickadd.js';
 import { UNITS } from '../core/units.js';
 import { activeList, findItemByArticle } from '../core/state.js';
 import { QuantityError, parseQuantity } from '../core/quantity.js';
+import { statusLine } from '../core/status.js';
 
 const TOAST_MS = 4000;
-/** So lange ist das Häkchen zu sehen, bevor der Eintrag nach „Erledigt“ wandert */
-const CHECK_FEEDBACK_MS = 350;
+/**
+ * Abgehakte Einträge bleiben an ihrem Platz, bis so lange nichts mehr abgehakt wurde. Dann wandern alle gemeinsam
+ * nach „Erledigt“. So rutscht beim Abhaken im Laden keine Zeile unter dem Finger weg.
+ */
+const KEEP_IN_PLACE_MS = 1000;
+/** Direkt nach dem Zusammenrücken zählt ein Tipp nicht (er galt vermutlich der Zeile, die vorher dort stand) */
+const SETTLE_GUARD_MS = 400;
+/** Zweiter Tipp auf denselben Kreis so kurz danach: versehentlicher Doppeltipp, kein Rückgängig */
+const DOUBLE_TAP_MS = 500;
 /** Fehler und Ablehnungen etwas länger, damit man sie lesen kann */
 const ERROR_TOAST_MS = 6000;
 
@@ -24,6 +32,11 @@ export function shoppingList(engine) {
     const cleanups = [];
     let toastTimer = null;
     let dragOrigin = null;
+    // Gerade abgehakt, noch an ihrem Platz (siehe KEEP_IN_PLACE_MS)
+    const keptInPlace = new Set();
+    let keepTimer = null;
+    let settledAt = 0;
+    let lastTap = { id: null, at: 0 };
     // Wurzelelement, in init() gesetzt. Alpine-Magics wie $refs/$root sind nach einem await nicht mehr verfügbar,
     // deshalb greifen die Methoden über dieses Element auf das DOM zu.
     let root = null;
@@ -91,11 +104,12 @@ export function shoppingList(engine) {
             cleanups.splice(0).forEach((cleanup) => cleanup());
             sortables.splice(0).forEach((sortable) => sortable.destroy());
             clearTimeout(toastTimer);
+            clearTimeout(keepTimer);
         },
 
         render() {
             this.hasData = engine.hasData;
-            this.view = buildListView(engine.state);
+            this.view = buildListView(engine.state, { keepInPlace: keptInPlace });
 
             const [rejected] = engine.takeRejected();
             if (rejected) {
@@ -185,19 +199,39 @@ export function shoppingList(engine) {
         // ------------------------------------------------------------ Abhaken
 
         /**
-         * Abhaken ohne Text-Hinweis: Kreis füllt sich mit Häkchen, die Zeile blendet aus und wandert nach „Erledigt“.
-         * Versehentlich Abgehaktes kommt per Antippen in „Erledigt“ zurück.
+         * Abhaken: Kreis füllt sich mit Häkchen, der Name wird durchgestrichen, die Zeile bleibt aber stehen. Erst wenn
+         * eine Weile nichts mehr abgehakt wurde, wandern alle abgehakten Einträge gemeinsam nach „Erledigt“.
+         * Gespeichert und abgeglichen wird sofort. Ein weiterer Tipp auf einen noch stehenden Eintrag macht es rückgängig.
          */
         async check(item) {
-            const row = element(`[data-id="${item.id}"]`);
-            if (row?.classList.contains('item-row--checking')) {
-                return; // Doppeltipp
+            const now = Date.now();
+            if (now - settledAt < SETTLE_GUARD_MS || (lastTap.id === item.id && now - lastTap.at < DOUBLE_TAP_MS)) {
+                return;
             }
-            row?.classList.add('item-row--checking');
-            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            await new Promise((resolve) => setTimeout(resolve, reducedMotion ? 0 : CHECK_FEEDBACK_MS));
+            lastTap = { id: item.id, at: now };
+
+            if (item.checked) {
+                keptInPlace.delete(item.id);
+                this.keepInPlaceAWhile();
+                await this.run(uncheckItem(item.id, ctx));
+                return;
+            }
+            keptInPlace.add(item.id);
+            this.keepInPlaceAWhile();
             await this.run(checkItem(item.id, ctx));
-            row?.classList.remove('item-row--checking'); // nur relevant, falls die Zeile noch da ist (Fehler)
+        },
+
+        /** Frist neu starten: Solange weiter abgehakt wird, bleibt alles stehen */
+        keepInPlaceAWhile() {
+            clearTimeout(keepTimer);
+            if (keptInPlace.size === 0) {
+                return;
+            }
+            keepTimer = setTimeout(() => {
+                keptInPlace.clear();
+                settledAt = Date.now();
+                this.render();
+            }, KEEP_IN_PLACE_MS);
         },
 
         async reactivate(item) {
@@ -228,8 +262,20 @@ export function shoppingList(engine) {
                 unit: item.editableQuantity.unit ?? '',
                 categoryId: source.category_id,
                 original: item.editableQuantity,
+                checked: item.checked,
+                // "Hinzugefügt von Anna heute um 9:05", bei Abgehaktem zusätzlich "Erledigt von …"
+                statusLines: this.statusLines(item),
             };
             element('dialog.sheet').showModal();
+        },
+
+        statusLines(item) {
+            const options = { names: engine.people.names, texts: JSON.parse(text('textStatus') || '{}'), now: new Date() };
+
+            return [item.status.added, item.status.checked]
+                .filter(Boolean)
+                .map((status) => statusLine(status, options))
+                .filter((line) => line !== '');
         },
 
         /** Hinweis unter dem Namensfeld im Bearbeiten-Sheet (Feld selbst ist auf 100 Zeichen begrenzt) */
@@ -271,6 +317,21 @@ export function shoppingList(engine) {
 
             this.closeEditor();
             await this.run(mutations);
+        },
+
+        /**
+         * Abgehakten Eintrag aus dem Dialog zurückholen. Steht er noch an seinem Platz, ist es ein Rückgängig (Menge
+         * bleibt), sonst ein Reaktivieren wie per Kreis in „Erledigt“.
+         */
+        async reactivateFromEditor() {
+            const itemId = this.editor.id;
+            this.closeEditor();
+            if (keptInPlace.delete(itemId)) {
+                this.keepInPlaceAWhile();
+                await this.run(uncheckItem(itemId, ctx));
+                return;
+            }
+            await this.run(reactivateItem(itemId, ctx));
         },
 
         async deleteFromEditor() {

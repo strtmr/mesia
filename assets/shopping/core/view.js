@@ -6,8 +6,11 @@ const numberFormat = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 3 }
 
 /**
  * Bereitet den Zustand für die Anzeige auf: offene Einträge nach Kategorien gruppiert, Erledigtes separat.
+ *
+ * keepInPlace: gerade abgehakte Einträge, die noch kurz an ihrem Platz bleiben (abgehakt dargestellt), damit die
+ * Zeilen darunter beim schnellen Abhaken nicht unter dem Finger wegrutschen.
  */
-export function buildListView(state, { doneLimit = 100 } = {}) {
+export function buildListView(state, { doneLimit = 100, keepInPlace = new Set() } = {}) {
     const list = activeList(state);
     const categories = [...state.categories.values()]
         .filter((category) => !category.deleted)
@@ -22,7 +25,7 @@ export function buildListView(state, { doneLimit = 100 } = {}) {
         if (item.deleted || !list || item.list_id !== list.id) {
             continue;
         }
-        if (item.checked_at) {
+        if (item.checked_at && !keepInPlace.has(item.id)) {
             done.push(item);
             continue;
         }
@@ -65,7 +68,27 @@ function toViewItem(item) {
         editableQuantity: editableQuantity(item),
         checked: Boolean(item.checked_at),
         pending: Boolean(item.pending),
+        status: itemStatus(item),
     };
+}
+
+/**
+ * Wer hat den Eintrag auf die Liste gesetzt und wer abgehakt, und wann? Für den Bearbeiten-Dialog, Texte macht
+ * status.js daraus. Hinzugefügt: alle, die zur aktuellen Runde beigetragen haben (nach dem Reaktivieren zählen nur
+ * neue Beiträge), Zeitpunkt des ersten Beitrags.
+ *
+ * @returns {{added: {kind: 'added', userIds: string[], at: string|null}, checked: {kind: 'checked', userIds: string[], at: string}|null}}
+ */
+export function itemStatus(item) {
+    const contributions = [...(item.contributions ?? [])].sort((a, b) => time(a.created_at) - time(b.created_at));
+    const added = {
+        kind: 'added',
+        userIds: [...new Set(contributions.map((c) => c.created_by).filter(Boolean))],
+        at: contributions[0]?.created_at ?? item.activated_at ?? null,
+    };
+    const checked = item.checked_at ? { kind: 'checked', userIds: item.checked_by ? [item.checked_by] : [], at: item.checked_at } : null;
+
+    return { added, checked };
 }
 
 /**

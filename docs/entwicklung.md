@@ -12,6 +12,7 @@ Deployment: [betrieb.md](betrieb.md).
 | `Identity` | Haushalt, Benutzer, Login, `/api/me`, Konsolenbefehle | Shared |
 | `Catalog` | Kategorien, Artikel, Aliase, Startkatalog, `TextNormalizer`, `Unit` | Shared |
 | `Shopping` | Liste, Einträge mit Beiträgen, Kaufhistorie | Shared, Catalog |
+| `Notification` | Web-Push-Abos, Versand der Mitteilungen (`/api/push`, `app:push:send`) | Shared |
 | `Sync` | `/api/sync/*`, Mutation-Dispatcher, Change-Feed | alle |
 
 Schichten je Modul: `Domain` (Entities in `Domain/Model`, Regeln), `Application` (Anwendungsfälle, Mutation-Handler),
@@ -21,8 +22,9 @@ Module koppeln sich über Ereignisse statt über direkte Aufrufe: `UserRegistrat
 `Catalog` legt daraufhin den Startkatalog an und `Shopping` die Liste. `CategoryManagement` löst beim Löschen
 `CategoryDeleted` aus, `Shopping` verschiebt seine Einträge nach „Sonstiges“ (alles in einer Transaktion).
 
-Den Haushalt des angemeldeten Benutzers liefert `Shared\Application\CurrentHousehold` (umgesetzt in Identity), so
-müssen Module wie `Catalog` den Benutzer nicht kennen.
+Den Haushalt des angemeldeten Benutzers liefert `Shared\Application\CurrentHousehold`, Benutzer-ID und Haushalt
+zusammen `Shared\Application\CurrentUser` (beide umgesetzt in Identity). So müssen Module wie `Catalog` oder
+`Notification` die Benutzer-Entity nicht kennen.
 
 ## Synchronisierte Entities
 
@@ -83,8 +85,10 @@ Status im Push-Ergebnis: `applied`, `merged` (auf bestehendes Objekt umgelenkt, 
 
 ```
 core/   reines JavaScript ohne DOM, getestet mit Vitest (tests/js)
-  db.js        Dexie/IndexedDB: entities (bestätigter Serverzustand), outbox, meta (cursor, deviceId, householdId)
-  state.js     buildState(server, outbox): Serverzustand + ausstehende Mutationen → Anzeigezustand (spiegelt die Server-Handler)
+  db.js        Dexie/IndexedDB: entities (bestätigter Serverzustand), outbox, meta (cursor, deviceId, householdId,
+               snapshotVersion, people)
+  state.js     buildState(server, outbox, {actorId}): Serverzustand + ausstehende Mutationen → Anzeigezustand (spiegelt die Server-Handler)
+  status.js    „Hinzugefügt von … heute um …“ / „Erledigt von …“ für den Bearbeiten-Dialog
   commands.js  fachliche Aktionen → Mutationen (addFromText, checkItem, editItem, moveItem …)
   sync.js      SyncEngine: push → pull → Outbox bereinigen, Status, Timer
   quantity.js  Mengen: Grundrechenarten auswerten, Grenzen prüfen (MAX_QUANTITY = PHP Quantity::MAX, gemeinsam ändern)
@@ -111,6 +115,19 @@ ui/     Alpine.js: app.js (Einstieg, Store "sync"), list.js (Komponente)
   `.app-main` scrollt. Wegen `transform` beziehen sich fixierte Elemente darin (Eingabeleiste, Tab-Leiste, Toast) auf
   die Hülle, sitzen also bei offener Tastatur direkt darüber. iOS ändert beim Öffnen der Tastatur nur den sichtbaren
   Bereich, nicht das Layout. Mit Chromium lässt sich das nicht testen, nur auf dem iPhone.
+- **Abhaken bleibt stehen:** `check()` in `ui/list.js` speichert sofort, merkt sich den Eintrag aber in
+  `keptInPlace`. `buildListView(state, {keepInPlace})` zeigt ihn weiter in seiner Gruppe (`checked: true`,
+  durchgestrichen). Erst nach `KEEP_IN_PLACE_MS` ohne weiteres Abhaken wandert alles nach „Erledigt“. Danach
+  ignoriert die Liste Tipps auf Kreise für `SETTLE_GUARD_MS`, damit kein Tipp die nachgerückte Zeile trifft. Ein Tipp
+  auf einen noch stehenden Eintrag schickt `item.uncheck`.
+- **„Erledigt“:** Der Kreis reaktiviert, der Name öffnet den Bearbeiten-Dialog. Dessen Knopf „Wieder auf die Liste“
+  (`reactivateFromEditor()`) schickt `item.uncheck`, solange der Eintrag noch an seinem Platz steht (Menge bleibt),
+  sonst `item.reactivate`.
+- **Wer und wann:** Beiträge tragen `created_by`, Einträge `checked_by`. Namen liefert `/api/me`
+  (`household.members`). Die SyncEngine speichert sie mit der eigenen ID in `meta.people` (auch offline verfügbar)
+  und gibt die ID an `buildState` weiter, damit eigene, noch nicht gesendete Änderungen den Benutzer schon tragen.
+- **Snapshot-Version:** Bekommt der Snapshot ein Feld, das schon vorhandene Objekte brauchen, `SNAPSHOT_VERSION` in
+  `sync.js` erhöhen. Jedes Gerät lädt dann einmal einen frischen Snapshot (Outbox bleibt erhalten).
 - **Drag & Drop:** SortableJS verschiebt DOM-Knoten. `onEnd` setzt das DOM zurück und löst nur eine Mutation aus,
   Alpine rendert die neue Reihenfolge.
 - UI-Texte stehen im Twig-Template bzw. in `translations/`, nicht im JavaScript.
@@ -140,6 +157,33 @@ ausgeliefert. Nur so kennt er die versionierten AssetMapper-URLs.
 - **Entwicklung:** Auch in dev ist der Service Worker aktiv. Jede Asset-Änderung erzeugt eine neue Version (Hinweis
   oben). Zum Zurücksetzen: Browser-Entwicklertools → Application → Storage → „Clear site data“.
 
+## Mitteilungen (Web Push)
+
+Modul `Notification`. Ein Abo gehört einem **Gerät** (Push-Endpoint des Browsers), nicht dem Haushalt, und wird
+nicht synchronisiert.
+
+- **Abo:** `push_settings_controller.js` (Mehr → Mitteilungen) fragt die Erlaubnis an, abonniert per
+  `pushManager.subscribe()` mit dem öffentlichen VAPID-Schlüssel und meldet das Abo an `POST /api/push/subscription`
+  (`DELETE` zum Abmelden, `GET /api/push?endpoint=…` für den Stand). Gleicher Endpoint = Update (Häufigkeit,
+  anderes Konto).
+- **Was gemeldet wird:** Einträge im `change_log` des Haushalts mit `entity_type = shopping_item`, deren Mutation
+  `item.add` oder `item.reactivate` war (über `processed_mutation`), von jemand anderem als dem Abo-Inhaber
+  (`DbalAddedItemsFeed`). `push_subscription.last_seq` merkt sich, bis wohin ein Gerät informiert ist. Ein neues Abo
+  beginnt bei der aktuellen `seq`, nichts wird rückwirkend gemeldet.
+- **Versand:** `app:push:send` (Cron jede Minute, `LockFactory`-Lock gegen Überlappung) ruft `PushDispatcher` auf.
+  Pro fälligem Abo eine Sammel-Nachricht (`NotificationText`, höchstens drei Namen, Texte in `push.*`).
+  „Alle 15 Minuten“ (`PushFrequency::QuarterHour`) wartet, bis die letzte Nachricht 15 Minuten her ist, und sammelt
+  bis dahin. Antwortet der Push-Dienst mit 404/410, wird das Abo gelöscht; andere Fehler versucht der nächste Lauf.
+- **Senden:** `WebPushSender` (minishlink/web-push mit Symfony-HTTP-Client als PSR-18). In Tests ersetzt
+  `InMemoryPushSender` den Versand (`when@test` in `services.yaml`).
+- **Service Worker:** `push` zeigt die Mitteilung (gleicher `tag`, ersetzt die vorige), `notificationclick` holt ein
+  offenes Fenster nach vorn oder öffnet die Liste.
+- **Schlüssel:** `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` (erzeugt `app:push:generate-keys`), `VAPID_SUBJECT`
+  (https- oder mailto-URL, Standard `DEFAULT_URI`). Ohne Schlüssel zeigt die App „nicht eingerichtet“ und der
+  Versand tut nichts. Lokal liegen Schlüssel in `.env.local`.
+- **Testen am Gerät:** Headless-Chromium meldet `Notification.permission` immer als `denied`. Echte Zustellung nur
+  auf einem Gerät mit HTTPS prüfbar (iPhone: installierte App, iOS 16.4+).
+
 ## Tests
 
 | Befehl | Was |
@@ -168,6 +212,8 @@ ausgeliefert. Nur so kennt er die versionierten AssetMapper-URLs.
 - **Datenfehler beim Speichern** (SQLSTATE 22/23) lehnt der Dispatcher nur für die betroffene Mutation ab und
   protokolliert sie als Fehler. Andere Fehler (z. B. Datenbank weg) lassen den Push scheitern, damit das Gerät es
   später erneut versucht. So kann eine einzelne fehlerhafte Mutation den Abgleich nicht dauerhaft blockieren.
+- **`change_log.mutation_id`** wird nur gesetzt, wenn `flush()` innerhalb von `ChangeContext::runForMutation()`
+  läuft (der Doctrine-Listener schreibt das Protokoll beim Flush). Mitteilungen hängen davon ab.
 - **Normalisierung** gibt es in PHP und JS. Beide gemeinsam ändern und `tests/fixtures/normalize.json` ergänzen.
 - **Test-Container:** private Services nur über `self::getContainer()` in KernelTestCase/WebTestCase holen
   (Trait `CreatesUsers` für Testbenutzer).
@@ -211,3 +257,5 @@ in die Service-Worker-Version ein.
 | `app:user:set-password <email>` | Passwort neu setzen |
 | `app:household:initialize [--household=ID]` | fehlende Grunddaten in bestehenden Haushalten ergänzen (idempotent) |
 | `app:catalog:update [--dry-run] [--household=ID]` | Katalog-Abgleich: Erweiterungen des Startkatalogs übernehmen (idempotent, `--dry-run` zeigt nur an) |
+| `app:push:send` | fällige Mitteilungen verschicken (Cron jede Minute) |
+| `app:push:generate-keys` | VAPID-Schlüsselpaar für `.env.local` erzeugen |

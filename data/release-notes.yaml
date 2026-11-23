@@ -5,6 +5,14 @@
 # Kurz und aus Sicht der Benutzer schreiben, ohne Technik. Einträge immer in '…' setzen (ein „: “ im Text würde sonst
 # als Schlüssel gelesen).
 
+- version: 0.8.0
+  date: 2026-11-23
+  changes:
+    - 'Mitteilungen: Dein Gerät meldet sich, wenn jemand anderes etwas auf die Liste setzt. Einschalten unter „Mehr → Mitteilungen“, sofort oder gesammelt alle 15 Minuten (auf dem iPhone in der installierten App)'
+    - 'Abhaken im Laden: Abgehakte Artikel bleiben kurz an ihrem Platz und wandern erst gesammelt nach „Erledigt“. So rutscht keine Zeile mehr unter dem Finger weg. Noch einmal tippen macht das Abhaken rückgängig'
+    - 'Im Bearbeiten-Fenster steht, wer einen Artikel wann auf die Liste gesetzt und wer ihn erledigt hat'
+    - 'In „Erledigt“ setzt jetzt der Kreis einen Artikel wieder auf die Liste, ein Tipp auf den Namen zeigt die Details'
+
 - version: 0.7.0
   date: 2026-11-22
   changes:

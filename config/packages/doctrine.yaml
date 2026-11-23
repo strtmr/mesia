@@ -34,6 +34,11 @@ doctrine:
                 is_bundle: false
                 dir: '%kernel.project_dir%/src/Shopping/Domain/Model'
                 prefix: 'App\Shopping\Domain\Model'
+            Notification:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Notification/Domain/Model'
+                prefix: 'App\Notification\Domain\Model'
             Sync:
                 type: attribute
                 is_bundle: false

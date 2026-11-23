@@ -91,6 +91,7 @@ class ItemContribution
             'source_ref' => $this->sourceRef?->toRfc4122(),
             'quantity' => null === $this->quantity ? null : (float) $this->quantity,
             'unit' => $this->unit?->value,
+            'created_by' => $this->createdBy?->toRfc4122(),
             'created_at' => $this->createdAt->format(\DATE_ATOM),
         ];
     }

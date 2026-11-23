@@ -33,6 +33,34 @@
         </div>
     </section>
 
+    {# Mitteilungen dieses Geräts (controllers/push_settings_controller.js) #}
+    <section class="list-section" data-controller="push-settings"
+             data-push-settings-status-url-value="{{ path('api_push_status') }}"
+             data-push-settings-subscription-url-value="{{ path('api_push_subscribe') }}"
+             data-push-settings-text-unsupported-value="{{ 'push.settings.unsupported'|trans }}"
+             data-push-settings-text-not-configured-value="{{ 'push.settings.not_configured'|trans }}"
+             data-push-settings-text-denied-value="{{ 'push.settings.denied'|trans }}"
+             data-push-settings-text-error-value="{{ 'push.settings.error'|trans }}">
+        <h2 class="list-section__title">{{ 'push.settings.section'|trans }}</h2>
+        <div class="list-group">
+            <label class="list-group__row">
+                <span class="list-group__label">
+                    {{ 'push.settings.enabled'|trans }}
+                    <small>{{ 'push.settings.enabled_hint'|trans }}</small>
+                </span>
+                <input type="checkbox" class="switch" data-push-settings-target="toggle" data-action="push-settings#toggle" disabled>
+            </label>
+            <label class="list-group__row" data-push-settings-target="frequencyRow" hidden>
+                <span>{{ 'push.settings.frequency'|trans }}</span>
+                <select class="list-group__select" data-push-settings-target="frequency" data-action="push-settings#changeFrequency">
+                    <option value="immediate">{{ 'push.settings.immediate'|trans }}</option>
+                    <option value="quarter_hour">{{ 'push.settings.quarter_hour'|trans }}</option>
+                </select>
+            </label>
+        </div>
+        <p class="list-section__hint" data-push-settings-target="hint" hidden></p>
+    </section>
+
     <section class="list-section">
         <h2 class="list-section__title">{{ 'more.app.section'|trans }}</h2>
         <div class="list-group">

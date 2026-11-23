@@ -42,15 +42,26 @@ shopping:
         offline: Offline
         unauthorized: Abgemeldet
         error: Sync-Fehler
+    # Statuszeile unter jedem Eintrag (assets/shopping/core/status.js)
+    item_status:
+        added: 'Hinzugefügt von %name% %when%'
+        added_anonymous: 'Hinzugefügt %when%'
+        checked: 'Erledigt von %name% %when%'
+        checked_anonymous: 'Erledigt %when%'
+        today: 'heute um %time%'
+        yesterday: 'gestern um %time%'
+        date: 'am %date% um %time%'
+        and: und
     unauthorized: Deine Anmeldung ist abgelaufen. Deine Änderungen bleiben gespeichert und werden nach dem Anmelden übertragen.
     login: Jetzt anmelden
     done: Erledigt
-    done_hint: Antippen setzt einen Artikel wieder auf die Liste, nach links wischen entfernt ihn.
+    done_hint: Kreis antippen setzt einen Artikel wieder auf die Liste, Name antippen zeigt Details, nach links wischen entfernt ihn.
     remove: Entfernen
     remove_label: Aus „Erledigt“ entfernen
     add: Hinzufügen
     add_placeholder: Artikel hinzufügen …
     check_label: Abhaken
+    uncheck_label: Abhaken rückgängig
     reactivate_label: Wieder auf die Liste
     toast:
         rejected: '„%name%“ wurde nicht gespeichert: %error%'
@@ -76,6 +87,7 @@ shopping:
         save: Fertig
         cancel: Abbrechen
         delete: Löschen
+        reactivate: Wieder auf die Liste
 
 more:
     title: Mehr
@@ -101,6 +113,25 @@ more:
 app_update:
     text: Neue Version verfügbar
     reload: Neu laden
+
+push:
+    title: Einkaufsliste
+    body_one: '%actors% hat %items% auf die Liste gesetzt.'
+    body_many: '%actors% haben %items% auf die Liste gesetzt.'
+    and: und
+    more: '%count% weitere'
+    someone: Jemand
+    settings:
+        section: Mitteilungen
+        enabled: Auf diesem Gerät
+        enabled_hint: Wenn jemand anderes etwas auf die Liste setzt.
+        frequency: Häufigkeit
+        immediate: Sofort
+        quarter_hour: Höchstens alle 15 Minuten
+        unsupported: Mitteilungen gibt es auf dem iPhone nur in der installierten App (Teilen → „Zum Home-Bildschirm“).
+        not_configured: Mitteilungen sind auf diesem Server noch nicht eingerichtet.
+        denied: Mitteilungen sind für Mesia blockiert. Erlauben unter Einstellungen → Mitteilungen → Mesia.
+        error: Das hat nicht geklappt. Bitte später noch einmal versuchen.
 
 categories:
     title: Kategorien

@@ -112,6 +112,27 @@ php bin/console app:household:create "<Haushaltsname>"           # gibt die Haus
 php bin/console app:user:create <email> <Name> --household=<ID>   # für jede Person
 ```
 
+**8. Mitteilungen einrichten** (einmalig)
+
+```bash
+ssh -t -p 222 <benutzer>@<host>
+cd ~/public_html/projects/mesia/current
+php85 bin/console app:push:generate-keys    # gibt VAPID_PUBLIC_KEY=… und VAPID_PRIVATE_KEY=… aus
+nano ../shared/.env.local                   # beide Zeilen anhängen
+php85 bin/console cache:clear               # damit die neuen Werte gelten
+```
+
+`VAPID_SUBJECT` muss eine `https://`- oder `mailto:`-Adresse sein. Ohne Eintrag gilt `DEFAULT_URI`, das reicht.
+Die Schlüssel **nicht wechseln**: Mit neuen Schlüsseln müssen alle Geräte Mitteilungen neu einschalten.
+
+Dann in konsoleH unter **Cronjobs** einen Job anlegen, jede Minute (Pflicht: höchstens alle 5 Minuten):
+
+```
+cd /usr/www/users/<benutzer>/projects/mesia/current && php85 bin/console app:push:send --quiet
+```
+
+Bei 5 Minuten Takt kommt „Sofort“ entsprechend bis zu 5 Minuten später. Überlappende Läufe verhindert eine Sperre.
+
 ## Im Betrieb
 
 | Aufgabe | Befehl |
@@ -119,6 +140,7 @@ php bin/console app:user:create <email> <Name> --household=<ID>   # für jede Pe
 | Logs ansehen | `ssh -p 222 <benutzer>@<host> 'tail -n 100 ~/public_html/projects/mesia/shared/log/prod-*.log'` |
 | Rollback | `ssh -p 222 <benutzer>@<host> 'sh -s rollback <basis>' < deploy/remote.sh` |
 | Katalog-Abgleich ansehen | auf dem Server: `php85 bin/console app:catalog:update --dry-run` (läuft bei jedem Deployment automatisch) |
+| Mitteilungen von Hand senden | auf dem Server: `php85 bin/console app:push:send` (zeigt gesendet/entfernt/fehlgeschlagen) |
 | Passwort neu setzen | auf dem Server: `php bin/console app:user:set-password <email>` |
 | Von Hand deployen | `ddev exec deploy/build.sh var/build`, dann in WSL mit gesetzten `DEPLOY_*`-Variablen `deploy/release.sh var/build` |
 
@@ -127,7 +149,8 @@ php bin/console app:user:create <email> <Name> --household=<ID>   # für jede Pe
 - **Rollback setzt nur den Code zurück**, nicht die Datenbank. Migrationen deshalb so schreiben, dass auch die
   vorherige Version noch damit läuft (Spalten erst im nächsten Release entfernen).
 - Nach dem Umschalten kann PHP bis zu ca. 2 Minuten lang noch Dateien des alten Releases ausliefern (Realpath-Cache).
-- **Cronjobs** sind noch nicht nötig. Sobald es asynchrone Nachrichten gibt: jede Minute
+- **Cronjobs:** `app:push:send` jede Minute (Schritt 8). Läuft der Cron nicht, kommen keine Mitteilungen, sonst
+  funktioniert alles. Falls später asynchrone Nachrichten dazukommen: ebenfalls jede Minute
   `cd <basis>/current && <php> bin/console messenger:consume async --time-limit=55`.
 - **Backup:** Hetzner sichert Webspace und Datenbanken. Ein eigener Datenbank-Dump folgt später.
 - Lokal nachstellen: `deploy/remote.sh` lässt sich im DDEV-Container gegen ein Verzeichnis unter `/tmp` ausprobieren.

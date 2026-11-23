@@ -134,10 +134,13 @@ final readonly class MutationDispatcher
                 return $previous;
             }
 
-            $outcome = $this->changeContext->runForMutation(
-                $mutation->id,
-                fn (): MutationOutcome => $this->handle($householdId, $actorId, $mutation),
-            );
+            // Innerhalb des Kontexts speichern: Das Änderungsprotokoll entsteht beim flush() und soll die Mutation kennen
+            $outcome = $this->changeContext->runForMutation($mutation->id, function () use ($householdId, $actorId, $mutation): MutationOutcome {
+                $outcome = $this->handle($householdId, $actorId, $mutation);
+                $this->entityManager->flush();
+
+                return $outcome;
+            });
             $result = self::result($mutation->id, $outcome->status, $outcome->mergedInto);
             $this->remember($householdId, $deviceId, $mutation, $result);
             $this->entityManager->flush();

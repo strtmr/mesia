@@ -30,7 +30,7 @@ startet sie auch im Funkloch. iOS bewahrt die Daten installierter Apps zuverläs
 | Tab | Inhalt |
 |-----|--------|
 | **Einkauf** | eure gemeinsame Einkaufsliste |
-| **Mehr** | Kategorien, Hilfe, Konto, Haushalt, App-Version mit **Neuigkeiten** (was sich in welcher Version geändert hat), Verbindungsstatus, Abmelden |
+| **Mehr** | Kategorien, Mitteilungen, Hilfe, Konto, Haushalt, App-Version mit **Neuigkeiten** (was sich in welcher Version geändert hat), Verbindungsstatus, Abmelden |
 
 ## Einkaufsliste
 
@@ -59,17 +59,24 @@ Ein Artikelname darf höchstens 100 Zeichen lang sein (eine Notiz in Klammern 20
 - Beim Tippen erscheinen **Vorschläge**, zuerst Dinge, die ihr schon gekauft habt. Tippfehler werden verziehen.
 - Steht ein Artikel schon auf der Liste, kommt die Menge dazu statt eines zweiten Eintrags.
 
-**Abhaken:** auf den Kreis tippen. Ein kurzes Häkchen bestätigt es, dann wandert der Artikel nach **„Erledigt“**
-(unten, aufklappbar). Versehentlich abgehakt? Den Artikel in „Erledigt“ antippen, dann kommt er wieder auf die Liste.
+**Abhaken:** auf den Kreis tippen. Der Artikel bekommt ein Häkchen und wird durchgestrichen, bleibt aber an seinem
+Platz. So kannst du schnell mehrere hintereinander abhaken, ohne dass die Liste verrutscht. Erst wenn du etwa
+3 Sekunden nichts mehr abhakst, wandern alle abgehakten Artikel gemeinsam nach **„Erledigt“** (unten, aufklappbar).
+Versehentlich abgehakt? Solange der Artikel noch durchgestrichen dasteht, einfach noch einmal auf den Kreis tippen.
+Danach in „Erledigt“ auf seinen Kreis tippen, dann kommt er wieder auf die Liste.
 
 **„Erledigt“** ist euer Vorrat an schon Gekauftem: Jeder Artikel steht dort einmal, **oft Gekauftes oben** (bei
-gleich vielen Käufen das zuletzt Gekaufte). Ein Tipp setzt ihn wieder auf die Liste.
+gleich vielen Käufen das zuletzt Gekaufte). Ein Tipp auf den Kreis setzt ihn wieder auf die Liste. Ein Tipp auf den
+Namen öffnet das Bearbeiten-Fenster: Dort steht, wer ihn wann erledigt und hinzugefügt hat, und „Wieder auf die
+Liste“ holt ihn ebenfalls zurück.
 
 **Aus „Erledigt“ entfernen:** nach links wischen und „Entfernen“ tippen, gedacht für Einmalkäufe wie
 „Geschenkpapier“. Der Artikel bleibt im Katalog und wird beim nächsten Eintippen wieder erkannt, er steht nur nicht
 mehr in „Erledigt“.
 
 **Bearbeiten:** auf den Namen tippen. Dort änderst du Name, Menge, Einheit, Kategorie und Notiz oder löschst den Artikel.
+Unten steht, wer den Artikel wann auf die Liste gesetzt hat (z. B. „Hinzugefügt von Anna heute um 9:05“), bei
+abgehakten Artikeln auch, wer ihn wann erledigt hat.
 Änderst du die Kategorie, merkt sich die App das für das nächste Mal.
 
 **Umsortieren:** einen Artikel lange gedrückt halten und ziehen, auch in eine andere Kategorie.
@@ -107,3 +114,20 @@ so, wie du durch deinen Laden gehst.
 
 Die Seite braucht eine Internetverbindung. Die Einkaufsliste übernimmt Änderungen beim nächsten Abgleich, auch auf
 dem anderen Gerät.
+
+## Mitteilungen
+
+Unter **Mehr → Mitteilungen** schaltest du ein, dass dein Gerät Bescheid gibt, wenn **jemand anderes** etwas auf
+die Liste setzt. Was du selbst einträgst, meldet Mesia dir nicht. Beim ersten Einschalten fragt das Gerät, ob Mesia
+Mitteilungen senden darf: mit „Erlauben“ bestätigen.
+
+- **Pro Gerät:** Die Einstellung gilt nur für das Gerät, auf dem du sie triffst. Handy und Tablet schaltest du
+  getrennt ein.
+- **Häufigkeit:** „Sofort“ meldet sich innerhalb weniger Minuten. „Höchstens alle 15 Minuten“ sammelt und schickt
+  eine Nachricht für alles, was in der Zwischenzeit dazugekommen ist, z. B. „Anna hat Milch, Brot und 2 weitere auf
+  die Liste gesetzt.“
+- **Antippen** der Mitteilung öffnet die Einkaufsliste.
+- **iPhone:** Mitteilungen gibt es nur in der **installierten App** (siehe „Auf dem iPhone installieren“), nicht in
+  Safari. Voraussetzung ist iOS 16.4 oder neuer.
+- **Ausschalten:** Schalter wieder aus. Wurden Mitteilungen einmal abgelehnt, lassen sie sich nur in den
+  Einstellungen des Geräts wieder erlauben (iPhone: Einstellungen → Mitteilungen → Mesia).

@@ -13,6 +13,7 @@ werden (und umgekehrt).
 | Version | Datum | Änderung |
 |---|---|---|
 | 1.0 | – | PDF: Markenidee, Logo-Konzept, Startpalette, Typografie, Tokens |
+| 1.4 | 2026-11-23 | Komponente Schalter (Mitteilungen), Abhaken bleibt stehen, Metazeile im Sheet |
 | 1.3 | 2026-11-22 | Streetstyle: Signal-Orange als Aktionsfarbe, Sticker-Bildmarke mit Größenstufen, Wortmarke „MESIA“ in Archivo Black |
 | 1.2 | 2026-11-22 | Warnfarbe hell auf `#b0740f` (Kontrast 3:1) |
 | 1.1 | 2026-11-22 | Eigene Farbpalette, Bildmarke als SVG nachgebaut, Manrope eingebunden, Abstände und Dichte der App, Kontrastwerte gemessen |
@@ -265,10 +266,13 @@ nicht benötigt.
 | Listengruppe | weiße Karte (Radius 14), Zeilen 44 px, Trennlinie ab der Textspalte |
 | Kategorie-Überschrift | Emoji + Name, 16 px fett in Akzentfarbe, 6 px über der Gruppe |
 | Eingabeleiste | unten fixiert, über der Tastatur, Feld rund, Plus-Knopf rund in Signal-Orange (Plus in Ink) |
-| Abhaken | Kreis füllt sich in Signal-Orange mit Häkchen in Ink, Zeile blendet aus, dann „Erledigt“ |
+| Abhaken | Kreis füllt sich in Signal-Orange mit Häkchen in Ink, Name durchgestrichen in gedämpfter Farbe; die Zeile bleibt stehen, bis 3 s nichts mehr abgehakt wurde, dann wandert alles nach „Erledigt“ |
+| Metazeile im Sheet | 13 px gedämpft über dem Löschen-Knopf („Hinzugefügt von … heute um …“) |
 | Wischen zum Entfernen | Zeile nach links schieben, roter Knopf „Entfernen“ rastet ein |
 | Hinweis (Toast) | dunkle Fläche (Radius 14, 15 px Text) über der Eingabeleiste, Fehler in Fehlerfarbe |
 | Sheet | von unten, Radius 20 oben, für Bearbeiten |
+| Schalter | in einer Listengruppen-Zeile rechts, 51 × 31 px, aus: Trennlinienfarbe, an: Signal-Orange, Knopf weiß |
+| Auswahl in Zeile | Wert rechtsbündig in gedämpfter Farbe ohne Rahmen (z. B. Häufigkeit) |
 
 ---
 

@@ -32,7 +32,17 @@
          data-text-quantity-invalid="{{ 'shopping.quantity.invalid'|trans }}"
          data-text-length-remaining="{{ 'shopping.length.remaining'|trans }}"
          data-text-length-over="{{ 'shopping.length.over'|trans }}"
-         data-text-note-over="{{ 'shopping.length.note_over'|trans }}">
+         data-text-note-over="{{ 'shopping.length.note_over'|trans }}"
+         data-text-status="{{ {
+             added: 'shopping.item_status.added'|trans,
+             added_anonymous: 'shopping.item_status.added_anonymous'|trans,
+             checked: 'shopping.item_status.checked'|trans,
+             checked_anonymous: 'shopping.item_status.checked_anonymous'|trans,
+             today: 'shopping.item_status.today'|trans,
+             yesterday: 'shopping.item_status.yesterday'|trans,
+             date: 'shopping.item_status.date'|trans,
+             and: 'shopping.item_status.and'|trans,
+         }|json_encode }}">
 
         <p class="notice notice--warning" x-cloak x-show="$store.sync.state === 'unauthorized'">
             {{ 'shopping.unauthorized'|trans }}
@@ -60,8 +70,10 @@
                 </h2>
                 <ul class="shopping-items" :data-category-id="group.category.id" x-init="enableSorting($el)">
                     <template x-for="item in group.items" :key="item.id">
-                        <li class="item-row" :class="{ 'item-row--pending': item.pending }" :data-id="item.id">
-                            <button type="button" class="item-check" @click="check(item)" :aria-label="'{{ 'shopping.check_label'|trans|e('js') }} ' + item.name">
+                        {# Gerade abgehakt (item.checked): bleibt kurz an seinem Platz, siehe KEEP_IN_PLACE_MS in list.js #}
+                        <li class="item-row" :class="{ 'item-row--pending': item.pending, 'item-row--checked': item.checked }" :data-id="item.id">
+                            <button type="button" class="item-check" :class="{ 'is-checked': item.checked }" @click="check(item)"
+                                    :aria-label="(item.checked ? '{{ 'shopping.uncheck_label'|trans|e('js') }} ' : '{{ 'shopping.check_label'|trans|e('js') }} ') + item.name">
                                 <span class="item-check__circle"></span>
                             </button>
                             <button type="button" class="item-body" @click="openEditor(item)">
@@ -75,7 +87,7 @@
             </section>
         </template>
 
-        {# Erledigt (Historie): Antippen setzt den Artikel wieder auf die Liste #}
+        {# Erledigt (Historie): Kreis setzt den Artikel wieder auf die Liste, Name öffnet den Dialog (wer, wann) #}
         <section class="shopping-done" x-cloak x-show="view.done.length > 0">
             <button type="button" class="shopping-done__toggle" @click="showDone = !showDone" :aria-expanded="showDone">
                 <span class="shopping-done__chevron" :class="{ 'is-open': showDone }" aria-hidden="true">›</span>
@@ -90,7 +102,7 @@
                             <button type="button" class="item-check is-checked" @click="reactivate(item)" :aria-label="'{{ 'shopping.reactivate_label'|trans|e('js') }} ' + item.name">
                                 <span class="item-check__circle"></span>
                             </button>
-                            <button type="button" class="item-body" @click="reactivate(item)">
+                            <button type="button" class="item-body" @click="openEditor(item)">
                                 <span class="item-body__name" x-text="item.name"></span>
                             </button>
                             <span class="item-qty" x-text="item.quantityLabel"></span>
@@ -172,6 +184,12 @@
                         <span class="field__label">{{ 'shopping.editor.note'|trans }}</span>
                         <input class="field__input" type="text" x-model="editor.note" maxlength="200" enterkeyhint="done">
                     </label>
+
+                    <p class="sheet__meta" x-show="editor.statusLines.length > 0">
+                        <template x-for="line in editor.statusLines" :key="line"><span x-text="line"></span></template>
+                    </p>
+
+                    <button type="button" class="button button--primary button--block" x-show="editor.checked" @click="reactivateFromEditor()">{{ 'shopping.editor.reactivate'|trans }}</button>
 
                     <button type="button" class="button button--danger button--block" @click="deleteFromEditor()">{{ 'shopping.editor.delete'|trans }}</button>
                 </form>

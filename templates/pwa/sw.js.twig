@@ -117,3 +117,37 @@ async function fromCacheOrNetwork(request) {
 async function offlinePage() {
     return (await caches.match(OFFLINE_URL)) ?? Response.error();
 }
+
+// ---------------------------------------------------------------- Mitteilungen (Web Push, app:push:send)
+
+self.addEventListener('push', (event) => {
+    let data = {};
+    try {
+        data = event.data ? event.data.json() : {};
+    } catch {
+        data = { body: event.data?.text() ?? '' };
+    }
+    event.waitUntil(self.registration.showNotification(data.title ?? 'Mesia', {
+        body: data.body ?? '',
+        tag: data.tag ?? 'mesia',
+        renotify: true,
+        icon: '/icons/icon-192.png',
+        badge: '/icons/icon-192.png',
+        data: { url: data.url ?? SHELL_URL },
+    }));
+});
+
+// Antippen: offenes Fenster nach vorn holen, sonst die Liste öffnen
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    const url = event.notification.data?.url ?? SHELL_URL;
+    event.waitUntil((async () => {
+        const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+        const existing = windows.find((client) => new URL(client.url).origin === self.location.origin);
+        if (existing) {
+            await existing.focus();
+            return existing.navigate ? existing.navigate(url).catch(() => existing) : existing;
+        }
+        return self.clients.openWindow(url);
+    })());
+});

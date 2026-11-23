@@ -34,7 +34,10 @@ function fakeServer({ household = 'h1' } = {}) {
     };
 
     server.api = {
-        async me() { guard(); return { household: { id: server.household } }; },
+        async me() {
+            guard();
+            return { id: 'u-marco', household: { id: server.household, members: [{ id: 'u-anna', display_name: 'Anna' }, { id: 'u-marco', display_name: 'Marco' }] } };
+        },
         async snapshot() {
             guard();
             const grouped = {};
@@ -100,6 +103,34 @@ describe('SyncEngine', () => {
         expect(engine.status.state).toBe('synced');
         expect(engine.state.articles.size).toBe(6);
         expect(engine.state.lists.size).toBe(1);
+    });
+
+    it('kennt die Haushaltsmitglieder auch nach einem Neustart ohne Verbindung', async () => {
+        await engine.sync();
+        expect(engine.people.userId).toBe('u-marco');
+        expect(engine.people.names.get('u-anna')).toBe('Anna');
+
+        const restarted = new SyncEngine({ db: engine.db, api: server.api });
+        server.offline = true;
+        await restarted.init();
+        expect(restarted.people.names.get('u-marco')).toBe('Marco');
+
+        // Eigene, noch nicht gesendete Einträge tragen den angemeldeten Benutzer
+        await restarted.execute(addFromText(restarted.state, 'Milch', ctx));
+        expect(buildListView(restarted.state).groups[0].items[0].status.added.userIds).toEqual(['u-marco']);
+    });
+
+    it('lädt einmal einen frischen Snapshot, wenn sich dessen Version ändert', async () => {
+        await engine.sync();
+        let snapshots = 0;
+        const snapshot = server.api.snapshot;
+        server.api.snapshot = async () => { snapshots++; return snapshot(); };
+
+        await engine.db.table('meta').put({ key: 'snapshotVersion', value: 1 });
+        await engine.sync();
+        await engine.sync();
+
+        expect(snapshots).toBe(1);
     });
 
     it('zeigt Änderungen sofort und leert die Outbox nach erfolgreichem Sync', async () => {

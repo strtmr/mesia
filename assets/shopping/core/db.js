@@ -6,7 +6,7 @@ export const DATABASE_NAME = 'mesia';
  * Lokale Datenbank (IndexedDB):
  * - entities: bestätigter Serverzustand, ein Datensatz je Objekt ({key: "typ:id", type, id, data})
  * - outbox:   ausstehende Mutationen in Reihenfolge (seq)
- * - meta:     cursor, deviceId, householdId
+ * - meta:     cursor, deviceId, householdId, snapshotVersion, people (angemeldeter Benutzer und Haushaltsmitglieder)
  */
 export function openDatabase(name = DATABASE_NAME) {
     const db = new Dexie(name);

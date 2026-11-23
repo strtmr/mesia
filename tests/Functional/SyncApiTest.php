@@ -50,6 +50,8 @@ final class SyncApiTest extends WebTestCase
         $me = $this->json();
         self::assertSame('marco@example.com', $me['email']);
         self::assertSame($this->user->getHousehold()->getId()->toRfc4122(), $me['household']['id']);
+        self::assertSame($this->user->getId()->toRfc4122(), $me['id']);
+        self::assertSame([['id' => $this->user->getId()->toRfc4122(), 'display_name' => $this->user->getDisplayName()]], $me['household']['members']);
     }
 
     public function testSnapshotContainsTheStarterCatalogAndTheEmptyList(): void
@@ -91,10 +93,15 @@ final class SyncApiTest extends WebTestCase
         self::assertCount(1, $item['contributions']);
         self::assertEquals(2, $item['contributions'][0]['quantity']);
         self::assertSame('l', $item['contributions'][0]['unit']);
+        self::assertSame($this->user->getId()->toRfc4122(), $item['contributions'][0]['created_by'], 'für „Hinzugefügt von …“');
         self::assertSame(
             $this->user->getId()->toRfc4122(),
             self::getContainer()->get(Connection::class)->fetchOne('SELECT actor_id FROM change_log WHERE entity_id = ? ORDER BY seq DESC LIMIT 1', [$itemId]),
             'Das Änderungsprotokoll kennt den Urheber.',
+        );
+        self::assertNotNull(
+            self::getContainer()->get(Connection::class)->fetchOne('SELECT mutation_id FROM change_log WHERE entity_id = ? ORDER BY seq DESC LIMIT 1', [$itemId]),
+            'Das Änderungsprotokoll kennt die auslösende Mutation.',
         );
     }
 
@@ -144,6 +151,7 @@ final class SyncApiTest extends WebTestCase
         self::assertSame($existingId, $results[0]['merged_into']);
         self::assertSame('applied', $results[1]['status'], 'Das Abhaken wird auf den bestehenden Eintrag umgelenkt.');
         self::assertNotNull($this->item($existingId)['checked_at']);
+        self::assertSame($this->user->getId()->toRfc4122(), $this->item($existingId)['checked_by'], 'für „Erledigt von …“');
     }
 
     public function testOfflineCheckOlderThanALaterReactivationIsIgnored(): void

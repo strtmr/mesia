@@ -108,14 +108,27 @@ try {
     await waitForSync(page);
     await page.screenshot({ path: `${screenshotDir}/1-liste.png`, fullPage: true });
 
-    step('Abhaken (Häkchen, Eintrag wandert nach "Erledigt")');
+    step('Abhaken: Zeile bleibt kurz stehen, zweiter Tipp macht es rückgängig');
+    const butter = page.locator('.item-row', { hasText: 'Butter' });
+    await butter.locator('.item-check').click();
+    await expectVisible(page.locator('.item-row--checked', { hasText: 'Butter' }), 'Butter abgehakt, noch an ihrem Platz');
+    await page.waitForTimeout(700); // kein Doppeltipp
+    await butter.locator('.item-check').click();
+    await page.waitForTimeout(3500);
+    if ((await page.locator('.item-row:not(.item-row--done):not(.item-row--checked)', { hasText: 'Butter' }).count()) !== 1) {
+        throw new Error('Butter sollte nach dem Rückgängigmachen offen bleiben');
+    }
+
+    step('Abhaken (Zeile bleibt stehen, wandert nach 3 s nach "Erledigt")');
     await milk.locator('.item-check').click();
-    await expectVisible(page.locator('.shopping-done__toggle', { hasText: 'Erledigt (1)' }), 'Erledigt (1)');
+    await expectVisible(page.locator('.shopping-group', { hasText: 'Milchprodukte' }).locator('.item-row--checked', { hasText: 'Milch' }), 'Milch abgehakt an ihrem Platz');
     await page.screenshot({ path: `${screenshotDir}/2-abgehakt.png`, fullPage: true });
+    await expectVisible(page.locator('.shopping-done__toggle', { hasText: 'Erledigt (1)' }), 'Erledigt (1)');
 
     step('Bearbeiten: Drachenfrucht nach Obst & Gemüse');
     await page.locator('.item-row', { hasText: 'Drachenfrucht' }).locator('.item-body').click();
     await expectVisible(page.locator('dialog.sheet[open]'), 'Sheet');
+    await expectVisible(page.locator('dialog.sheet .sheet__meta', { hasText: /Hinzugefügt von E2E heute um \d{1,2}:\d{2}/ }), 'Hinzugefügt von E2E heute (im Dialog)');
     const produceValue = await page.locator('dialog.sheet select').nth(1).locator('option', { hasText: 'Obst & Gemüse' }).getAttribute('value');
     await page.locator('dialog.sheet select').nth(1).selectOption(produceValue);
     await page.fill('dialog.sheet input[inputmode=decimal]', '3');
@@ -144,8 +157,12 @@ try {
         await expectVisible(page.locator('.item-row:not(.item-row--done)', { hasText: name }), name);
     }
 
-    step('Reaktivieren aus "Erledigt"');
+    step('Erledigt: Name zeigt "Erledigt von …", Kreis setzt zurück auf die Liste');
     await page.click('.shopping-done__toggle');
+    await page.locator('.item-row--done', { hasText: 'Milch' }).locator('.item-body').click();
+    await expectVisible(page.locator('dialog.sheet .sheet__meta', { hasText: 'Erledigt von E2E heute um' }), 'Erledigt von E2E (im Dialog)');
+    await expectVisible(page.locator('dialog.sheet button', { hasText: 'Wieder auf die Liste' }), 'Knopf "Wieder auf die Liste"');
+    await page.click('dialog.sheet .sheet__link:not(.sheet__link--strong)');
     await page.locator('.item-row--done', { hasText: 'Milch' }).locator('.item-check').click();
     await expectVisible(page.locator('.shopping-group', { hasText: 'Milchprodukte' }).locator('.item-row', { hasText: 'Milch' }), 'Milch wieder offen');
     await waitForSync(page);
