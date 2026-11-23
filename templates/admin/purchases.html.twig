@@ -1,0 +1,43 @@
+{% extends 'app/layout.html.twig' %}
+
+{% block page_title %}{{ 'admin.purchases.title'|trans }}{% endblock %}
+{% block header_actions %}{{ include('admin/_nav.html.twig') }}{% endblock %}
+
+{% block content %}
+    {# Filter per GET, ändert sich ein Feld, wird sofort neu geladen #}
+    <form class="list-section" method="get" action="{{ path('admin_purchases') }}" data-turbo-action="replace">
+        <div class="list-group">
+            <label class="list-group__row">
+                <span>{{ 'admin.purchases.period'|trans }}</span>
+                <select class="list-group__select" name="zeitraum" onchange="this.form.requestSubmit()">
+                    {% for period in periods %}
+                        <option value="{{ period }}" {{ period == filter.zeitraum ? 'selected' }}>{{ ('admin.purchases.periods.' ~ period)|trans }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label class="list-group__row">
+                <span>{{ 'admin.purchases.household'|trans }}</span>
+                <select class="list-group__select" name="haushalt" onchange="this.form.requestSubmit()">
+                    <option value="">{{ 'admin.purchases.all_households'|trans }}</option>
+                    {% for household in households %}
+                        <option value="{{ household.id }}" {{ household.id.toRfc4122 == filter.haushalt ? 'selected' }}>{{ household.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <noscript><button type="submit" class="button button--block">{{ 'admin.purchases.apply'|trans }}</button></noscript>
+    </form>
+
+    <section class="list-section">
+        <ol class="list-group">
+            {% for article in articles %}
+                <li class="list-group__row">
+                    <span class="list-group__label"><span><span class="admin-rank">{{ loop.index }}.</span> {{ article.name }}</span><small>{{ article.category ?? '–' }}</small></span>
+                    <span class="list-group__value">{{ 'admin.usage'|trans({'%households%': article.households, '%purchases%': article.purchases}) }}</span>
+                </li>
+            {% else %}
+                <li class="list-group__row">{{ 'admin.purchases.empty'|trans }}</li>
+            {% endfor %}
+        </ol>
+    </section>
+{% endblock %}

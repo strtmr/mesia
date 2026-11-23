@@ -17,6 +17,8 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\UniqueConstraint(name: 'app_user_email_unique', columns: ['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public const string ROLE_ADMIN = 'ROLE_ADMIN';
+
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME)]
     private Uuid $id;
@@ -32,6 +34,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private \DateTimeImmutable $createdAt;
+
+    /**
+     * Zusätzliche Rollen neben ROLE_USER, derzeit nur ROLE_ADMIN (Admin-Bereich, vergeben per app:user:admin).
+     *
+     * @var list<string>
+     */
+    #[ORM\Column(type: Types::JSON, options: ['default' => '[]'])]
+    private array $roles = [];
 
     public function __construct(
         #[ORM\ManyToOne]
@@ -107,7 +117,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        return ['ROLE_USER'];
+        return array_values(array_unique(['ROLE_USER', ...$this->roles]));
+    }
+
+    public function isAdmin(): bool
+    {
+        return \in_array(self::ROLE_ADMIN, $this->roles, true);
+    }
+
+    public function setAdmin(bool $admin): void
+    {
+        $this->roles = $admin ? [self::ROLE_ADMIN] : [];
     }
 
     public function getPassword(): string

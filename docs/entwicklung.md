@@ -13,6 +13,7 @@ Deployment: [betrieb.md](betrieb.md).
 | `Catalog` | Kategorien, Artikel, Aliase, Startkatalog, `TextNormalizer`, `Unit` | Shared |
 | `Shopping` | Liste, Einträge mit Beiträgen, Kaufhistorie | Shared, Catalog |
 | `Notification` | Web-Push-Abos, Versand der Mitteilungen (`/api/push`, `app:push:send`) | Shared |
+| `Admin` | Admin-Bereich `/admin`: Überblick, Auswertungen, Haushalte und Personen anlegen | Shared, Identity |
 | `Sync` | `/api/sync/*`, Mutation-Dispatcher, Change-Feed | alle |
 
 Schichten je Modul: `Domain` (Entities in `Domain/Model`, Regeln), `Application` (Anwendungsfälle, Mutation-Handler),
@@ -184,6 +185,24 @@ nicht synchronisiert.
 - **Testen am Gerät:** Headless-Chromium meldet `Notification.permission` immer als `denied`. Echte Zustellung nur
   auf einem Gerät mit HTTPS prüfbar (iPhone: installierte App, iOS 16.4+).
 
+## Admin-Bereich
+
+Modul `Admin`, nur mit `ROLE_ADMIN` (`access_control` für `^/admin` und `#[IsGranted]` am Controller). Vergeben
+wird die Rolle nur per Konsole (`app:user:admin <email>`, Spalte `app_user.roles`). Unter „Mehr“ erscheint der
+Link nur für Admins. Admin-Funktionen betreffen die Benutzer nicht: **keine neue Version, kein Eintrag in den
+Neuigkeiten** (CLAUDE.md).
+
+- **Auswertungen** (`AdminStatistics`, umgesetzt per SQL in `DbalAdminStatistics`): liest die Tabellen der anderen
+  Module direkt, ohne deren Klassen, damit deptrac nur `Shared` und `Identity` erlauben muss. Artikel werden über
+  Haushalte hinweg per `name_normalized` zusammengefasst, angezeigt wird die häufigste Schreibweise (`mode()`).
+  „Selbst angelegt“ = `article.source = 'user'`, „Oft gekauft“ = `purchase_event` (Abhaken, Rückgängig löscht den
+  Eintrag wieder).
+- **Anlegen:** `UserRegistration::createHouseholdWithUser()` legt Haushalt und erste Person in einer Transaktion an
+  (Startkatalog und Liste per `HouseholdCreated`, wie `app:household:create`). Ob die E-Mail frei ist, prüft der
+  Controller vorher, damit das Formular eine Meldung am Feld zeigen kann.
+- Rollenänderungen melden laufende Sitzungen ab (Symfony vergleicht die Rollen), „Angemeldet bleiben“ meldet
+  gleich wieder an.
+
 ## Tests
 
 | Befehl | Was |
@@ -257,5 +276,6 @@ in die Service-Worker-Version ein.
 | `app:user:set-password <email>` | Passwort neu setzen |
 | `app:household:initialize [--household=ID]` | fehlende Grunddaten in bestehenden Haushalten ergänzen (idempotent) |
 | `app:catalog:update [--dry-run] [--household=ID]` | Katalog-Abgleich: Erweiterungen des Startkatalogs übernehmen (idempotent, `--dry-run` zeigt nur an) |
+| `app:user:admin <email> [--revoke]` | Admin-Rechte vergeben oder entziehen (Admin-Bereich unter Mehr → Admin) |
 | `app:push:send` | fällige Mitteilungen verschicken (Cron jede Minute) |
 | `app:push:generate-keys` | VAPID-Schlüsselpaar für `.env.local` erzeugen |

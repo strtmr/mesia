@@ -133,6 +133,15 @@ cd /usr/www/users/<benutzer>/projects/mesia/current && php85 bin/console app:pus
 
 Bei 5 Minuten Takt kommt „Sofort“ entsprechend bis zu 5 Minuten später. Überlappende Läufe verhindert eine Sperre.
 
+**9. Admin-Bereich freischalten** (einmalig, für das eigene Konto)
+
+```bash
+php85 bin/console app:user:admin <email>
+```
+
+Danach steht unter **Mehr → Admin** der Überblick über alle Haushalte, die Auswertungen und das Anlegen von Haushalten
+und Personen (statt `app:household:create`/`app:user:create`). Entziehen mit `--revoke`.
+
 ## Im Betrieb
 
 | Aufgabe | Befehl |
@@ -141,6 +150,7 @@ Bei 5 Minuten Takt kommt „Sofort“ entsprechend bis zu 5 Minuten später. Üb
 | Rollback | `ssh -p 222 <benutzer>@<host> 'sh -s rollback <basis>' < deploy/remote.sh` |
 | Katalog-Abgleich ansehen | auf dem Server: `php85 bin/console app:catalog:update --dry-run` (läuft bei jedem Deployment automatisch) |
 | Mitteilungen von Hand senden | auf dem Server: `php85 bin/console app:push:send` (zeigt gesendet/entfernt/fehlgeschlagen) |
+| Haushalt oder Person anlegen | in der App unter Mehr → Admin (oder per Konsole wie in Schritt 7) |
 | Passwort neu setzen | auf dem Server: `php bin/console app:user:set-password <email>` |
 | Von Hand deployen | `ddev exec deploy/build.sh var/build`, dann in WSL mit gesetzten `DEPLOY_*`-Variablen `deploy/release.sh var/build` |
 

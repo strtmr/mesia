@@ -17,6 +17,7 @@ _keine_
 + Freemium Model
 + Payment options
 + Registration, change profile, create household, add persons to household
++ Statistiken, wer wie oft, welche Produkte, etc.
 
 # Development
 + Matt Pocock skills installieren und nutzen

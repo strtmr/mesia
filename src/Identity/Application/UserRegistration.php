@@ -14,7 +14,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
- * Legt Haushalte und Benutzer an. In Phase 0/1 nur über Konsolenbefehle, eine Selbstregistrierung gibt es noch nicht.
+ * Legt Haushalte und Benutzer an: über Konsolenbefehle und den Admin-Bereich. Eine Selbstregistrierung gibt es noch nicht.
  */
 final readonly class UserRegistration
 {
@@ -44,6 +44,16 @@ final readonly class UserRegistration
 
             return $household;
         });
+    }
+
+    /**
+     * Neuer Haushalt mit seiner ersten Person, gemeinsam oder gar nicht (z. B. wenn die E-Mail-Adresse vergeben ist).
+     */
+    public function createHouseholdWithUser(string $householdName, string $email, string $displayName, string $plainPassword): User
+    {
+        return $this->entityManager->wrapInTransaction(
+            fn (): User => $this->createUser($this->createHousehold($householdName), $email, $displayName, $plainPassword),
+        );
     }
 
     public function createUser(Household $household, string $email, string $displayName, string $plainPassword): User
@@ -76,6 +86,21 @@ final readonly class UserRegistration
 
         $user->setPasswordHash($this->passwordHasher->hashPassword($user, $plainPassword));
         $this->entityManager->flush();
+    }
+
+    /**
+     * Admin-Rechte vergeben oder entziehen. Geänderte Rollen melden laufende Sitzungen ab (Symfony vergleicht die
+     * Rollen), „Angemeldet bleiben“ meldet sie gleich wieder an.
+     */
+    public function changeAdmin(string $email, bool $admin): User
+    {
+        $user = $this->users->findOneByEmail($email)
+            ?? throw new \DomainException(\sprintf('Es gibt keinen Benutzer mit der E-Mail-Adresse "%s".', $email));
+
+        $user->setAdmin($admin);
+        $this->entityManager->flush();
+
+        return $user;
     }
 
     private static function assertPasswordStrength(string $plainPassword): void

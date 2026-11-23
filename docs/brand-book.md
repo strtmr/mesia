@@ -267,6 +267,7 @@ nicht benötigt.
 | Kategorie-Überschrift | Emoji + Name, 16 px fett in Akzentfarbe, 6 px über der Gruppe |
 | Eingabeleiste | unten fixiert, über der Tastatur, Feld rund, Plus-Knopf rund in Signal-Orange (Plus in Ink) |
 | Abhaken | Kreis füllt sich in Signal-Orange mit Häkchen in Ink, Name durchgestrichen in gedämpfter Farbe; die Zeile bleibt stehen, bis 3 s nichts mehr abgehakt wurde, dann wandert alles nach „Erledigt“ |
+| Hinweis Erfolg | `.notice--success`: Fläche mit 16 % Erfolgsfarbe, z. B. nach dem Anlegen im Admin-Bereich |
 | Metazeile im Sheet | 13 px gedämpft über dem Löschen-Knopf („Hinzugefügt von … heute um …“) |
 | Wischen zum Entfernen | Zeile nach links schieben, roter Knopf „Entfernen“ rastet ein |
 | Hinweis (Toast) | dunkle Fläche (Radius 14, 15 px Text) über der Eingabeleiste, Fehler in Fehlerfarbe |

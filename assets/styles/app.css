@@ -261,7 +261,9 @@ a {
 
 .list-group {
     margin: 0;
+    padding: 0;
     overflow: hidden;
+    list-style: none;
     background: var(--color-surface);
     border-radius: var(--radius-m);
 }
@@ -459,6 +461,13 @@ a {
 .list-group__label {
     display: grid;
     gap: 2px;
+    /* Lange Namen umbrechen, statt den Wert rechts aus der Zeile zu drängen */
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.list-group__label + .list-group__value {
+    flex-shrink: 0;
 }
 
 .list-group__label small {
@@ -874,6 +883,30 @@ a {
 
 .notice--warning {
     background: color-mix(in srgb, var(--color-warning) 16%, var(--color-surface));
+}
+
+.notice--success {
+    background: color-mix(in srgb, var(--color-success) 16%, var(--color-surface));
+}
+
+/* ---------- Admin-Bereich ---------- */
+
+.admin-household {
+    align-items: flex-start;
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
+}
+
+.admin-household__add {
+    flex-shrink: 0;
+    color: var(--color-accent);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.admin-rank {
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
 }
 
 .badge {

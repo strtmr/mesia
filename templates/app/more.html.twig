@@ -61,6 +61,17 @@
         <p class="list-section__hint" data-push-settings-target="hint" hidden></p>
     </section>
 
+    {% if is_granted('ROLE_ADMIN') %}
+        <section class="list-section">
+            <div class="list-group">
+                <a class="list-group__row list-group__row--link" href="{{ path('admin') }}">
+                    <span>{{ 'admin.link'|trans }}</span>
+                    <span class="list-group__value">{{ 'admin.link_hint'|trans }}</span>
+                </a>
+            </div>
+        </section>
+    {% endif %}
+
     <section class="list-section">
         <h2 class="list-section__title">{{ 'more.app.section'|trans }}</h2>
         <div class="list-group">

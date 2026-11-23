@@ -1,0 +1,59 @@
+{% extends 'app/layout.html.twig' %}
+
+{# Admin-Überblick (AdminController::dashboard). Nur ROLE_ADMIN. #}
+
+{% block page_title %}{{ 'admin.title'|trans }}{% endblock %}
+
+{% block header_actions %}
+    <a class="header-link" href="{{ path('app_more') }}">‹ {{ 'more.title'|trans }}</a>
+{% endblock %}
+
+{% block content %}
+    {% for message in app.flashes('success') %}
+        <p class="notice notice--success" role="status">{{ message }}</p>
+    {% endfor %}
+
+    <section class="list-section">
+        <h2 class="list-section__title">{{ 'admin.totals.section'|trans }}</h2>
+        <dl class="list-group">
+            <div class="list-group__row"><dt>{{ 'admin.totals.households'|trans }}</dt><dd>{{ totals.households }}</dd></div>
+            <div class="list-group__row"><dt>{{ 'admin.totals.users'|trans }}</dt><dd>{{ totals.users }}</dd></div>
+            <div class="list-group__row"><dt>{{ 'admin.totals.open_items'|trans }}</dt><dd>{{ totals.openItems }}</dd></div>
+            <div class="list-group__row"><dt>{{ 'admin.totals.purchases'|trans }}</dt><dd>{{ totals.purchases }}</dd></div>
+        </dl>
+    </section>
+
+    <section class="list-section">
+        <h2 class="list-section__title">{{ 'admin.reports.section'|trans }}</h2>
+        <div class="list-group">
+            <a class="list-group__row list-group__row--link" href="{{ path('admin_user_articles') }}">
+                <span class="list-group__label">{{ 'admin.user_articles.title'|trans }}<small>{{ 'admin.user_articles.teaser'|trans }}</small></span>
+            </a>
+            <a class="list-group__row list-group__row--link" href="{{ path('admin_purchases') }}">
+                <span class="list-group__label">{{ 'admin.purchases.title'|trans }}<small>{{ 'admin.purchases.teaser'|trans }}</small></span>
+            </a>
+        </div>
+    </section>
+
+    <section class="list-section">
+        <h2 class="list-section__title">{{ 'admin.households.section'|trans }}</h2>
+        <div class="list-group">
+            {% for household in households %}
+                <div class="list-group__row admin-household">
+                    <span class="list-group__label">
+                        {{ household.name }}
+                        <small>{{ household.members ? household.members|join(', ') : 'admin.households.no_members'|trans }}</small>
+                        <small>
+                            {{ 'admin.households.stats'|trans({'%open%': household.openItems, '%purchases%': household.purchases}) }}
+                            · {{ household.lastActivity ? 'admin.households.last_activity'|trans({'%date%': household.lastActivity|date('d.m.Y, H:i')}) : 'admin.households.never_active'|trans }}
+                        </small>
+                    </span>
+                    <a class="admin-household__add" href="{{ path('admin_member_new', {id: household.id}) }}">{{ 'admin.households.add_member'|trans }}</a>
+                </div>
+            {% else %}
+                <p class="list-group__row">{{ 'admin.households.empty'|trans }}</p>
+            {% endfor %}
+            <a class="list-group__row list-group__row--action" href="{{ path('admin_household_new') }}">{{ 'admin.households.new'|trans }}</a>
+        </div>
+    </section>
+{% endblock %}

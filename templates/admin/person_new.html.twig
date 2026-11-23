@@ -1,0 +1,51 @@
+{% extends 'app/layout.html.twig' %}
+
+{# Neuer Haushalt mit erster Person (household = null) oder weitere Person in einem Haushalt #}
+
+{% block page_title %}{{ household ? 'admin.person.title'|trans : 'admin.household.title'|trans }}{% endblock %}
+{% block header_actions %}{{ include('admin/_nav.html.twig') }}{% endblock %}
+
+{% block content %}
+    {% if household %}
+        <p class="page-hint">{{ 'admin.person.hint'|trans({'%household%': household.name}) }}</p>
+    {% else %}
+        <p class="page-hint">{{ 'admin.household.hint'|trans }}</p>
+    {% endif %}
+
+    {{ form_start(form, {attr: {class: 'form-group', novalidate: 'novalidate'}}) }}
+        {% if form.householdName is defined %}
+            <label class="field">
+                <span class="field__label">{{ 'admin.household.name'|trans }}</span>
+                {{ form_widget(form.householdName) }}
+                {{ _self.errors(form.householdName) }}
+            </label>
+        {% endif %}
+        <label class="field">
+            <span class="field__label">{{ 'admin.person.display_name'|trans }}</span>
+            {{ form_widget(form.displayName) }}
+            {{ _self.errors(form.displayName) }}
+        </label>
+        <label class="field">
+            <span class="field__label">{{ 'admin.person.email'|trans }}</span>
+            {{ form_widget(form.email) }}
+            {{ _self.errors(form.email) }}
+        </label>
+        <label class="field">
+            <span class="field__label">{{ 'admin.person.password'|trans }}</span>
+            {{ form_widget(form.password.first) }}
+            {{ _self.errors(form.password.first) }}
+        </label>
+        <label class="field">
+            <span class="field__label">{{ 'admin.person.password_repeat'|trans }}</span>
+            {{ form_widget(form.password.second) }}
+        </label>
+        <p class="page-hint">{{ 'admin.person.password_hint'|trans }}</p>
+        <button type="submit" class="button button--primary button--block">{{ 'admin.person.create'|trans }}</button>
+    {{ form_end(form) }}
+{% endblock %}
+
+{% macro errors(field) %}
+    {% for error in field.vars.errors %}
+        <span class="form-error">{{ error.message }}</span>
+    {% endfor %}
+{% endmacro %}

@@ -1,0 +1,21 @@
+{% extends 'app/layout.html.twig' %}
+
+{% block page_title %}{{ 'admin.user_articles.title'|trans }}{% endblock %}
+{% block header_actions %}{{ include('admin/_nav.html.twig') }}{% endblock %}
+
+{% block content %}
+    <p class="page-hint">{{ 'admin.user_articles.hint'|trans }}</p>
+
+    <section class="list-section">
+        <div class="list-group">
+            {% for article in articles %}
+                <div class="list-group__row">
+                    <span class="list-group__label">{{ article.name }}<small>{{ article.category ?? '–' }}</small></span>
+                    <span class="list-group__value">{{ 'admin.usage'|trans({'%households%': article.households, '%purchases%': article.purchases}) }}</span>
+                </div>
+            {% else %}
+                <p class="list-group__row">{{ 'admin.user_articles.empty'|trans }}</p>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}
