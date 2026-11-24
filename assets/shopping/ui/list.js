@@ -1,12 +1,14 @@
 import Sortable from 'sortablejs';
 import { buildListView, formatInputNumber, formatNumber } from '../core/view.js';
-import { TextTooLongError, addArticle, addFromText, checkItem, createContext, deleteItem, editItem, moveItem, reactivateItem, uncheckItem } from '../core/commands.js';
+import { TextTooLongError, UnknownStoreError, addArticle, addFromText, checkItem, createContext, deleteItem, editItem, moveItem, reactivateItem, uncheckItem } from '../core/commands.js';
 import { suggest } from '../core/matcher.js';
 import { LENGTH_WARNING_AT, NAME_MAX_LENGTH, NOTE_MAX_LENGTH, parseQuickAdd, textLength } from '../core/quickadd.js';
 import { UNITS } from '../core/units.js';
 import { activeList, findItemByArticle } from '../core/state.js';
 import { QuantityError, parseQuantity } from '../core/quantity.js';
 import { statusLine } from '../core/status.js';
+import { formatValidUntil, searchStores, storeToken } from '../core/extras.js';
+import { activeStores } from '../core/state.js';
 
 const TOAST_MS = 4000;
 /**
@@ -18,6 +20,24 @@ const KEEP_IN_PLACE_MS = 1000;
 const SETTLE_GUARD_MS = 400;
 /** Zweiter Tipp auf denselben Kreis so kurz danach: versehentlicher Doppeltipp, kein Rückgängig */
 const DOUBLE_TAP_MS = 500;
+/** Gewählter Laden-Filter, pro Gerät */
+const STORE_FILTER_KEY = 'mesia.storeFilter';
+
+function loadStoreFilter() {
+    try {
+        return localStorage.getItem(STORE_FILTER_KEY);
+    } catch {
+        return null;
+    }
+}
+
+function saveStoreFilter(id) {
+    try {
+        if (id) localStorage.setItem(STORE_FILTER_KEY, id); else localStorage.removeItem(STORE_FILTER_KEY);
+    } catch {
+        // privater Modus o. Ä.: Filter gilt dann nur bis zum Neuladen
+    }
+}
 /** Fehler und Ablehnungen etwas länger, damit man sie lesen kann */
 const ERROR_TOAST_MS = 6000;
 
@@ -76,12 +96,14 @@ export function shoppingList(engine) {
     return {
         ready: false,
         hasData: false,
-        view: { listId: null, categories: [], groups: [], openCount: 0, done: [] },
+        view: { listId: null, categories: [], groups: [], openCount: 0, done: [], stores: [], storeChips: [], storeFilter: null, hiddenCount: 0 },
         query: '',
         suggestions: [],
         /** Längenhinweis zur Schnelleingabe ({over, text}) oder null */
         lengthHint: null,
         showDone: false,
+        /** Laden-ID oder null (alle) */
+        storeFilter: loadStoreFilter(),
         toast: null,
         editor: null,
         units: Object.entries(UNITS).map(([value, unit]) => ({ value, label: unit.label })),
@@ -109,7 +131,16 @@ export function shoppingList(engine) {
 
         render() {
             this.hasData = engine.hasData;
-            this.view = buildListView(engine.state, { keepInPlace: keptInPlace });
+            const view = buildListView(engine.state, { keepInPlace: keptInPlace, storeFilter: this.storeFilter });
+            // Gemerkter Filter, dessen Laden keine offenen Einträge mehr hat: aufheben, sonst taucht er später überraschend wieder auf
+            if (this.hasData && this.storeFilter && !view.storeFilter) {
+                this.storeFilter = null;
+                saveStoreFilter(null);
+            }
+            for (const item of view.groups.flatMap((group) => group.items)) {
+                item.validLabel = validLabel(item);
+            }
+            this.view = view;
 
             const [rejected] = engine.takeRejected();
             if (rejected) {
@@ -135,6 +166,11 @@ export function shoppingList(engine) {
             try {
                 return create();
             } catch (error) {
+                if (error instanceof UnknownStoreError) {
+                    this.showToast(text('textUnknownStore').replace('%name%', `@${error.token}`), { duration: ERROR_TOAST_MS, error: true });
+
+                    return null;
+                }
                 if (error instanceof TextTooLongError) {
                     this.showToast(lengthHint(error.length, error.max, error.field === 'note' ? 'textNoteOver' : 'textLengthOver').text, { duration: ERROR_TOAST_MS, error: true });
 
@@ -169,6 +205,12 @@ export function shoppingList(engine) {
         },
 
         async pick(suggestion) {
+            if (suggestion.store) {
+                // "@ed" → "@Edeka ", weitertippen
+                this.query = this.query.replace(/@[^\s@]*$/, `${storeToken(suggestion.store)} `);
+                element('.quick-add__input')?.focus();
+                return;
+            }
             const parsed = parseQuickAdd(this.query);
             const mutations = this.prepare(() => addArticle(engine.state, suggestion.article, { ...parsed, name: suggestion.article.name }, ctx));
             if (!mutations) {
@@ -187,6 +229,13 @@ export function shoppingList(engine) {
             // Gezählt wird, was gespeichert wird: der Name ohne Menge, die Notiz in Klammern separat
             this.lengthHint = lengthHint(textLength(parsed.name), NAME_MAX_LENGTH)
                 ?? (textLength(parsed.note) > NOTE_MAX_LENGTH ? lengthHint(textLength(parsed.note), NOTE_MAX_LENGTH, 'textNoteOver') : null);
+            // Gerade wird ein Laden getippt ("@ed"): Läden statt Artikeln vorschlagen
+            const storeTyping = this.query.match(/(?:^|\s)@([^\s@]*)$/);
+            if (storeTyping) {
+                this.suggestions = searchStores(activeStores(engine.state), storeTyping[1], { preferred: this.view.storeChips.map((chip) => chip.id) })
+                    .map((store) => ({ id: `store-${store.id}`, name: store.name, store }));
+                return;
+            }
             this.suggestions = suggest(engine.state, parsed.name).map((s) => ({
                 id: s.article.id,
                 name: s.article.name,
@@ -263,6 +312,10 @@ export function shoppingList(engine) {
                 categoryId: source.category_id,
                 original: item.editableQuantity,
                 checked: item.checked,
+                storeIds: [...item.storeIds],
+                storeQuery: '',
+                storeFocus: false,
+                validUntil: item.validUntil ?? '',
                 // "Hinzugefügt von Anna heute um 9:05", bei Abgehaktem zusätzlich "Erledigt von …"
                 statusLines: this.statusLines(item),
             };
@@ -313,6 +366,8 @@ export function shoppingList(engine) {
                 quantity,
                 unit: quantity === null ? null : (form.unit || null),
                 categoryId: form.categoryId,
+                storeIds: form.storeIds,
+                validUntil: form.validUntil || null,
             }, form.original, ctx);
 
             this.closeEditor();
@@ -338,6 +393,40 @@ export function shoppingList(engine) {
             const itemId = this.editor.id;
             this.closeEditor();
             await this.run(deleteItem(itemId, ctx));
+        },
+
+        toggleEditorStore(storeId) {
+            const ids = this.editor.storeIds;
+            this.editor.storeIds = ids.includes(storeId) ? ids.filter((id) => id !== storeId) : [...ids, storeId];
+        },
+
+        storeName(storeId) {
+            return this.view.stores.find((store) => store.id === storeId)?.name ?? '';
+        },
+
+        /** Tippbare Auswahl im Bearbeiten-Fenster: wie „Artikel hinzufügen …“ erst Vorschläge, wenn etwas getippt ist */
+        editorStoreOptions() {
+            if (!this.editor || this.editor.storeQuery.trim() === '') {
+                return [];
+            }
+
+            return searchStores(this.view.stores, this.editor.storeQuery, { exclude: this.editor.storeIds });
+        },
+
+        pickEditorStore(store) {
+            if (store && !this.editor.storeIds.includes(store.id)) {
+                this.editor.storeIds = [...this.editor.storeIds, store.id];
+            }
+            this.editor.storeQuery = '';
+        },
+
+        // ------------------------------------------------------------ Laden-Filter
+
+        /** Chip antippen: nur Einträge dieses Ladens. Nochmal antippen (oder „Alle“): wieder alles */
+        setStoreFilter(storeId) {
+            this.storeFilter = storeId && storeId !== this.storeFilter ? storeId : null;
+            saveStoreFilter(this.storeFilter);
+            this.render();
         },
 
         // ------------------------------------------------------------ Sortieren (lang drücken + ziehen)
@@ -383,6 +472,19 @@ export function shoppingList(engine) {
             this.toast = null;
         },
     };
+}
+
+/** "heute" (grün), "abgelaufen 26.11." (rot), "bis Sa., 28.11." — Texte aus dem Template */
+function validLabel(item) {
+    if (!item.validUntil) {
+        return '';
+    }
+    const root = document.querySelector('[data-shopping-app]');
+    // Abgelaufen kürzer (ohne Wochentag), das Etikett steht in der schmalen rechten Spalte
+    const date = formatValidUntil(item.validUntil, new Date(), { weekday: item.dateStatus !== 'expired' });
+    const key = { today: 'textValidToday', expired: 'textValidExpired' }[item.dateStatus] ?? 'textValidUntil';
+
+    return (root?.dataset[key] ?? '').replace('%date%', date);
 }
 
 function siblingRow(element, direction) {

@@ -18,9 +18,9 @@ use App\Shopping\Domain\Quantity;
  */
 final readonly class UpdateItemHandler implements MutationHandler
 {
-    private const array ALLOWED_FIELDS = ['name', 'note', 'qty_override', 'unit_override'];
+    private const array ALLOWED_FIELDS = ['name', 'note', 'qty_override', 'unit_override', 'store_ids', 'valid_until'];
 
-    public function __construct(private ItemLookup $lookup)
+    public function __construct(private ItemLookup $lookup, private ItemExtras $extras)
     {
     }
 
@@ -62,6 +62,12 @@ final readonly class UpdateItemHandler implements MutationHandler
                     throw new MutationRejected('Unbekannte Einheit.');
                 }
                 $item->overrideQuantity(Quantity::fromFloat(null === $quantity ? null : (float) $quantity), $unitEnum, $context->actorId, $context->now);
+            }
+            if (\array_key_exists('store_ids', $fields)) {
+                $item->assignStores($this->extras->storeIds($context->householdId, $fields['store_ids']), $context->actorId, $context->now);
+            }
+            if (\array_key_exists('valid_until', $fields)) {
+                $item->setValidUntil(ItemExtras::date($fields['valid_until']), $context->actorId, $context->now);
             }
         } catch (\InvalidArgumentException $exception) {
             throw new MutationRejected($exception->getMessage(), previous: $exception);

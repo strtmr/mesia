@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildState, findItemByArticle } from '../../assets/shopping/core/state.js';
 import { buildListView, itemStatus } from '../../assets/shopping/core/view.js';
-import { TextTooLongError, addFromText, checkItem, editItem, moveItem, reactivateItem, uncheckItem } from '../../assets/shopping/core/commands.js';
+import { TextTooLongError, UnknownStoreError, addFromText, checkItem, editItem, moveItem, reactivateItem, uncheckItem } from '../../assets/shopping/core/commands.js';
 import { QuantityError } from '../../assets/shopping/core/quantity.js';
 import { LIST_ID as LIST, catalogEntities } from './support/fixtures.js';
 
@@ -257,3 +257,74 @@ function testCtx() {
 
     return { newId: () => `id-${++counter}-${Math.random().toString(36).slice(2, 7)}`, now: () => now, setNow: (iso) => { now = iso; } };
 }
+
+describe('Läden und gültig bis', () => {
+    const stores = [
+        { type: 'store', data: { id: 'st-edeka', name: 'Edeka', deleted: false } },
+        { type: 'store', data: { id: 'st-lidl', name: 'Lidl', deleted: false } },
+        { type: 'store', data: { id: 'st-alt', name: 'Alter Laden', deleted: true } },
+    ];
+    const withStores = () => [...catalogEntities(), ...stores];
+
+    it('übernimmt "@Edeka" und "bis …" aus der Schnelleingabe', () => {
+        const ctx = testCtx();
+        const { outbox, view } = run(withStores(), [(s) => addFromText(s, 'Milch @edeka bis 1.1.2099', ctx)]);
+
+        expect(outbox.at(-1).payload).toMatchObject({ store_ids: ['st-edeka'], valid_until: '2099-01-01' });
+        expect(view.groups[0].items[0]).toMatchObject({ name: 'Milch', stores: ['Edeka'], validUntil: '2099-01-01', dateStatus: 'upcoming' });
+    });
+
+    it('legt bei unbekanntem Laden nichts an', () => {
+        expect(() => addFromText(buildState(withStores()), 'Milch @aldi', testCtx())).toThrow(UnknownStoreError);
+        expect(() => addFromText(buildState(withStores()), 'Milch @alter', testCtx())).toThrow(UnknownStoreError); // gelöscht
+    });
+
+    it('ergänzt Läden, wenn der Artikel schon auf der Liste steht, und vergisst das Datum beim Reaktivieren', () => {
+        const ctx = testCtx();
+        const { state } = run(withStores(), [
+            (s) => addFromText(s, 'Milch @Lidl bis 1.1.2099', ctx),
+            (s) => addFromText(s, 'Milch @Edeka', ctx),
+        ]);
+        const milk = findItemByArticle(state, LIST, 'art-milch');
+        expect(milk.store_ids).toEqual(['st-lidl', 'st-edeka']);
+        expect(milk.valid_until).toBe('2099-01-01');
+
+        const again = run(withStores(), [
+            (s) => addFromText(s, 'Milch @Lidl bis 1.1.2099', ctx),
+            (s) => checkItem(findItemByArticle(s, LIST, 'art-milch').id, ctx),
+            (s) => { ctx.setNow('2026-11-20T11:00:00.000Z'); return addFromText(s, 'Milch', ctx); },
+        ]);
+        expect(findItemByArticle(again.state, LIST, 'art-milch')).toMatchObject({ store_ids: ['st-lidl'], valid_until: null });
+    });
+
+    it('filtert die Liste nach Laden', () => {
+        const ctx = testCtx();
+        const { state } = run(withStores(), [
+            (s) => addFromText(s, 'Milch @Edeka', ctx),
+            (s) => addFromText(s, 'Butter @Lidl', ctx),
+            (s) => addFromText(s, 'Äpfel', ctx),
+        ]);
+
+        const all = buildListView(state);
+        expect(all.storeChips).toEqual([{ id: 'st-edeka', name: 'Edeka', count: 1 }, { id: 'st-lidl', name: 'Lidl', count: 1 }]);
+        expect(all.openCount).toBe(3);
+
+        const edeka = buildListView(state, { storeFilter: 'st-edeka' });
+        expect(edeka.groups.flatMap((g) => g.items).map((i) => i.name)).toEqual(['Milch']);
+        expect(edeka.hiddenCount).toBe(2);
+
+        // Laden ohne offene Einträge: Filter wirkt nicht
+        expect(buildListView(state, { storeFilter: 'st-alt' })).toMatchObject({ storeFilter: null, openCount: 3 });
+    });
+
+    it('sendet geänderte Läden und Datum aus dem Bearbeiten-Fenster', () => {
+        const ctx = testCtx();
+        const { state } = run(withStores(), [(s) => addFromText(s, 'Milch @Edeka', ctx)]);
+        const milk = findItemByArticle(state, LIST, 'art-milch');
+        const form = { name: 'Milch', note: '', quantity: null, unit: null, categoryId: milk.category_id };
+
+        expect(editItem(state, milk, { ...form, storeIds: ['st-edeka'], validUntil: null }, { quantity: null, unit: null }, ctx)).toEqual([]);
+        const [update] = editItem(state, milk, { ...form, storeIds: ['st-lidl', 'st-edeka'], validUntil: '2026-11-28' }, { quantity: null, unit: null }, ctx);
+        expect(update.payload.fields).toEqual({ store_ids: ['st-edeka', 'st-lidl'], valid_until: '2026-11-28' });
+    });
+});

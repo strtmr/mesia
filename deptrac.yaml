@@ -31,5 +31,5 @@ deptrac:
         Catalog: [Shared]
         Shopping: [Shared, Catalog]
         Notification: [Shared]
-        Admin: [Shared, Identity]
+        Admin: [Shared, Identity, Catalog]
         Sync: [Shared, Identity, Catalog, Shopping]

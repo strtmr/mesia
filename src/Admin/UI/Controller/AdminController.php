@@ -8,6 +8,7 @@ use App\Admin\Application\AdminStatistics;
 use App\Admin\UI\Form\PersonData;
 use App\Admin\UI\Form\PersonType;
 use App\Admin\UI\Http\PurchaseFilterRequest;
+use App\Catalog\Application\ArticleRemoval;
 use App\Identity\Application\UserRegistration;
 use App\Identity\Domain\Model\User;
 use App\Identity\Infrastructure\Doctrine\HouseholdRepository;
@@ -31,6 +32,8 @@ use Symfony\Component\Uid\Uuid;
 #[IsGranted(User::ROLE_ADMIN)]
 final class AdminController extends AbstractController
 {
+    public const string DELETE_ARTICLE_TOKEN = 'delete-user-article';
+
     /** Zeitraum für „Käufe“ in Überblick und Haushaltsliste */
     private const string RECENT = '-30 days';
 
@@ -40,6 +43,7 @@ final class AdminController extends AbstractController
         private readonly HouseholdRepository $households,
         private readonly UserRepository $users,
         private readonly ClockInterface $clock,
+        private readonly ArticleRemoval $articleRemoval,
     ) {
     }
 
@@ -59,7 +63,27 @@ final class AdminController extends AbstractController
     {
         return $this->render('admin/user_articles.html.twig', [
             'articles' => $this->statistics->userArticles(100),
+            'delete_token' => self::DELETE_ARTICLE_TOKEN,
         ]);
+    }
+
+    /**
+     * Selbst angelegten Artikel in allen Haushalten löschen (Tippfehler, Testeinträge). Offene Listeneinträge bleiben.
+     */
+    #[Route('/artikel/loeschen', name: '_user_articles_delete', methods: ['POST'])]
+    public function deleteUserArticle(Request $request): Response
+    {
+        if (!$this->isCsrfTokenValid(self::DELETE_ARTICLE_TOKEN, $request->request->getString('_token'))) {
+            throw $this->createAccessDeniedException('Ungültiges CSRF-Token.');
+        }
+        $key = $request->request->getString('key');
+        $deleted = 0;
+        foreach ($this->statistics->userArticleRefs($key) as $ref) {
+            $deleted += $this->articleRemoval->delete($ref['householdId'], $ref['articleId']) ? 1 : 0;
+        }
+        $this->addFlash('success', \sprintf('„%s“ gelöscht (%d %s).', $request->request->getString('name'), $deleted, 1 === $deleted ? 'Haushalt' : 'Haushalte'));
+
+        return $this->redirectToRoute('admin_user_articles', status: Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/einkaeufe', name: '_purchases', methods: ['GET'])]

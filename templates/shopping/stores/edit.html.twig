@@ -1,0 +1,18 @@
+{% extends 'app/layout.html.twig' %}
+
+{% block page_title %}{{ 'stores.edit'|trans }}{% endblock %}
+
+{% block header_actions %}
+    <a class="header-link" href="{{ path('shopping_stores') }}">‹ {{ 'stores.title'|trans }}</a>
+{% endblock %}
+
+{% block content %}
+    {{ include('shopping/stores/_form.html.twig', {submit: 'stores.form.save'}) }}
+
+    <form class="category-delete" method="post" action="{{ path('shopping_stores_delete', {id: store.id}) }}"
+          data-turbo-confirm="{{ 'stores.delete_confirm'|trans({'%name%': store.name}) }}">
+        <input type="hidden" name="_token" value="{{ csrf_token(delete_token) }}">
+        <button type="submit" class="button button--danger button--block">{{ 'stores.delete'|trans }}</button>
+    </form>
+    <p class="page-hint">{{ 'stores.delete_hint'|trans }}</p>
+{% endblock %}

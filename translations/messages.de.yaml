@@ -42,6 +42,15 @@ shopping:
         offline: Offline
         unauthorized: Abgemeldet
         error: Sync-Fehler
+    stores:
+        filter: Nach Laden filtern
+        all: Alle
+        hidden: '%count% Artikel anderer Läden ausgeblendet'
+        unknown: '„%name%“ gibt es nicht. Läden verwaltest du unter Mehr → Läden.'
+    valid:
+        today: heute
+        expired: 'abgelaufen %date%'
+        until: 'bis %date%'
     # Statuszeile unter jedem Eintrag (assets/shopping/core/status.js)
     item_status:
         added: 'Hinzugefügt von %name% %when%'
@@ -76,6 +85,7 @@ shopping:
     suggestion:
         on_list: auf der Liste
         history: schon gekauft
+        store: Laden
     editor:
         title: Bearbeiten
         name: Name
@@ -88,6 +98,12 @@ shopping:
         cancel: Abbrechen
         delete: Löschen
         reactivate: Wieder auf die Liste
+        stores: Läden
+        store_add: Laden hinzufügen …
+        store_remove: Entfernen
+        store_none: 'Kein Laden „%name%“. Neue Läden unter Mehr → Läden.'
+        valid_until: Gültig bis (z. B. Angebot)
+        valid_until_clear: Datum entfernen
 
 more:
     title: Mehr
@@ -100,6 +116,8 @@ more:
         section: Einkaufsliste
         categories: Kategorien
         categories_hint: Reihenfolge, Namen
+        stores: Läden
+        stores_hint: Supermärkte für die Liste
     app:
         section: App
         version: Version
@@ -190,6 +208,8 @@ admin:
         teaser: Artikel, die nicht im Startkatalog stehen
         hint: 'Artikel, die Haushalte selbst eingetippt haben, zusammengefasst nach Schreibweise. Was in mehreren Haushalten vorkommt oder oft gekauft wird, gehört vielleicht in den Startkatalog (data/seed/articles.yaml).'
         empty: Noch keine selbst angelegten Artikel.
+        delete: Löschen
+        delete_confirm: '{1} „%name%“ aus dem Katalog löschen (1 Haushalt)? Aus „Erledigt“ verschwindet er, auf offenen Einkaufslisten bleibt er stehen.|]1,Inf[ „%name%“ aus dem Katalog löschen (%count% Haushalte)? Aus „Erledigt“ verschwindet er, auf offenen Einkaufslisten bleibt er stehen.'
     purchases:
         title: Oft gekauft
         teaser: Rangliste aus der Kaufhistorie
@@ -216,4 +236,19 @@ admin:
         password_repeat: Passwort wiederholen
         password_hint: 'Mindestens 10 Zeichen. Das Passwort persönlich weitergeben, ändern lässt es sich mit app:user:set-password.'
         create: Anlegen
+
+# „Mehr → Läden“
+stores:
+    title: Läden
+    new: Neuer Laden
+    edit: Laden ändern
+    hint: 'Ordne Artikel einem Laden zu („Bier nur bei Edeka“), im Bearbeiten-Fenster oder per „@Edeka“ in der Schnelleingabe. Die Liste lässt sich dann nach Laden filtern.'
+    empty: Noch keine Läden.
+    delete: Laden löschen
+    delete_confirm: '„%name%“ löschen?'
+    delete_hint: Artikel, die diesem Laden zugeordnet sind, bleiben auf der Liste, nur ohne diesen Laden.
+    form:
+        name: Name
+        create: Anlegen
+        save: Speichern
 

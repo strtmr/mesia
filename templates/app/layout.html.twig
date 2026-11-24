@@ -22,7 +22,7 @@
 
         {% set current_route = app.request.attributes.get('_route') ?? '' %}
         <nav class="tabbar" aria-label="{{ 'nav.label'|trans }}">
-            <a class="tabbar__item" href="{{ path('shopping_list') }}"{% if current_route starts with 'shopping_' %} aria-current="page"{% endif %}>
+            <a class="tabbar__item" href="{{ path('shopping_list') }}"{% if current_route starts with 'shopping_' and not (current_route starts with 'shopping_stores') %} aria-current="page"{% endif %}>
                 <svg class="tabbar__icon" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M3 4h2l2.4 10.2a1.5 1.5 0 0 0 1.5 1.1h8.4a1.5 1.5 0 0 0 1.5-1.1L21 7H6.2"/>
                     <circle cx="9.5" cy="19.5" r="1.5"/>
@@ -30,7 +30,7 @@
                 </svg>
                 <span>{{ 'nav.shopping'|trans }}</span>
             </a>
-            <a class="tabbar__item" href="{{ path('app_more') }}"{% if current_route in ['app_more', 'app_release_notes', 'app_help'] or current_route starts with 'catalog_' %} aria-current="page"{% endif %}>
+            <a class="tabbar__item" href="{{ path('app_more') }}"{% if current_route in ['app_more', 'app_release_notes', 'app_help'] or current_route starts with 'catalog_' or current_route starts with 'shopping_stores' or current_route starts with 'admin' %} aria-current="page"{% endif %}>
                 <svg class="tabbar__icon" viewBox="0 0 24 24" aria-hidden="true">
                     <circle cx="5" cy="12" r="1.6"/>
                     <circle cx="12" cy="12" r="1.6"/>

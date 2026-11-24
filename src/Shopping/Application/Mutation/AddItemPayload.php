@@ -25,6 +25,10 @@ final readonly class AddItemPayload
         public ?Uuid $articleId = null,
         #[Assert\Length(max: 200, maxMessage: 'Die Notiz darf höchstens {{ limit }} Zeichen lang sein.')]
         public ?string $note = null,
+        /** @var list<string> Läden ("Bier @Edeka"), werden beim Zusammenführen ergänzt */
+        public array $storeIds = [],
+        /** "2026-11-28" (z. B. Ende eines Angebots) */
+        public ?string $validUntil = null,
     ) {
     }
 

@@ -1,0 +1,11 @@
+{# Formular „Laden anlegen/umbenennen“. Erwartet: form, submit (Übersetzungsschlüssel des Knopfs) #}
+{{ form_start(form, {attr: {class: 'form-group', novalidate: 'novalidate'}}) }}
+    <label class="field">
+        <span class="field__label">{{ 'stores.form.name'|trans }}</span>
+        {{ form_widget(form.name) }}
+    </label>
+    {% for error in form.name.vars.errors %}
+        <p class="form-error">{{ error.message }}</p>
+    {% endfor %}
+    <button type="submit" class="button button--primary button--block">{{ submit|trans }}</button>
+{{ form_end(form) }}

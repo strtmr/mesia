@@ -33,6 +33,7 @@ final readonly class AddItemHandler implements MutationHandler
         private CategoryRepository $categories,
         private ArticleRepository $articles,
         private EntityManagerInterface $entityManager,
+        private ItemExtras $extras,
     ) {
     }
 
@@ -69,11 +70,15 @@ final readonly class AddItemHandler implements MutationHandler
 
         $contribution = $payload->contribution;
         $quantity = Quantity::fromFloat($contribution->quantity);
+        $storeIds = $this->extras->storeIds($context->householdId, $payload->storeIds);
+        $validUntil = ItemExtras::date($payload->validUntil);
 
         if (null !== $payload->articleId) {
             $existing = $this->items->findActiveByArticle($payload->listId, $payload->articleId);
             if (null !== $existing) {
+                // Erst der Beitrag (reaktiviert ggf. und entfernt dabei ein altes Datum), dann Läden und Datum
                 $existing->addContribution($contribution->id, ContributionSource::Manual, null, $quantity, $contribution->unit, $context->actorId, $context->at, $context->now);
+                ItemExtras::addTo($existing, $storeIds, $validUntil, $context->actorId, $context->now);
 
                 return MutationOutcome::merged($existing->getId());
             }
@@ -93,6 +98,7 @@ final readonly class AddItemHandler implements MutationHandler
             $context->now,
         );
         $item->addContribution($contribution->id, ContributionSource::Manual, null, $quantity, $contribution->unit, $context->actorId, $context->at, $context->now);
+        ItemExtras::addTo($item, $storeIds, $validUntil, $context->actorId, $context->now);
         $this->entityManager->persist($item);
 
         return MutationOutcome::applied();

@@ -5,6 +5,14 @@
 # Kurz und aus Sicht der Benutzer schreiben, ohne Technik. Einträge immer in '…' setzen (ein „: “ im Text würde sonst
 # als Schlüssel gelesen).
 
+- version: 0.9.0
+  date: 2026-11-24
+  changes:
+    - 'Läden: Artikel einem Supermarkt zuordnen, z. B. „Bier @Edeka“ in der Schnelleingabe oder im Bearbeiten-Fenster. Im Laden zeigt ein Filter oben nur dessen Artikel'
+    - '„Gültig bis“ für Angebote: „Kaffee bis Sa“ merkt sich das Datum. Am letzten Tag steht es grün als „heute“, danach rot'
+    - 'Ruhigerer Hintergrund: warmes Papierweiß statt Hellgrün'
+    - 'Läden verwalten unter „Mehr → Läden“: rund 45 Märkte sind schon dabei (Discounter, Supermärkte, Bio, Drogerie, Getränke, Lieferdienste), eigene lassen sich ergänzen. Beim Tippen schlägt die App passende Läden vor'
+
 - version: 0.8.1
   date: 2026-11-23
   changes:

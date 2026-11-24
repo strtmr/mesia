@@ -14,6 +14,7 @@ const COLLECTIONS = {
     article_alias: 'aliases',
     shopping_list: 'lists',
     shopping_item: 'items',
+    store: 'stores',
 };
 
 /**
@@ -29,6 +30,7 @@ export function buildState(serverEntities, outbox = [], { actorId = null } = {})
         aliases: new Map(),
         lists: new Map(),
         items: new Map(),
+        stores: new Map(),
     };
 
     for (const { type, data } of serverEntities) {
@@ -64,6 +66,7 @@ const HANDLERS = {
             const existing = findItemByArticle(state, p.list_id, p.article_id);
             if (existing) {
                 addContribution(state, existing.id, p.contribution, at, actorId);
+                addExtras(state, existing.id, p);
                 return;
             }
         }
@@ -80,6 +83,8 @@ const HANDLERS = {
             checked_at: null,
             checked_by: null,
             activated_at: at,
+            store_ids: [...new Set(p.store_ids ?? [])],
+            valid_until: p.valid_until ?? null,
             contributions: [contribution(p.contribution, at, actorId)],
             deleted: false,
             pending: true,
@@ -120,6 +125,8 @@ const HANDLERS = {
         const fields = p.fields ?? {};
         if ('name' in fields) changed.name = fields.name.trim();
         if ('note' in fields) changed.note = fields.note?.trim() || null;
+        if ('store_ids' in fields) changed.store_ids = [...new Set(fields.store_ids ?? [])];
+        if ('valid_until' in fields) changed.valid_until = fields.valid_until ?? null;
         if ('qty_override' in fields || 'unit_override' in fields) {
             changed.qty_override = fields.qty_override ?? null;
             changed.unit_override = changed.qty_override === null ? null : (fields.unit_override ?? null);
@@ -215,6 +222,13 @@ export function findArticleIdByTerm(state, normalized) {
     return null;
 }
 
+/** Aktive Läden, alphabetisch */
+export function activeStores(state) {
+    return [...state.stores.values()]
+        .filter((store) => !store.deleted)
+        .sort((a, b) => a.name.localeCompare(b.name, 'de', { sensitivity: 'base' }));
+}
+
 export function activeList(state) {
     return [...state.lists.values()].find((list) => !list.deleted) ?? null;
 }
@@ -241,11 +255,25 @@ function addContribution(state, itemId, payload, at, actorId) {
         changed.contributions = [];
         changed.checked_at = null;
         changed.checked_by = null;
+        changed.valid_until = null; // Angebot o. Ä. gilt nur für die alte Runde, der Laden bleibt
         changed.activated_at = time(at) > time(changed.activated_at) ? at : changed.activated_at;
         changed.qty_override = null;
         changed.unit_override = null;
     }
     changed.contributions = [...changed.contributions, contribution(payload, at, actorId)];
+}
+
+/** item.add für einen Artikel, der schon auf der Liste steht: Läden ergänzen, Datum setzen (wie ItemExtras::addTo) */
+function addExtras(state, itemId, payload) {
+    const stores = payload.store_ids ?? [];
+    if (stores.length === 0 && !payload.valid_until) {
+        return;
+    }
+    const changed = edit(state.items, itemId);
+    changed.store_ids = [...new Set([...(changed.store_ids ?? []), ...stores])];
+    if (payload.valid_until) {
+        changed.valid_until = payload.valid_until;
+    }
 }
 
 function contribution(payload, at, actorId) {

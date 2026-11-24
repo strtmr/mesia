@@ -47,4 +47,12 @@ final class ShoppingListItemRepository extends ServiceEntityRepository
     {
         return $this->findBy(['householdId' => $householdId, 'categoryId' => $categoryId, 'deletedAt' => null]);
     }
+
+    /**
+     * @return list<ShoppingListItem>
+     */
+    public function findByArticle(Uuid $householdId, Uuid $articleId): array
+    {
+        return $this->findBy(['householdId' => $householdId, 'articleId' => $articleId, 'deletedAt' => null]);
+    }
 }

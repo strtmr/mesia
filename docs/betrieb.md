@@ -9,7 +9,7 @@ Deployt wird automatisch per GitHub Actions, sobald auf `main` alle Prüfungen g
 push auf main → CI (Prüfungen, Tests) → Job "Deployment":
   deploy/build.sh    git archive + composer --no-dev + asset-map:compile (ohne Tests, Doku, Dev-Werkzeuge)
   deploy/release.sh  tar über SSH nach releases/<zeit>-<commit>, dann deploy/remote.sh auf dem Server:
-                     .env.local + Logs verlinken → cache:warmup → Migrationen → Katalog-Abgleich → current umschalten → alte Releases löschen
+                     .env.local + Logs verlinken → cache:warmup → Migrationen → Katalog-Abgleich → Grunddaten (app:household:initialize) → current umschalten → alte Releases löschen
                      danach Test von APP_URL/login, bei Fehler automatisch zurück auf das vorherige Release
 ```
 

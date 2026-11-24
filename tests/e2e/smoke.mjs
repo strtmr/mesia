@@ -125,6 +125,18 @@ try {
     await page.screenshot({ path: `${screenshotDir}/2-abgehakt.png`, fullPage: true });
     await expectVisible(page.locator('.shopping-done__toggle', { hasText: 'Erledigt (1)' }), 'Erledigt (1)');
 
+    step('Laden und Datum per Schnelleingabe, Filter nach Laden');
+    await page.fill('.quick-add__input', 'Bier @Edeka bis heute');
+    await page.press('.quick-add__input', 'Enter');
+    const beer = page.locator('.item-row', { hasText: 'Bier' });
+    await expectVisible(beer.locator('.item-body__meta', { hasText: 'Edeka' }), 'Bier mit Laden Edeka');
+    await expectVisible(beer.locator('.item-date--today', { hasText: 'heute' }), 'Datum heute (grün)');
+    await page.locator('.store-filter .chip', { hasText: 'Edeka' }).click();
+    await expectVisible(page.locator('.store-filter__hint'), 'Hinweis auf ausgeblendete Artikel');
+    if ((await page.locator('.shopping-group .item-row').count()) !== 1) throw new Error('Filter Edeka zeigt mehr als Bier');
+    await page.locator('.store-filter .chip', { hasText: 'Alle' }).click();
+    await expectVisible(page.locator('.item-row', { hasText: 'Drachenfrucht' }), 'Filter aufgehoben');
+
     step('Bearbeiten: Drachenfrucht nach Obst & Gemüse');
     await page.locator('.item-row', { hasText: 'Drachenfrucht' }).locator('.item-body').click();
     await expectVisible(page.locator('dialog.sheet[open]'), 'Sheet');

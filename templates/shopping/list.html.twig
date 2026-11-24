@@ -33,6 +33,10 @@
          data-text-length-remaining="{{ 'shopping.length.remaining'|trans }}"
          data-text-length-over="{{ 'shopping.length.over'|trans }}"
          data-text-note-over="{{ 'shopping.length.note_over'|trans }}"
+         data-text-unknown-store="{{ 'shopping.stores.unknown'|trans }}"
+         data-text-valid-today="{{ 'shopping.valid.today'|trans }}"
+         data-text-valid-expired="{{ 'shopping.valid.expired'|trans }}"
+         data-text-valid-until="{{ 'shopping.valid.until'|trans }}"
          data-text-status="{{ {
              added: 'shopping.item_status.added'|trans,
              added_anonymous: 'shopping.item_status.added_anonymous'|trans,
@@ -61,6 +65,20 @@
             <p class="empty-state__text">{{ 'shopping.empty.text'|trans }}</p>
         </div>
 
+        {# Laden-Filter: nur Läden, denen offene Einträge zugeordnet sind #}
+        <div class="store-filter" x-cloak x-show="view.storeChips.length > 0">
+            <div class="chips chips--scroll" role="group" aria-label="{{ 'shopping.stores.filter'|trans }}">
+                <button type="button" class="chip" :aria-pressed="(view.storeFilter === null).toString()" @click="setStoreFilter(null)">{{ 'shopping.stores.all'|trans }}</button>
+                <template x-for="chip in view.storeChips" :key="chip.id">
+                    <button type="button" class="chip" :aria-pressed="(view.storeFilter === chip.id).toString()" @click="setStoreFilter(chip.id)">
+                        <span x-text="chip.name"></span> <span class="chip__count" x-text="chip.count"></span>
+                    </button>
+                </template>
+            </div>
+            <p class="store-filter__hint" x-show="view.storeFilter && view.hiddenCount > 0"
+               x-text="'{{ 'shopping.stores.hidden'|trans|e('js') }}'.replace('%count%', view.hiddenCount)"></p>
+        </div>
+
         {# Offene Einträge nach Kategorie #}
         <template x-for="group in view.groups" :key="group.category.id">
             <section class="shopping-group">
@@ -79,6 +97,11 @@
                             <button type="button" class="item-body" @click="openEditor(item)">
                                 <span class="item-body__name" x-text="item.name"></span>
                                 <span class="item-body__note" x-show="item.note" x-text="item.note"></span>
+                                {# Laden, direkt dahinter "gültig bis" als Etikett (heute grün, abgelaufen rot) #}
+                                <span class="item-body__meta" x-show="item.stores.length > 0 || item.validUntil">
+                                    <span class="item-body__stores" x-show="item.stores.length > 0" x-text="item.stores.join(' · ')"></span>
+                                    <span class="item-date" :class="'item-date--' + item.dateStatus" x-show="item.validUntil" x-text="item.validLabel"></span>
+                                </span>
                             </button>
                             <span class="item-qty" x-text="item.quantityLabel"></span>
                         </li>
@@ -121,6 +144,7 @@
                     <li>
                         <button type="button" class="quick-add__suggestion" @mousedown.prevent @click="pick(suggestion)">
                             <span x-text="suggestion.name"></span>
+                            <span class="badge badge--muted" x-show="suggestion.store">{{ 'shopping.suggestion.store'|trans }}</span>
                             <span class="badge" x-show="suggestion.onList">{{ 'shopping.suggestion.on_list'|trans }}</span>
                             <span class="badge badge--muted" x-show="!suggestion.onList && suggestion.fromHistory">{{ 'shopping.suggestion.history'|trans }}</span>
                         </button>
@@ -179,6 +203,36 @@
                                 <option :value="category.id" x-text="category.icon + ' ' + category.name" :selected="category.id === editor.categoryId"></option>
                             </template>
                         </select>
+                    </label>
+                    {# Läden: gewählte als Chips (antippen entfernt), darunter tippbare Auswahl #}
+                    <div class="field store-picker" x-show="view.stores.length > 0">
+                        <span class="field__label">{{ 'shopping.editor.stores'|trans }}</span>
+                        <div class="chips" x-show="editor.storeIds.length > 0">
+                            <template x-for="storeId in editor.storeIds" :key="storeId">
+                                <button type="button" class="chip" aria-pressed="true" @click="toggleEditorStore(storeId)"
+                                        :aria-label="'{{ 'shopping.editor.store_remove'|trans|e('js') }} ' + storeName(storeId)">
+                                    <span x-text="storeName(storeId)"></span> <span aria-hidden="true">×</span>
+                                </button>
+                            </template>
+                        </div>
+                        <input class="field__input" type="text" x-model="editor.storeQuery" autocomplete="off" autocapitalize="none" spellcheck="false" enterkeyhint="done"
+                               placeholder="{{ 'shopping.editor.store_add'|trans }}" aria-label="{{ 'shopping.editor.store_add'|trans }}"
+                               @focus="editor.storeFocus = true" @blur="editor.storeFocus = false"
+                               @keydown.enter.prevent="pickEditorStore(editorStoreOptions()[0])">
+                        <ul class="store-picker__options" x-show="editor.storeFocus && editorStoreOptions().length > 0">
+                            <template x-for="store in editorStoreOptions()" :key="store.id">
+                                <li><button type="button" class="store-picker__option" @mousedown.prevent @click="pickEditorStore(store)" x-text="store.name"></button></li>
+                            </template>
+                        </ul>
+                        <p class="field__hint field__hint--left" x-show="editor.storeQuery.trim() !== '' && editorStoreOptions().length === 0"
+                           x-text="'{{ 'shopping.editor.store_none'|trans|e('js') }}'.replace('%name%', editor.storeQuery.trim())"></p>
+                    </div>
+                    <label class="field">
+                        <span class="field__label">{{ 'shopping.editor.valid_until'|trans }}</span>
+                        <span class="field-with-action">
+                            <input class="field__input" type="date" x-model="editor.validUntil">
+                            <button type="button" class="field-with-action__clear" x-show="editor.validUntil" @click="editor.validUntil = ''" aria-label="{{ 'shopping.editor.valid_until_clear'|trans }}">×</button>
+                        </span>
                     </label>
                     <label class="field">
                         <span class="field__label">{{ 'shopping.editor.note'|trans }}</span>

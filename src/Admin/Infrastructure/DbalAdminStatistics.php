@@ -71,14 +71,27 @@ final readonly class DbalAdminStatistics implements AdminStatistics
     {
         $rows = $this->connection->fetchAllAssociative(
             <<<'SQL'
-                SELECT mode() WITHIN GROUP (ORDER BY a.name) AS name,
-                       mode() WITHIN GROUP (ORDER BY c.name) AS category,
-                       count(DISTINCT a.household_id) AS households,
-                       sum(a.purchase_count) AS purchases
-                FROM article a
-                LEFT JOIN category c ON c.id = a.category_id
-                WHERE a.source = 'user' AND a.deleted_at IS NULL
-                GROUP BY a.name_normalized
+                WITH labelled AS (
+                    -- Aktuelle Bezeichnung: zuletzt geänderter Listeneintrag des Artikels, sonst der Artikelname
+                    SELECT a.household_id, a.name_normalized, a.purchase_count, c.name AS category,
+                           COALESCE(i.name, a.name) AS label,
+                           COALESCE(i.updated_at, a.updated_at) AS label_at
+                    FROM article a
+                    LEFT JOIN category c ON c.id = a.category_id
+                    LEFT JOIN LATERAL (
+                        SELECT li.name, li.updated_at FROM shopping_list_item li
+                        WHERE li.article_id = a.id AND li.deleted_at IS NULL
+                        ORDER BY li.updated_at DESC LIMIT 1
+                    ) i ON true
+                    WHERE a.source = 'user' AND a.deleted_at IS NULL
+                )
+                SELECT (array_agg(label ORDER BY label_at DESC))[1] AS name,
+                       mode() WITHIN GROUP (ORDER BY category) AS category,
+                       count(DISTINCT household_id) AS households,
+                       sum(purchase_count) AS purchases,
+                       name_normalized AS key
+                FROM labelled
+                GROUP BY name_normalized
                 ORDER BY households DESC, purchases DESC, name
                 LIMIT :limit
                 SQL,
@@ -87,6 +100,19 @@ final readonly class DbalAdminStatistics implements AdminStatistics
         );
 
         return array_map(self::usage(...), $rows);
+    }
+
+    public function userArticleRefs(string $key): array
+    {
+        $rows = $this->connection->fetchAllAssociative(
+            "SELECT household_id, id FROM article WHERE source = 'user' AND deleted_at IS NULL AND name_normalized = :key",
+            ['key' => $key],
+        );
+
+        return array_map(static fn (array $row): array => [
+            'householdId' => Uuid::fromString((string) $row['household_id']),
+            'articleId' => Uuid::fromString((string) $row['id']),
+        ], $rows);
     }
 
     public function topPurchases(?\DateTimeImmutable $since, ?Uuid $householdId, int $limit): array
@@ -123,6 +149,7 @@ final readonly class DbalAdminStatistics implements AdminStatistics
             null === $row['category'] ? null : (string) $row['category'],
             (int) $row['households'],
             (int) $row['purchases'],
+            isset($row['key']) ? (string) $row['key'] : null,
         );
     }
 

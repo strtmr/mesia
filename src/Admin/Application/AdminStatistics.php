@@ -20,11 +20,19 @@ interface AdminStatistics
 
     /**
      * Selbst angelegte Artikel (nicht aus dem Startkatalog), über alle Haushalte nach Normalform zusammengefasst.
-     * Was in mehreren Haushalten auftaucht oder oft gekauft wird, ist ein Kandidat für den Startkatalog.
+     * Angezeigt wird die aktuelle Bezeichnung, also wie der Eintrag zuletzt auf einer Liste hieß (umbenannt wird in
+     * der App nur der Eintrag, nicht der Katalogartikel).
      *
      * @return list<ArticleUsage>
      */
     public function userArticles(int $limit): array;
+
+    /**
+     * Die einzelnen selbst angelegten Artikel hinter einem Eintrag von userArticles() (zum Löschen).
+     *
+     * @return list<array{householdId: Uuid, articleId: Uuid}>
+     */
+    public function userArticleRefs(string $key): array;
 
     /**
      * Meistgekaufte Artikel (Kaufhistorie), nach Normalform zusammengefasst.

@@ -28,7 +28,7 @@ describe('parseQuickAdd', () => {
         ['1111111111 Schokolade', { name: 'Schokolade', quantity: 1111111111, unit: 'stk', note: null }],
         ['  ', { name: '', quantity: null, unit: null, note: null }],
     ])('%s', (input, expected) => {
-        expect(parseQuickAdd(input)).toEqual(expected);
+        expect(parseQuickAdd(input)).toEqual({ stores: [], validUntil: null, ...expected });
     });
 });
 

@@ -185,6 +185,52 @@ final class AdminTest extends WebTestCase
         self::assertResponseStatusCodeSame(404);
     }
 
+    public function testUserArticlesShowTheCurrentLabelAndCanBeDeleted(): void
+    {
+        $this->client->loginUser($this->admin);
+        $snapshot = $this->snapshot();
+        $listId = $snapshot['entities']['shopping_list'][0]['id'];
+        $fallback = array_values(array_filter($snapshot['entities']['category'], static fn (array $c): bool => $c['is_fallback']))[0];
+
+        $balls = ['article' => Uuid::v7()->toRfc4122(), 'item' => Uuid::v7()->toRfc4122()];
+        $buns = ['article' => Uuid::v7()->toRfc4122(), 'item' => Uuid::v7()->toRfc4122()];
+        $add = static fn (array $ids, string $name): array => ['type' => 'item.add', 'payload' => [
+            'item_id' => $ids['item'], 'list_id' => $listId, 'article_id' => $ids['article'], 'name' => $name, 'category_id' => $fallback['id'],
+            'sort_key' => 'a0', 'contribution' => ['id' => Uuid::v7()->toRfc4122(), 'quantity' => null, 'unit' => null],
+        ]];
+        $this->push([
+            ['type' => 'article.create', 'payload' => ['article_id' => $balls['article'], 'name' => 'quarkbällchen', 'category_id' => $fallback['id']]],
+            $add($balls, 'quarkbällchen'),
+            // In der App umbenannt: ändert nur den Eintrag, nicht den Katalogartikel
+            ['type' => 'item.update', 'payload' => ['item_id' => $balls['item'], 'fields' => ['name' => 'Quarkbällchen vom Bäcker']]],
+            ['type' => 'item.check', 'payload' => ['item_id' => $balls['item']]],
+            ['type' => 'article.create', 'payload' => ['article_id' => $buns['article'], 'name' => 'Zimtschnecken', 'category_id' => $fallback['id']]],
+            $add($buns, 'Zimtschnecken'),
+        ]);
+
+        $crawler = $this->client->request('GET', '/admin/artikel');
+        self::assertSelectorTextContains('main', 'Quarkbällchen vom Bäcker');
+        self::assertSelectorTextNotContains('main', 'quarkbällchen');
+
+        // Löschen: Quarkbällchen (erledigt) und Zimtschnecken (offen)
+        foreach (['Quarkbällchen vom Bäcker', 'Zimtschnecken'] as $name) {
+            $form = $crawler->filter('form')->reduce(static fn ($form): bool => $form->filter('input[name="name"]')->attr('value') === $name)->form();
+            $this->client->submit($form);
+            self::assertResponseRedirects('/admin/artikel', 303);
+            $crawler = $this->client->followRedirect();
+            self::assertSelectorTextContains('.notice--success', '(1 Haushalt)');
+        }
+        self::assertSelectorTextContains('main', 'Noch keine selbst angelegten Artikel.');
+
+        $snapshot = $this->snapshot();
+        $articleIds = array_column($snapshot['entities']['article'], 'id');
+        self::assertNotContains($balls['article'], $articleIds);
+        self::assertNotContains($buns['article'], $articleIds);
+        $itemIds = array_column($snapshot['entities']['shopping_item'] ?? [], 'id');
+        self::assertNotContains($balls['item'], $itemIds, 'Erledigter Eintrag verschwindet mit dem Artikel');
+        self::assertContains($buns['item'], $itemIds, 'Offener Eintrag bleibt auf der Liste');
+    }
+
     private function user(string $email): User
     {
         $user = self::getContainer()->get(UserRepository::class)->findOneByEmail($email);

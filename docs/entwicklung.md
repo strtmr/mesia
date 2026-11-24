@@ -11,7 +11,7 @@ Deployment: [betrieb.md](betrieb.md).
 | `Shared` | Änderungsprotokoll, `Syncable`, `SyncableFields`, `SortKey`, Sync-Schnittstellen, Ereignis `HouseholdCreated` | – |
 | `Identity` | Haushalt, Benutzer, Login, `/api/me`, Konsolenbefehle | Shared |
 | `Catalog` | Kategorien, Artikel, Aliase, Startkatalog, `TextNormalizer`, `Unit` | Shared |
-| `Shopping` | Liste, Einträge mit Beiträgen, Kaufhistorie | Shared, Catalog |
+| `Shopping` | Liste, Einträge mit Beiträgen, Kaufhistorie, Läden (`/mehr/laeden`) | Shared, Catalog |
 | `Notification` | Web-Push-Abos, Versand der Mitteilungen (`/api/push`, `app:push:send`) | Shared |
 | `Admin` | Admin-Bereich `/admin`: Überblick, Auswertungen, Haushalte und Personen anlegen | Shared, Identity |
 | `Sync` | `/api/sync/*`, Mutation-Dispatcher, Change-Feed | alle |
@@ -49,9 +49,17 @@ Ohne Anmeldung antwortet die API mit `401` statt mit einer Weiterleitung.
 | Endpunkt | Zweck |
 |----------|-------|
 | `GET /api/me` | Benutzer und Haushalt, gleichzeitig Prüfung der Sitzung |
-| `GET /api/sync/snapshot` | `{cursor, entities: {category: [...], article: [...], article_alias: [...], shopping_list: [...], shopping_item: [...]}}` |
+| `GET /api/sync/snapshot` | `{cursor, entities: {category: [...], article: [...], article_alias: [...], store: [...], shopping_list: [...], shopping_item: [...]}}` |
 | `POST /api/sync/push` | `{device_id, mutations: [{id, type, at, payload}]}` → `{results: [{id, status, merged_into?, error?}]}` |
 | `GET /api/sync/pull?since=&limit=` | `{changes: [{seq, type, id, op, data}], cursor, has_more}` |
+
+**Läden** (`store`, Modul Shopping) werden wie Kategorien nur auf einer Seite gepflegt („Mehr → Läden“,
+`StoreManagement`). Einträge tragen `store_ids` (JSON-Liste) und `valid_until` (Datum, `YYYY-MM-DD`). Unbekannte
+oder gelöschte Laden-IDs in Mutationen fallen still weg (offline zugeordnet, inzwischen gelöscht), gelöschte Läden
+blendet der Client aus. Beim Reaktivieren bleibt `store_ids`, `valid_until` wird geleert. Die Startliste legt
+`CreateDefaultStoresOnHouseholdCreated` an. Sie ergänzt nur, was fehlt (`seed_key`, auch gelöschte, und gleiche
+Namen zählen als vorhanden), und läuft per `app:household:initialize` bei jedem Deployment. Neue Märkte also einfach
+in `DEFAULT_STORES` ergänzen, `seed_key` nie wiederverwenden.
 
 Kategorien werden nicht per Mutation geändert, sondern auf der Seite „Mehr → Kategorien“ (mit Verbindung). Verweist
 eine Mutation auf eine inzwischen gelöschte Kategorie (`item.add`, `item.move`, `article.create/update`), landet der
@@ -64,11 +72,11 @@ Status im Push-Ergebnis: `applied`, `merged` (auf bestehendes Objekt umgelenkt, 
 
 | Typ | Payload | Besonderheit |
 |-----|---------|--------------|
-| `item.add` | `item_id, list_id, name, category_id, sort_key, contribution{id, quantity?, unit?}, article_id?, note?` | gleicher Artikel schon auf der Liste → `merged`, erledigter Eintrag wird reaktiviert |
+| `item.add` | `item_id, list_id, name, category_id, sort_key, contribution{id, quantity?, unit?}, article_id?, note?, store_ids?, valid_until?` | gleicher Artikel schon auf der Liste → `merged`, erledigter Eintrag wird reaktiviert; Läden werden ergänzt, Datum gesetzt |
 | `item.reactivate` | `item_id, contribution{…}` | alte Beiträge archiviert, manuelle Menge zurückgesetzt |
 | `item.check` | `item_id` | `ignored`, wenn `at` vor dem letzten Reaktivieren liegt; erzeugt Kaufhistorie, `article.purchase_count` +1 |
 | `item.uncheck` | `item_id` | entfernt den letzten Kaufhistorien-Eintrag, `article.purchase_count` −1 |
-| `item.update` | `item_id, fields{name?, note?, qty_override?, unit_override?}` | fehlendes Feld = unverändert, `null` = leeren |
+| `item.update` | `item_id, fields{name?, note?, qty_override?, unit_override?, store_ids?, valid_until?}` | fehlendes Feld = unverändert, `null` = leeren; `store_ids` ersetzt |
 | `item.move` | `item_id, category_id, sort_key` | Kategoriewechsel wird vom Artikel übernommen |
 | `item.delete` | `item_id` | Soft Delete |
 | `article.create` | `article_id, name, category_id` | Name/Alias existiert → `merged` |
@@ -93,6 +101,7 @@ core/   reines JavaScript ohne DOM, getestet mit Vitest (tests/js)
   commands.js  fachliche Aktionen → Mutationen (addFromText, checkItem, editItem, moveItem …)
   sync.js      SyncEngine: push → pull → Outbox bereinigen, Status, Timer
   quantity.js  Mengen: Grundrechenarten auswerten, Grenzen prüfen (MAX_QUANTITY = PHP Quantity::MAX, gemeinsam ändern)
+  extras.js    Schnelleingabe „@Laden“ und „bis <Datum>“, Laden-Zuordnung und -Suche (searchStores), Datumsstatus
   quickadd.js, matcher.js, normalize.js, units.js, sortkey.js, view.js, api.js
 ui/     Alpine.js: app.js (Einstieg, Store "sync"), list.js (Komponente)
 ```
@@ -129,6 +138,9 @@ ui/     Alpine.js: app.js (Einstieg, Store "sync"), list.js (Komponente)
   und gibt die ID an `buildState` weiter, damit eigene, noch nicht gesendete Änderungen den Benutzer schon tragen.
 - **Snapshot-Version:** Bekommt der Snapshot ein Feld, das schon vorhandene Objekte brauchen, `SNAPSHOT_VERSION` in
   `sync.js` erhöhen. Jedes Gerät lädt dann einmal einen frischen Snapshot (Outbox bleibt erhalten).
+- **Laden-Filter:** `buildListView(state, {storeFilter})` zeigt nur Einträge dieses Ladens und liefert `storeChips`
+  (Läden mit offenen Einträgen) und `hiddenCount`. Ein Filter auf einen Laden ohne offene Einträge wirkt nicht und
+  wird verworfen. Gemerkt pro Gerät in `localStorage` (`mesia.storeFilter`).
 - **Drag & Drop:** SortableJS verschiebt DOM-Knoten. `onEnd` setzt das DOM zurück und löst nur eine Mutation aus,
   Alpine rendert die neue Reihenfolge.
 - UI-Texte stehen im Twig-Template bzw. in `translations/`, nicht im JavaScript.
@@ -193,10 +205,13 @@ Link nur für Admins. Admin-Funktionen betreffen die Benutzer nicht: **keine neu
 Neuigkeiten** (CLAUDE.md).
 
 - **Auswertungen** (`AdminStatistics`, umgesetzt per SQL in `DbalAdminStatistics`): liest die Tabellen der anderen
-  Module direkt, ohne deren Klassen, damit deptrac nur `Shared` und `Identity` erlauben muss. Artikel werden über
-  Haushalte hinweg per `name_normalized` zusammengefasst, angezeigt wird die häufigste Schreibweise (`mode()`).
-  „Selbst angelegt“ = `article.source = 'user'`, „Oft gekauft“ = `purchase_event` (Abhaken, Rückgängig löscht den
-  Eintrag wieder).
+  Module direkt, ohne deren Klassen. Artikel werden über Haushalte hinweg per `name_normalized` zusammengefasst.
+  „Selbst angelegt“ = `article.source = 'user'`, angezeigt mit der **aktuellen Bezeichnung**: Name des zuletzt
+  geänderten Listeneintrags, sonst der Artikelname (umbenannt wird in der App nur der Eintrag). „Oft gekauft“ =
+  `purchase_event` (Abhaken, Rückgängig löscht den Eintrag wieder).
+- **Löschen** (nur „Selbst angelegt“): `Catalog\Application\ArticleRemoval` löscht den Artikel in jedem Haushalt
+  weich, samt Aliasen (Sperre, Änderungsprotokoll), und löst `ArticleDeleted` aus. Shopping entfernt daraufhin die
+  erledigten Einträge dieses Artikels, offene bleiben stehen. Dafür darf `Admin` auch `Catalog` nutzen.
 - **Anlegen:** `UserRegistration::createHouseholdWithUser()` legt Haushalt und erste Person in einer Transaktion an
   (Startkatalog und Liste per `HouseholdCreated`, wie `app:household:create`). Ob die E-Mail frei ist, prüft der
   Controller vorher, damit das Formular eine Meldung am Feld zeigen kann.
@@ -233,6 +248,9 @@ Neuigkeiten** (CLAUDE.md).
   später erneut versucht. So kann eine einzelne fehlerhafte Mutation den Abgleich nicht dauerhaft blockieren.
 - **`change_log.mutation_id`** wird nur gesetzt, wenn `flush()` innerhalb von `ChangeContext::runForMutation()`
   läuft (der Doctrine-Listener schreibt das Protokoll beim Flush). Mitteilungen hängen davon ab.
+- **`make:migration` mit Tabellen aus einem anderen Branch:** Liegen in der Dev-Datenbank Tabellen, die der aktuelle
+  Branch nicht kennt (z. B. aus einem Feature-Branch), erzeugt Doctrine dafür `DROP TABLE`. Generierte Migrationen
+  vor dem Ausführen immer lesen und fremde Änderungen entfernen.
 - **Normalisierung** gibt es in PHP und JS. Beide gemeinsam ändern und `tests/fixtures/normalize.json` ergänzen.
 - **Test-Container:** private Services nur über `self::getContainer()` in KernelTestCase/WebTestCase holen
   (Trait `CreatesUsers` für Testbenutzer).
@@ -243,8 +261,9 @@ Neuigkeiten** (CLAUDE.md).
 
 Gestaltungsregeln, Farben, Typografie, Komponenten und Kontrastwerte: [brand-book.md](brand-book.md) (lebende Fassung,
 Grundlage `MESIA_Brand_Book_v1.pdf`). Hier nur die technischen Punkte. Palette:
-`#01161e` Ink, `#124559` Deep, `#598392` Slate, `#aec3b0` Sage, `#eff6e0` Cream, `#ff6a2b` Signal-Orange.
+`#01161e` Ink, `#124559` Deep, `#598392` Slate, `#aec3b0` Sage, `#eff6e0` Cream, `#f7f5ef` Paper (Hintergrund hell), `#ff6a2b` Signal-Orange.
 
+- **Hintergrundfarbe** steht außer in `app.css` auch in `templates/base.html.twig` (`theme-color`), `public/manifest.webmanifest` und `public/offline.html`. Alle gemeinsam ändern.
 - **Farben nur über Tokens** in `assets/styles/app.css` (`--mesia-*` Palette, `--color-*` Rollen, hell und dunkel).
   `--color-accent` (Deep/Sage) für Links und Überschriften, `--color-action` (Signal-Orange, Schrift Ink) für
   Primärknöpfe, Plus und Häkchen. Gedämpfter Text ist aus Slate abgedunkelt (`#4a6b78`, 4,5:1).

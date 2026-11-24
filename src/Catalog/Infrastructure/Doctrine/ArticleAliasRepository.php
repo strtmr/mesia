@@ -27,6 +27,14 @@ final class ArticleAliasRepository extends ServiceEntityRepository
     /**
      * @return list<ArticleAlias>
      */
+    public function findActiveByArticle(Uuid $householdId, Uuid $articleId): array
+    {
+        return $this->findBy(['householdId' => $householdId, 'articleId' => $articleId, 'deletedAt' => null]);
+    }
+
+    /**
+     * @return list<ArticleAlias>
+     */
     public function findAllActive(Uuid $householdId): array
     {
         return $this->findBy(['householdId' => $householdId, 'deletedAt' => null]);

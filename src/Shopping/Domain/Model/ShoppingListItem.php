@@ -25,6 +25,7 @@ use Symfony\Component\Uid\Uuid;
  *   archiviert, und eine manuell gesetzte Menge wird zurückgesetzt.
  * - Ein Abhaken, das älter ist als das letzte Reaktivieren, wird ignoriert (Zeitpunkt vom Gerät).
  * - Jede Änderung an Beiträgen aktualisiert den Eintrag selbst. So landet der Gesamtzustand im Änderungsprotokoll.
+ * - Läden („Bier nur bei Edeka“) bleiben beim Reaktivieren erhalten, „gültig bis“ (z. B. Angebot) nicht.
  */
 #[ORM\Entity(repositoryClass: ShoppingListItemRepository::class)]
 #[ORM\Table(name: 'shopping_list_item')]
@@ -76,6 +77,18 @@ class ShoppingListItem implements Syncable
 
     #[ORM\Column(type: UuidType::NAME, nullable: true)]
     private ?Uuid $updatedBy;
+
+    /**
+     * Läden, in denen der Artikel gekauft werden soll (leer = egal wo).
+     *
+     * @var list<string> UUIDs
+     */
+    #[ORM\Column(type: Types::JSON, options: ['default' => '[]'])]
+    private array $storeIds = [];
+
+    /** Letzter Tag, an dem sich der Kauf lohnt (z. B. Ende eines Angebots) */
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $validUntil = null;
 
     /** @var Collection<int, ItemContribution> */
     #[ORM\OneToMany(targetEntity: ItemContribution::class, mappedBy: 'item', cascade: ['persist'])]
@@ -183,6 +196,7 @@ class ShoppingListItem implements Syncable
 
         $this->checkedAt = null;
         $this->checkedBy = null;
+        $this->validUntil = null;
         $this->activatedAt = $at > $this->activatedAt ? $at : $this->activatedAt;
         $this->qtyOverride = null;
         $this->unitOverride = null;
@@ -270,6 +284,50 @@ class ShoppingListItem implements Syncable
         }
     }
 
+    /**
+     * @param list<Uuid> $storeIds ersetzt die bisherigen Läden
+     */
+    public function assignStores(array $storeIds, Uuid $actorId, \DateTimeImmutable $now): void
+    {
+        $ids = array_values(array_unique(array_map(static fn (Uuid $id): string => $id->toRfc4122(), $storeIds)));
+        if ($ids !== $this->storeIds) {
+            $this->storeIds = $ids;
+            $this->changedBy($actorId, $now);
+        }
+    }
+
+    /**
+     * Läden ergänzen (Schnelleingabe „Bier @Edeka“ für einen Artikel, der schon auf der Liste steht).
+     *
+     * @param list<Uuid> $storeIds
+     */
+    public function addStores(array $storeIds, Uuid $actorId, \DateTimeImmutable $now): void
+    {
+        $this->assignStores([...array_map(Uuid::fromString(...), $this->storeIds), ...$storeIds], $actorId, $now);
+    }
+
+    public function setValidUntil(?\DateTimeImmutable $date, Uuid $actorId, \DateTimeImmutable $now): void
+    {
+        $date = $date?->setTime(0, 0);
+        if ($date?->format('Y-m-d') !== $this->validUntil?->format('Y-m-d')) {
+            $this->validUntil = $date;
+            $this->changedBy($actorId, $now);
+        }
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getStoreIds(): array
+    {
+        return $this->storeIds;
+    }
+
+    public function getValidUntil(): ?\DateTimeImmutable
+    {
+        return $this->validUntil;
+    }
+
     public function delete(Uuid $actorId, \DateTimeImmutable $now): void
     {
         $this->updatedBy = $actorId;
@@ -318,6 +376,8 @@ class ShoppingListItem implements Syncable
             'checked_at' => $this->checkedAt?->format(\DATE_ATOM),
             'checked_by' => $this->checkedBy?->toRfc4122(),
             'activated_at' => $this->activatedAt->format(\DATE_ATOM),
+            'store_ids' => $this->storeIds,
+            'valid_until' => $this->validUntil?->format('Y-m-d'),
             'contributions' => array_map(static fn (ItemContribution $c): array => $c->toSnapshot(), $this->activeContributions()),
         ] + $this->syncMeta();
     }

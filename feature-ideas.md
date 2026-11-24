@@ -4,7 +4,7 @@
 _keine_
 
 ## Funktion
-_keine_
++ [x] Artikel einem Laden zuordnen und mit Ablaufdatum versehen („Bier kaufe ich nur bei Edeka im aktuellen Angebot“): Datum „heute“ grün, abgelaufen rot, Liste nach Läden filtern (0.9.0)
 
 ## Design
 + Optimierte Ansicht fürs Web

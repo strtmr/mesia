@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Catalog;
 
 use App\Catalog\Application\CatalogSeeder;
+use App\Shopping\Application\CreateDefaultStoresOnHouseholdCreated;
 use App\Tests\Support\CreatesUsers;
 use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -24,7 +25,9 @@ final class HouseholdInitializationTest extends KernelTestCase
         self::assertSame(365, $this->rowCount('article', $householdId));
         self::assertSame(352, $this->rowCount('article_alias', $householdId));
         self::assertSame(1, $this->rowCount('shopping_list', $householdId));
-        self::assertSame(17 + 365 + 352 + 1, $this->rowCount('change_log', $householdId), 'Jedes angelegte Objekt steht im Änderungsprotokoll.');
+        $stores = \count(CreateDefaultStoresOnHouseholdCreated::DEFAULT_STORES);
+        self::assertSame($stores, $this->rowCount('store', $householdId));
+        self::assertSame(17 + 365 + 352 + 1 + $stores, $this->rowCount('change_log', $householdId), 'Jedes angelegte Objekt steht im Änderungsprotokoll.');
     }
 
     public function testSeedingIsIdempotent(): void

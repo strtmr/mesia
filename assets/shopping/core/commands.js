@@ -1,7 +1,8 @@
 import { NAME_MAX_LENGTH, NOTE_MAX_LENGTH, parseQuickAdd, textLength } from './quickadd.js';
 import { validateQuantity } from './quantity.js';
 import { matchArticle } from './matcher.js';
-import { activeList, fallbackCategory, findItemByArticle } from './state.js';
+import { activeList, activeStores, fallbackCategory, findItemByArticle } from './state.js';
+import { matchStore } from './extras.js';
 import { compareKeys, keyBetween } from './sortkey.js';
 
 /**
@@ -37,6 +38,15 @@ export class TextTooLongError extends Error {
     }
 }
 
+/** "@xyz" passt zu keinem Laden (oder zu mehreren). Dann wird nichts angelegt, die Eingabe bleibt stehen. */
+export class UnknownStoreError extends Error {
+    constructor(token) {
+        super(`Unbekannter Laden: ${token}`);
+        this.name = 'UnknownStoreError';
+        this.token = token;
+    }
+}
+
 export function addFromText(state, text, ctx) {
     const parsed = parseQuickAdd(text);
     if (!parsed.name) {
@@ -63,6 +73,8 @@ export function addArticle(state, article, parsed, ctx) {
     if (textLength(parsed.note) > NOTE_MAX_LENGTH) {
         throw new TextTooLongError('note', textLength(parsed.note), NOTE_MAX_LENGTH);
     }
+    const stores = activeStores(state);
+    const storeIds = (parsed.stores ?? []).map((token) => matchStore(stores, token) ?? (() => { throw new UnknownStoreError(token); })());
 
     const mutations = [];
     let target = article;
@@ -86,6 +98,8 @@ export function addArticle(state, article, parsed, ctx) {
         sort_key: existing?.sort_key ?? keyBetween(lastSortKey(state, list.id, categoryId), null),
         note: parsed.note ?? null,
         contribution: { id: ctx.newId(), quantity, unit: quantity === null ? null : (parsed.unit ?? null) },
+        ...(storeIds.length > 0 ? { store_ids: [...new Set(storeIds)] } : {}),
+        ...(parsed.validUntil ? { valid_until: parsed.validUntil } : {}),
     }, ctx));
 
     return mutations;
@@ -111,7 +125,7 @@ export function deleteItem(itemId, ctx) {
  * Änderungen aus dem Bearbeiten-Sheet. Nur geänderte Felder werden gesendet.
  *
  * @param {object} item Eintrag aus dem Zustand
- * @param {{name: string, note: string, quantity: number|null, unit: string|null, categoryId: string}} form
+ * @param {{name: string, note: string, quantity: number|null, unit: string|null, categoryId: string, storeIds?: string[], validUntil?: string|null}} form
  * @param {{quantity: number|null, unit: string|null}} currentQuantity
  */
 export function editItem(state, item, form, currentQuantity, ctx) {
@@ -127,6 +141,15 @@ export function editItem(state, item, form, currentQuantity, ctx) {
     if (form.quantity !== currentQuantity.quantity || (form.quantity !== null && form.unit !== currentQuantity.unit)) {
         fields.qty_override = form.quantity;
         fields.unit_override = form.quantity === null ? null : form.unit;
+    }
+
+    if (form.storeIds !== undefined) {
+        const before = [...(item.store_ids ?? [])].sort();
+        const after = [...new Set(form.storeIds)].sort();
+        if (before.join() !== after.join()) fields.store_ids = after;
+    }
+    if (form.validUntil !== undefined && (form.validUntil || null) !== (item.valid_until ?? null)) {
+        fields.valid_until = form.validUntil || null;
     }
 
     if (Object.keys(fields).length > 0) {

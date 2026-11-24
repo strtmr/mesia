@@ -7,7 +7,7 @@ namespace App\Shopping\Application\Mutation;
 use Symfony\Component\Uid\Uuid;
 
 /**
- * "fields" enthält nur die geänderten Felder: name, note, qty_override, unit_override.
+ * "fields" enthält nur die geänderten Felder: name, note, qty_override, unit_override, store_ids, valid_until.
  * Ein Feld mit Wert null wird geleert. Ein fehlendes Feld bleibt unverändert.
  * Deshalb ein Array statt einzelner Properties (null und "nicht gesendet" wären sonst nicht unterscheidbar).
  */

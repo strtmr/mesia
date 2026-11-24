@@ -4,14 +4,27 @@
 {% block header_actions %}{{ include('admin/_nav.html.twig') }}{% endblock %}
 
 {% block content %}
+    {% for message in app.flashes('success') %}
+        <p class="notice notice--success" role="status">{{ message }}</p>
+    {% endfor %}
+
     <p class="page-hint">{{ 'admin.user_articles.hint'|trans }}</p>
 
     <section class="list-section">
         <div class="list-group">
             {% for article in articles %}
                 <div class="list-group__row">
-                    <span class="list-group__label">{{ article.name }}<small>{{ article.category ?? '–' }}</small></span>
-                    <span class="list-group__value">{{ 'admin.usage'|trans({'%households%': article.households, '%purchases%': article.purchases}) }}</span>
+                    <span class="list-group__label">
+                        {{ article.name }}
+                        <small>{{ article.category ?? '–' }} · {{ 'admin.usage'|trans({'%households%': article.households, '%purchases%': article.purchases}) }}</small>
+                    </span>
+                    <form method="post" action="{{ path('admin_user_articles_delete') }}"
+                          data-turbo-confirm="{{ 'admin.user_articles.delete_confirm'|trans({'%name%': article.name, '%count%': article.households}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token(delete_token) }}">
+                        <input type="hidden" name="key" value="{{ article.key }}">
+                        <input type="hidden" name="name" value="{{ article.name }}">
+                        <button type="submit" class="admin-delete" aria-label="{{ 'admin.user_articles.delete'|trans }}: {{ article.name }}">{{ 'admin.user_articles.delete'|trans }}</button>
+                    </form>
                 </div>
             {% else %}
                 <p class="list-group__row">{{ 'admin.user_articles.empty'|trans }}</p>

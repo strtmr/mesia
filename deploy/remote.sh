@@ -58,6 +58,8 @@ activate)
     $php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
     echo "→ Katalog-Abgleich (neue Einträge des Startkatalogs übernehmen)"
     $php bin/console app:catalog:update --no-interaction
+    echo "→ Grunddaten ergänzen (z. B. Startliste der Läden für bestehende Haushalte)"
+    $php bin/console app:household:initialize --no-interaction
 
     echo "→ Live schalten: $release"
     cd "$base"

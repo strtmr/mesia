@@ -47,6 +47,8 @@ Artikel eingeben. Mengen erkennt die App automatisch:
 | `2x500g Mehl`, `2 x 500 g Mehl` | Mehl · 1.000 g |
 | `3+2 Äpfel`, `3x Äpfel` | Äpfel · 5 Stk bzw. 3 Stk |
 | `1/2 Zitrone` | Zitrone · 0,5 Stk |
+| `Bier @Edeka` | Bier, nur bei Edeka |
+| `Kaffee @Lidl bis Sa` | Kaffee bei Lidl, Angebot bis Samstag |
 
 Mengen darf man ausrechnen lassen: `+`, `-`, `x` bzw. `*` und `/` bzw. `:` (Punkt- vor Strichrechnung). Erlaubt
 sind Mengen bis 99.999. Ist eine Menge unplausibel, erscheint ein Hinweis und der Text bleibt zum Korrigieren stehen.
@@ -100,6 +102,28 @@ Verbindung.
 **Neue Version:** Erscheint oben „Neue Version verfügbar“, tippe auf „Neu laden“. Dabei geht nichts verloren.
 
 **Abmelden** löscht die Liste von diesem Gerät. Noch nicht übertragene Änderungen gehen dabei verloren.
+
+## Läden und Angebote
+
+Manches kauft man nur in einem bestimmten Laden („Bier bei Edeka im Angebot“). Dafür lassen sich Artikel einem oder
+mehreren Läden zuordnen und mit einem Datum „gültig bis“ versehen.
+
+- **Schnelleingabe:** `@` vor dem Laden, `bis` vor dem Datum, z. B. `6 Bier @Edeka bis Sa`. Als Datum gehen
+  `heute`, `morgen`, `übermorgen`, Wochentage (`Sa`, `Samstag`, der nächste dieses Namens) und `28.11.`. Nach dem
+  `@` schlägt die App passende Läden vor, antippen übernimmt ihn. Ein eindeutiger Anfang reicht auch so (`@ross` für
+  Rossmann). Gibt es den Laden nicht, erscheint ein Hinweis, und nichts wird angelegt.
+- **Bearbeiten-Fenster:** Unter „Läden“ ins Feld „Laden hinzufügen …“ tippen, passende Läden erscheinen darunter.
+  Antippen oder Return übernimmt, mehrere sind möglich. Ein Tipp auf einen gewählten
+  Laden entfernt ihn. „Gültig bis“ per Datumsauswahl, × entfernt das Datum.
+- **Auf der Liste** steht unter dem Artikel der Laden und das Datum: normal „bis Sa., 28.11.“, am letzten Tag **grün
+  „heute“**, danach **rot „abgelaufen“**.
+- **Filter:** Sobald Artikeln ein Laden zugeordnet ist, erscheinen oben Knöpfe mit den Läden. „Edeka“ zeigt nur noch
+  Edeka-Artikel, ein Hinweis nennt, wie viele ausgeblendet sind. „Alle“ (oder Edeka noch einmal antippen) zeigt
+  wieder alles. Das Gerät merkt sich den Filter.
+- **Wieder auf die Liste:** Der Laden bleibt (Gewohnheit), das Datum fällt weg (das Angebot galt für das letzte Mal).
+- **Läden verwalten:** Unter **Mehr → Läden** stehen rund 45 Märkte: Discounter, Supermärkte, Bio, Drogerien,
+  Getränkemärkte, Lieferdienste und Allgemeines wie Wochenmarkt, Bäckerei oder Hofladen. Eigene lassen sich
+  ergänzen, alle umbenennen oder löschen. Gelöschte kommen nicht wieder.
 
 ## Kategorien
 

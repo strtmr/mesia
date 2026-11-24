@@ -38,11 +38,13 @@
     --mesia-slate: #598392;
     --mesia-sage: #aec3b0;
     --mesia-cream: #eff6e0;
+    /* Hintergrund im hellen Thema: warmes Papierweiß, ohne den Grünstich von Cream */
+    --mesia-paper: #f7f5ef;
     /* Signalfarbe: Aktionen, Häkchen, Schüssel der Bildmarke. Immer mit dunkler Schrift (Ink: 6,5:1) */
     --mesia-orange: #ff6a2b;
 
     /* Rollen (helles Thema) */
-    --color-bg: var(--mesia-cream);
+    --color-bg: var(--mesia-paper);
     --color-surface: #ffffff;
     --color-text: var(--mesia-ink);
     /* aus --mesia-slate abgedunkelt: erreicht 4,5:1 auf Creme und Weiß (WCAG AA) */
@@ -57,7 +59,10 @@
     /* Bernstein: mindestens 3:1 auf Weiß und Creme (WCAG, grafische Hinweise wie der Punkt "ausstehend") */
     --color-warning: #b0740f;
     --color-success: #32845d;
-    --color-tabbar-bg: rgb(239 246 224 / 0.88);
+    /* Schrift auf getönten Etiketten ("heute", "abgelaufen"): dunkler, damit 4,5:1 auch auf der Tönung erreicht wird */
+    --color-success-text: #256b49;
+    --color-danger-text: #a63a34;
+    --color-tabbar-bg: rgb(247 245 239 / 0.88);
     --color-toast-bg: var(--mesia-ink);
     --color-toast-text: var(--mesia-cream);
     --color-toast-action: var(--mesia-sage);
@@ -102,6 +107,10 @@
         --color-accent-soft: var(--mesia-slate);
         --color-danger: #ef7a73;
         --color-warning: #e6a23c;
+        /* hell genug für Schrift auf der dunklen Fläche (heller als #32845d) */
+        --color-success: #6fcf9a;
+        --color-success-text: var(--color-success);
+        --color-danger-text: var(--color-danger);
         --color-tabbar-bg: rgb(7 38 51 / 0.88);
         --color-toast-bg: var(--mesia-cream);
         --color-toast-text: var(--mesia-ink);
@@ -928,6 +937,18 @@ a {
     text-decoration: none;
 }
 
+.admin-delete {
+    flex-shrink: 0;
+    min-height: var(--touch-target);
+    padding: 0 var(--space-2);
+    border: 0;
+    background: none;
+    color: var(--color-danger);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
 .admin-rank {
     color: var(--color-text-muted);
     font-variant-numeric: tabular-nums;
@@ -1161,6 +1182,157 @@ html[data-keyboard="open"] .page-shopping .item-row {
 .item-body__note {
     color: var(--color-text-muted);
     font-size: 14px;
+}
+
+/* Unter dem Namen: "Aldi · Edeka [bis Sa., 28.11.]" */
+.item-body__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+    margin-top: 2px;
+    color: var(--color-text-muted);
+    font-size: 13px;
+}
+
+.item-body__stores {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* "gültig bis" als Etikett direkt beim Laden */
+.item-date {
+    flex-shrink: 0;
+    padding: 1px var(--space-2);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-text-muted) 12%, transparent);
+    color: var(--color-text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.item-date--today {
+    background: color-mix(in srgb, var(--color-success) 16%, transparent);
+    color: var(--color-success-text);
+}
+
+.item-date--expired {
+    background: color-mix(in srgb, var(--color-danger) 14%, transparent);
+    color: var(--color-danger-text);
+}
+
+/* Chips: Laden-Filter und Auswahl im Bearbeiten-Fenster. Gewählt = Akzentfarbe gefüllt */
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.chips--scroll {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin: 0 calc(var(--space-4) * -1);
+    padding: 0 var(--space-4);
+}
+
+.chips--scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.chip {
+    flex-shrink: 0;
+    min-height: 32px;
+    padding: 0 var(--space-3);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-accent);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.chip[aria-pressed="true"] {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-accent-contrast);
+}
+
+.chip__count {
+    opacity: 0.7;
+    font-variant-numeric: tabular-nums;
+}
+
+.store-filter {
+    margin-bottom: var(--space-3);
+}
+
+.store-filter__hint {
+    margin: var(--space-2) var(--space-1) 0;
+    color: var(--color-text-muted);
+    font-size: 13px;
+}
+
+/* Tippbare Laden-Auswahl im Bearbeiten-Fenster */
+.store-picker .chips {
+    margin-bottom: var(--space-1);
+}
+
+.store-picker__options {
+    /* wie die Vorschläge unter „Artikel hinzufügen …“: Karte mit Schatten, ohne Trennlinien */
+    margin: 0;
+    padding: var(--space-1) 0;
+    overflow: hidden;
+    list-style: none;
+    border-radius: var(--radius-m);
+    background: var(--color-surface);
+    box-shadow: 0 8px 30px rgb(0 0 0 / 0.18);
+}
+
+.store-picker__option {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: var(--touch-target);
+    padding: 0 var(--space-4);
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.store-picker__option:active {
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+
+/* Datumsfeld mit "×" zum Leeren */
+.field-with-action {
+    position: relative;
+    display: block;
+}
+
+.field-with-action .field__input {
+    padding-right: 44px;
+}
+
+.field-with-action__clear {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: var(--touch-target);
+    height: 100%;
+    border: 0;
+    background: none;
+    color: var(--color-text-muted);
+    font-size: 22px;
+    cursor: pointer;
 }
 
 .item-qty {

@@ -13,6 +13,8 @@ werden (und umgekehrt).
 | Version | Datum | Änderung |
 |---|---|---|
 | 1.0 | – | PDF: Markenidee, Logo-Konzept, Startpalette, Typografie, Tokens |
+| 1.7 | 2026-11-24 | Hintergrund hell: Paper `#f7f5ef` statt Cream, dunklere Schrift auf getönten Etiketten |
+| 1.6 | 2026-11-24 | Läden: Chips (Filter und Auswahl), Datumsmarkierung heute/abgelaufen, Erfolgsfarbe im Dunkelmodus |
 | 1.5 | 2026-11-23 | Auswahlfelder: Chip in der Zeile, Pfeil auf/ab im Formular |
 | 1.4 | 2026-11-23 | Komponente Schalter (Mitteilungen), Abhaken bleibt stehen, Metazeile im Sheet |
 | 1.3 | 2026-11-22 | Streetstyle: Signal-Orange als Aktionsfarbe, Sticker-Bildmarke mit Größenstufen, Wortmarke „MESIA“ in Archivo Black |
@@ -139,7 +141,7 @@ scripts/render-icons.mjs` (rendert mit Chromium, weil ImageMagick die Kontur nic
 ## 5. Farbwelt (geändert)
 
 Die Startpalette des PDFs (Forest Green, Warm Cream, Fresh Orange, Sage) ist durch eine eigene Palette ersetzt.
-Sie ist ruhig und kühl mit Grün-Blau als Marke und Creme als warmem Grund. **(neu)** Für Streetstyle und Wärme kommt
+Sie ist ruhig und kühl mit Grün-Blau als Marke und warmem Papierweiß als Grund (bis 1.6 Cream). **(neu)** Für Streetstyle und Wärme kommt
 genau eine Signalfarbe dazu: Signal-Orange.
 
 ### Markenpalette
@@ -150,14 +152,15 @@ genau eine Signalfarbe dazu: Signal-Orange.
 | Deep | `#124559` | `--mesia-deep` | Primäre Markenfarbe: Links, Überschriften, Bildmarke im Kopf, Versatz des Stickers, App-Icon-Grund |
 | Slate | `#598392` | `--mesia-slate` | Sekundär: Dekor, nicht für kleinen Text auf hellem Grund |
 | Sage | `#aec3b0` | `--mesia-sage` | Akzentfarbe im Dark Mode (Links, Überschriften) |
-| Cream | `#eff6e0` | `--mesia-cream` | Hintergrund (hell), Text (dunkel), Fläche der Sticker-Bildmarke |
+| Cream | `#eff6e0` | `--mesia-cream` | Text (dunkel), Hinweise, Fläche der Sticker-Bildmarke |
+| Paper | `#f7f5ef` | `--mesia-paper` | **(neu)** Hintergrund im hellen Thema: warmes Papierweiß ohne Grünstich |
 | Signal-Orange | `#ff6a2b` | `--mesia-orange` | **(neu)** Aktionen (Knöpfe, Plus, Häkchen), Schüssel der Bildmarke, Merch |
 
 ### Rollen (Tokens in der App)
 
 | Rolle | Hell | Dunkel |
 |---|---|---|
-| `--color-bg` Hintergrund | Cream | Ink |
+| `--color-bg` Hintergrund | Paper | Ink |
 | `--color-surface` Flächen, Karten | `#ffffff` | `#072633` (zwischen Ink und Deep) |
 | `--color-text` Text | Ink | Cream |
 | `--color-text-muted` gedämpfter Text | `#4a6b78` (Slate abgedunkelt) | Sage |
@@ -176,7 +179,8 @@ Statusfarben dürfen nicht mit der Markenfarbe verwechselt werden.
 |---|---|---|---|
 | Fehler, Löschen | `#c84b45` | `#ef7a73` | Fehlermeldungen, „Entfernen“, „Löschen“ |
 | Warnung, ausstehend | `#b0740f` | `#e6a23c` | Punkt „noch nicht übertragen“, Status „ausstehend“ |
-| Erfolg | `#32845d` | `#32845d` | reserviert (Synchron nutzt derzeit die Akzentfarbe) |
+| Erfolg | `#32845d` | `#6fcf9a` | „heute“ am Datum eines Eintrags, Hinweis nach erfolgreichem Anlegen |
+| Schrift auf getönten Etiketten | Erfolg `#256b49`, Fehler `#a63a34` | wie Statusfarbe | „heute“ / „abgelaufen“, damit 4,5:1 auch auf der Tönung erreicht wird |
 
 ### Einsatzprinzip
 
@@ -184,7 +188,7 @@ Statusfarben dürfen nicht mit der Markenfarbe verwechselt werden.
 - **Signal-Orange nur für Aktionen und die Schüssel**, sparsam: ein Primärknopf pro Ansicht, Plus, Häkchen.
   Darauf immer Ink (6,5:1), nie Weiß (2,9:1). Nicht für Text auf hellem Grund (2,6:1).
 - Slate und Sage sind Akzente, nicht für Fließtext auf hellem Grund.
-- Cream bringt Wärme in die Flächen, Weiß hebt Karten davon ab.
+- Paper gibt einen warmen, ruhigen Grund, Weiß hebt Karten davon ab.
 
 ---
 
@@ -268,6 +272,9 @@ nicht benötigt.
 | Kategorie-Überschrift | Emoji + Name, 16 px fett in Akzentfarbe, 6 px über der Gruppe |
 | Eingabeleiste | unten fixiert, über der Tastatur, Feld rund, Plus-Knopf rund in Signal-Orange (Plus in Ink) |
 | Abhaken | Kreis füllt sich in Signal-Orange mit Häkchen in Ink, Name durchgestrichen in gedämpfter Farbe; die Zeile bleibt stehen, bis 3 s nichts mehr abgehakt wurde, dann wandert alles nach „Erledigt“ |
+| Chip | 32 px hoch, Radius voll, Rahmen 35 % Akzent, Schrift Akzent halbfett; gewählt: Fläche Akzent, Schrift Kontrastfarbe. Laden-Filter über der Liste (waagrecht scrollbar, mit Anzahl), Läden im Bearbeiten-Fenster |
+| Laden-Auswahl (Bearbeiten) | Eingabefeld „Laden hinzufügen …“ wie die Schnelleingabe; Vorschläge erst beim Tippen, als Karte mit Schatten wie unter „Artikel hinzufügen …“ (Zeilen 44 px). Gewählte Läden als Chips mit × darüber |
+| Laden und Datum am Eintrag | Zeile unter dem Namen: Läden 13 px gedämpft (zu lange werden mit … gekürzt), direkt dahinter „gültig bis“ als Etikett (12 px halbfett, Radius voll): neutral „bis Sa., 28.11.“, grün „heute“, rot „abgelaufen 23.11.“ (Fläche jeweils 12–16 % der Farbe) |
 | Hinweis Erfolg | `.notice--success`: Fläche mit 16 % Erfolgsfarbe, z. B. nach dem Anlegen im Admin-Bereich |
 | Metazeile im Sheet | 13 px gedämpft über dem Löschen-Knopf („Hinzugefügt von … heute um …“) |
 | Wischen zum Entfernen | Zeile nach links schieben, roter Knopf „Entfernen“ rastet ein |
@@ -303,22 +310,23 @@ respektieren, Trefferflächen mindestens 44 × 44 px.
 
 | Kombination | Kontrast | AA |
 |---|---|---|
-| Ink auf Cream (Text) | 16,7:1 | ✓ |
+| Ink auf Paper (Text) | 17,0:1 | ✓ |
 | Ink auf Weiß | 18,5:1 | ✓ |
-| Gedämpft `#4a6b78` auf Cream / Weiß | 5,2:1 / 5,7:1 | ✓ |
-| Slate auf Cream | 3,7:1 | nur große Schrift und Grafik |
-| Deep auf Cream (Links, Überschriften) | 9,4:1 | ✓ |
+| Gedämpft `#4a6b78` auf Paper / Weiß | 5,3:1 / 5,7:1 | ✓ |
+| Slate auf Paper | 3,8:1 | nur große Schrift und Grafik |
+| Deep auf Paper (Links, Überschriften) | 9,5:1 | ✓ |
 | Weiß auf Deep | 10,4:1 | ✓ |
 | Ink auf Signal-Orange (Primärknopf, Häkchen) | 6,5:1 | ✓ |
 | Weiß auf Signal-Orange | 2,9:1 | ✗, deshalb nicht verwenden |
-| Signal-Orange auf Cream (als Text) | 2,6:1 | ✗, nur Flächen und Grafik |
+| Signal-Orange auf Paper (als Text) | 2,6:1 | ✗, nur Flächen und Grafik |
 | Creme auf Deep (App-Icon, Sticker) | 9,4:1 | ✓ |
 | Fehlerfarbe auf Weiß, Weiß auf Fehlerfarbe | 4,6:1 | ✓ |
 | Dunkel: Cream auf Ink / auf Surface | 16,7:1 / 14,2:1 | ✓ |
 | Dunkel: Sage auf Ink / auf Surface | 9,9:1 / 8,4:1 | ✓ |
 | Dunkel: Ink auf Sage | 9,9:1 | ✓ |
 | Dunkel: Fehlerfarbe auf Surface | 5,8:1 | ✓ |
-| Warnpunkt hell `#b0740f` auf Weiß / Cream | 3,9:1 / 3,5:1 | ✓ (Grafik) |
+| Warnpunkt hell `#b0740f` auf Weiß / Paper | 3,9:1 / 3,6:1 | ✓ (Grafik) |
+| Etikett „heute“ `#256b49` / „abgelaufen“ `#a63a34` auf ihrer Tönung | 5,2:1 / 5,3:1 | ✓ |
 | Warnpunkt dunkel `#e6a23c` auf Surface | 7,2:1 | ✓ |
 
 ---
@@ -335,9 +343,10 @@ Tokens, keine eigenen Farben, Radien oder Abstände. Auszug (helles Thema):
     --mesia-slate: #598392;
     --mesia-sage: #aec3b0;
     --mesia-cream: #eff6e0;
+    --mesia-paper: #f7f5ef;
     --mesia-orange: #ff6a2b;
 
-    --color-bg: var(--mesia-cream);
+    --color-bg: var(--mesia-paper);
     --color-surface: #ffffff;
     --color-text: var(--mesia-ink);
     --color-text-muted: #4a6b78;
