@@ -5,22 +5,30 @@
 {% block content %}
     {% set user = app.user %}
 
+    {% for message in app.flashes('success') %}
+        <p class="notice notice--success" role="status">{{ message }}</p>
+    {% endfor %}
+
     <section class="list-section">
         <h2 class="list-section__title">{{ 'more.account.section'|trans }}</h2>
-        <dl class="list-group">
+        <div class="list-group">
+            <a class="list-group__row list-group__row--link" href="{{ path('account_name') }}">
+                <span>{{ 'more.account.name'|trans }}</span>
+                <span class="list-group__value">{{ user.displayName }}</span>
+            </a>
             <div class="list-group__row">
-                <dt>{{ 'more.account.name'|trans }}</dt>
-                <dd>{{ user.displayName }}</dd>
+                <span>{{ 'more.account.email'|trans }}</span>
+                <span class="list-group__value">{{ user.email }}</span>
             </div>
+            <a class="list-group__row list-group__row--link" href="{{ path('account_password') }}">
+                <span>{{ 'more.account.password'|trans }}</span>
+                <span class="list-group__value">{{ 'more.account.password_hint'|trans }}</span>
+            </a>
             <div class="list-group__row">
-                <dt>{{ 'more.account.email'|trans }}</dt>
-                <dd>{{ user.email }}</dd>
+                <span>{{ 'more.account.household'|trans }}</span>
+                <span class="list-group__value">{{ user.household.name }}</span>
             </div>
-            <div class="list-group__row">
-                <dt>{{ 'more.account.household'|trans }}</dt>
-                <dd>{{ user.household.name }}</dd>
-            </div>
-        </dl>
+        </div>
     </section>
 
     <section class="list-section">

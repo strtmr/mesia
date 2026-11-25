@@ -12,6 +12,9 @@ und Passwort an. Groß- und Kleinschreibung der E-Mail-Adresse spielt keine Roll
 
 - Du bleibst auf dem Gerät **ein Jahr lang angemeldet**, auch wenn du die App schließt.
 - Nach 5 falschen Passwörtern ist die Anmeldung für 15 Minuten gesperrt.
+- **Name oder Passwort ändern:** Tab „Mehr“ → Bereich „Konto“ → „Name“ bzw. „Passwort“. Für ein neues Passwort
+  gibst du das aktuelle einmal ein. Auf diesem Gerät bleibst du angemeldet, auf allen anderen Geräten musst du dich
+  mit dem neuen Passwort neu anmelden.
 - **Passwort vergessen?** Der Administrator setzt es neu. Danach bist du auf allen Geräten abgemeldet.
 - **Abmelden:** Tab „Mehr“ → „Abmelden“.
 
@@ -30,7 +33,7 @@ startet sie auch im Funkloch. iOS bewahrt die Daten installierter Apps zuverläs
 | Tab | Inhalt |
 |-----|--------|
 | **Einkauf** | eure gemeinsame Einkaufsliste |
-| **Mehr** | Kategorien, Mitteilungen, Hilfe, Konto, Haushalt, App-Version mit **Neuigkeiten** (was sich in welcher Version geändert hat), Verbindungsstatus, Abmelden |
+| **Mehr** | Konto (Name und Passwort ändern), Haushalt, Kategorien, Läden, Mitteilungen, Hilfe, App-Version mit **Neuigkeiten** (was sich in welcher Version geändert hat), Verbindungsstatus, Abmelden |
 
 ## Einkaufsliste
 

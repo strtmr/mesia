@@ -9,11 +9,11 @@ Deployment: [betrieb.md](betrieb.md).
 | Modul | Inhalt | darf nutzen |
 |-------|--------|-------------|
 | `Shared` | Änderungsprotokoll, `Syncable`, `SyncableFields`, `SortKey`, Sync-Schnittstellen, Ereignis `HouseholdCreated` | – |
-| `Identity` | Haushalt, Benutzer, Login, `/api/me`, Konsolenbefehle | Shared |
+| `Identity` | Haushalt, Benutzer, Login, `/api/me`, „Mehr → Konto“ (Name, Passwort), Konsolenbefehle | Shared |
 | `Catalog` | Kategorien, Artikel, Aliase, Startkatalog, `TextNormalizer`, `Unit` | Shared |
 | `Shopping` | Liste, Einträge mit Beiträgen, Kaufhistorie, Läden (`/mehr/laeden`) | Shared, Catalog |
 | `Notification` | Web-Push-Abos, Versand der Mitteilungen (`/api/push`, `app:push:send`) | Shared |
-| `Admin` | Admin-Bereich `/admin`: Überblick, Auswertungen, Haushalte und Personen anlegen | Shared, Identity |
+| `Admin` | Admin-Bereich `/admin`: Überblick, Auswertungen, Haushalte und Personen anlegen und bearbeiten | Shared, Identity |
 | `Sync` | `/api/sync/*`, Mutation-Dispatcher, Change-Feed | alle |
 
 Schichten je Modul: `Domain` (Entities in `Domain/Model`, Regeln), `Application` (Anwendungsfälle, Mutation-Handler),
@@ -197,6 +197,17 @@ nicht synchronisiert.
 - **Testen am Gerät:** Headless-Chromium meldet `Notification.permission` immer als `denied`. Echte Zustellung nur
   auf einem Gerät mit HTTPS prüfbar (iPhone: installierte App, iOS 16.4+).
 
+## Konto (Name, Passwort)
+
+`Identity\UI\Controller\AccountController` unter `/mehr/konto/name` und `/mehr/konto/passwort`, Anwendungsfälle in
+`UserRegistration` (`renameUser()`, `setPassword()`). Namen sind nirgends kopiert: `/api/me`, Mitteilungen und
+Admin-Auswertungen lesen `app_user.display_name` frisch.
+
+- **Passwort ändern** verlangt das aktuelle Passwort (`#[UserPassword]`). Der neue Hash macht alle anderen Sitzungen
+  und Remember-me-Cookies ungültig (Symfony vergleicht den Hash, die Cookie-Signatur enthält ihn). Damit das eigene
+  Gerät angemeldet bleibt, meldet der Controller den Benutzer per `Security::login(..., 'form_login', 'main',
+  [RememberMeBadge enabled])` neu an. Das setzt auch ein neues Remember-me-Cookie.
+
 ## Admin-Bereich
 
 Modul `Admin`, nur mit `ROLE_ADMIN` (`access_control` für `^/admin` und `#[IsGranted]` am Controller). Vergeben
@@ -215,6 +226,8 @@ Neuigkeiten** (CLAUDE.md).
 - **Anlegen:** `UserRegistration::createHouseholdWithUser()` legt Haushalt und erste Person in einer Transaktion an
   (Startkatalog und Liste per `HouseholdCreated`, wie `app:household:create`). Ob die E-Mail frei ist, prüft der
   Controller vorher, damit das Formular eine Meldung am Feld zeigen kann.
+- **Bearbeiten:** `/admin/haushalte/{id}` (Name, Liste der Personen) und `/admin/personen/{id}` (Name, optional neues
+  Passwort, leer = unverändert). Ändert der Admin dort sein eigenes Passwort, wird er wie unter „Konto“ neu angemeldet.
 - Rollenänderungen melden laufende Sitzungen ab (Symfony vergleicht die Rollen), „Angemeldet bleiben“ meldet
   gleich wieder an.
 
@@ -292,7 +305,7 @@ in die Service-Worker-Version ein.
 |--------|-------|
 | `app:household:create <name>` | Haushalt anlegen (inkl. Startkatalog und Liste) |
 | `app:user:create <email> <name> [--household=ID]` | Benutzer anlegen, Passwort wird abgefragt |
-| `app:user:set-password <email>` | Passwort neu setzen |
+| `app:user:set-password <email>` | Passwort neu setzen (alternativ Admin → Haushalt → Person) |
 | `app:household:initialize [--household=ID]` | fehlende Grunddaten in bestehenden Haushalten ergänzen (idempotent) |
 | `app:catalog:update [--dry-run] [--household=ID]` | Katalog-Abgleich: Erweiterungen des Startkatalogs übernehmen (idempotent, `--dry-run` zeigt nur an) |
 | `app:user:admin <email> [--revoke]` | Admin-Rechte vergeben oder entziehen (Admin-Bereich unter Mehr → Admin) |

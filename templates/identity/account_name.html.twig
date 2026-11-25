@@ -1,0 +1,23 @@
+{% extends 'app/layout.html.twig' %}
+
+{# Mehr → Konto → Name (AccountController::name) #}
+
+{% block page_title %}{{ 'account.name.title'|trans }}{% endblock %}
+
+{% block header_actions %}
+    <a class="header-link" href="{{ path('app_more') }}">‹ {{ 'more.title'|trans }}</a>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form, {attr: {class: 'form-group', novalidate: 'novalidate'}}) }}
+        <label class="field">
+            <span class="field__label">{{ 'account.name.label'|trans }}</span>
+            {{ form_widget(form.displayName) }}
+            {% for error in form.displayName.vars.errors %}
+                <span class="form-error">{{ error.message }}</span>
+            {% endfor %}
+        </label>
+        <p class="page-hint">{{ 'account.name.hint'|trans }}</p>
+        <button type="submit" class="button button--primary button--block">{{ 'account.save'|trans }}</button>
+    {{ form_end(form) }}
+{% endblock %}

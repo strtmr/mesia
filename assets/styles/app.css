@@ -930,8 +930,16 @@ a {
     padding-bottom: var(--space-2);
 }
 
-.admin-household__add {
+/* Bearbeiten, + Person: rechts untereinander */
+.admin-household__actions {
+    display: flex;
+    flex-direction: column;
     flex-shrink: 0;
+    align-items: flex-end;
+    gap: var(--space-2);
+}
+
+.admin-household__action {
     color: var(--color-accent);
     font-weight: 600;
     text-decoration: none;

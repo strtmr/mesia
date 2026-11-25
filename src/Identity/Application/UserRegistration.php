@@ -14,7 +14,8 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
- * Legt Haushalte und Benutzer an: über Konsolenbefehle und den Admin-Bereich. Eine Selbstregistrierung gibt es noch nicht.
+ * Legt Haushalte und Benutzer an und ändert sie: über Konsolenbefehle, den Admin-Bereich und „Mehr → Konto“.
+ * Eine Selbstregistrierung gibt es noch nicht.
  */
 final readonly class UserRegistration
 {
@@ -75,16 +76,39 @@ final readonly class UserRegistration
 
     /**
      * Ändert das Passwort. Da der Hash in die Remember-me-Signatur eingeht, werden dadurch alle
-     * "Angemeldet bleiben"-Cookies dieses Benutzers ungültig.
+     * "Angemeldet bleiben"-Cookies dieses Benutzers ungültig, laufende Sitzungen enden beim nächsten Aufruf.
      */
     public function changePassword(string $email, string $plainPassword): void
     {
         $user = $this->users->findOneByEmail($email)
             ?? throw new \DomainException(\sprintf('Es gibt keinen Benutzer mit der E-Mail-Adresse "%s".', $email));
 
+        $this->setPassword($user, $plainPassword);
+    }
+
+    /**
+     * Wie {@see changePassword()}, für einen schon geladenen Benutzer (Admin-Bereich, „Mehr → Konto“).
+     */
+    public function setPassword(User $user, string $plainPassword): void
+    {
         self::assertPasswordStrength($plainPassword);
 
         $user->setPasswordHash($this->passwordHasher->hashPassword($user, $plainPassword));
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Anzeigename ändern. Die App liest Namen immer frisch aus app_user (/api/me, Mitteilungen), nichts ist kopiert.
+     */
+    public function renameUser(User $user, string $displayName): void
+    {
+        $user->rename($displayName);
+        $this->entityManager->flush();
+    }
+
+    public function renameHousehold(Household $household, string $name): void
+    {
+        $household->rename($name);
         $this->entityManager->flush();
     }
 

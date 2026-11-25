@@ -27,3 +27,17 @@
   gemeinsam ändern und `tests/fixtures/normalize.json` ergänzen.
 - Hosting-Ziel: Hetzner Webhosting L (Shared): keine dauerhaft laufenden Prozesse (kein WebSocket/Mercure, Messenger
   per Cron).
+
+## Agent skills
+
+### Issue tracker
+
+Tickets liegen als GitHub Issues in `strtmr/mesia` (per `gh`). Siehe `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Standard-Labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. Siehe `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `CONTEXT.md` und `docs/adr/` im Wurzelverzeichnis, bis dahin `docs/architektur.md`. Siehe `docs/agents/domain.md`.

@@ -111,6 +111,8 @@ more:
         section: Konto
         name: Name
         email: E-Mail
+        password: Passwort
+        password_hint: Ändern
         household: Haushalt
     shopping:
         section: Einkaufsliste
@@ -127,6 +129,21 @@ more:
         online: Online
         offline: Offline
     logout: Abmelden
+
+# Mehr → Konto
+account:
+    save: Speichern
+    name:
+        title: Name ändern
+        label: Dein Name
+        hint: 'So sehen dich die anderen im Haushalt, z. B. bei „Hinzugefügt von …“.'
+    password:
+        title: Passwort ändern
+        current: Aktuelles Passwort
+        new: Neues Passwort
+        repeat: Neues Passwort wiederholen
+        hint: 'Mindestens 10 Zeichen. Auf diesem Gerät bleibst du angemeldet, auf allen anderen Geräten musst du dich neu anmelden.'
+        save: Passwort ändern
 
 app_update:
     text: Neue Version verfügbar
@@ -185,6 +202,7 @@ admin:
     title: Admin
     link: Admin
     link_hint: Haushalte, Auswertungen
+    save: Speichern
     usage: '%purchases%× gekauft · %households% Haush.'
     totals:
         section: Überblick
@@ -200,6 +218,7 @@ admin:
         last_activity: 'aktiv %date%'
         never_active: noch nie aktiv
         no_members: keine Personen
+        edit: Bearbeiten
         add_member: + Person
         new: Neuer Haushalt
         empty: Noch keine Haushalte.
@@ -234,8 +253,16 @@ admin:
         email: E-Mail-Adresse (Login)
         password: Passwort
         password_repeat: Passwort wiederholen
-        password_hint: 'Mindestens 10 Zeichen. Das Passwort persönlich weitergeben, ändern lässt es sich mit app:user:set-password.'
+        password_hint: 'Mindestens 10 Zeichen. Das Passwort persönlich weitergeben. Ändern kann es die Person selbst unter Mehr → Konto.'
         create: Anlegen
+    household_edit:
+        title: Haushalt bearbeiten
+        members: Personen
+    person_edit:
+        title: Person bearbeiten
+        hint: '%email% · Haushalt „%household%“'
+        password: Neues Passwort
+        password_hint: 'Leer lassen, um das Passwort zu behalten. Ein neues Passwort (mindestens 10 Zeichen) meldet die Person auf allen Geräten ab.'
 
 # „Mehr → Läden“
 stores:

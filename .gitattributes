@@ -9,6 +9,7 @@
 /.php-cs-fixer.dist.php export-ignore
 /AGENTS.md           export-ignore
 /CLAUDE.md           export-ignore
+/CONTEXT.md          export-ignore
 /README.md           export-ignore
 /bin/phpunit         export-ignore
 /deploy              export-ignore

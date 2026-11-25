@@ -5,16 +5,22 @@ declare(strict_types=1);
 namespace App\Admin\UI\Controller;
 
 use App\Admin\Application\AdminStatistics;
+use App\Admin\UI\Form\HouseholdData;
+use App\Admin\UI\Form\HouseholdType;
 use App\Admin\UI\Form\PersonData;
+use App\Admin\UI\Form\PersonEditData;
+use App\Admin\UI\Form\PersonEditType;
 use App\Admin\UI\Form\PersonType;
 use App\Admin\UI\Http\PurchaseFilterRequest;
 use App\Catalog\Application\ArticleRemoval;
 use App\Identity\Application\UserRegistration;
+use App\Identity\Domain\Model\Household;
 use App\Identity\Domain\Model\User;
 use App\Identity\Infrastructure\Doctrine\HouseholdRepository;
 use App\Identity\Infrastructure\Doctrine\UserRepository;
 use Psr\Clock\ClockInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,10 +28,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge;
 use Symfony\Component\Uid\Uuid;
 
 /**
- * Admin-Bereich: Überblick über alle Haushalte, Auswertungen für den Startkatalog, Haushalte und Personen anlegen.
+ * Admin-Bereich: Überblick über alle Haushalte, Auswertungen für den Startkatalog, Haushalte und Personen anlegen
+ * und bearbeiten.
  * Nur mit ROLE_ADMIN (app:user:admin). Gehört nicht zur Benutzer-App: keine Version, kein Eintrag in den Neuigkeiten.
  */
 #[Route('/admin', name: 'admin')]
@@ -33,6 +41,7 @@ use Symfony\Component\Uid\Uuid;
 final class AdminController extends AbstractController
 {
     public const string DELETE_ARTICLE_TOKEN = 'delete-user-article';
+    private const string ID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
 
     /** Zeitraum für „Käufe“ in Überblick und Haushaltsliste */
     private const string RECENT = '-30 days';
@@ -118,10 +127,64 @@ final class AdminController extends AbstractController
         return $this->render('admin/person_new.html.twig', ['form' => $form, 'household' => null], new Response(status: $form->isSubmitted() ? 422 : 200));
     }
 
-    #[Route('/haushalte/{id}/person', name: '_member_new', requirements: ['id' => '[0-9a-f-]{36}'], methods: ['GET', 'POST'])]
+    #[Route('/haushalte/{id}', name: '_household_edit', requirements: ['id' => self::ID], methods: ['GET', 'POST'])]
+    public function editHousehold(Request $request, string $id): Response
+    {
+        $household = $this->household($id);
+        $data = new HouseholdData();
+        $data->name = $household->getName();
+        $form = $this->createForm(HouseholdType::class, $data);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->registration->renameHousehold($household, (string) $data->name);
+            $this->addFlash('success', \sprintf('Haushalt „%s“ gespeichert.', $household->getName()));
+
+            return $this->redirectToRoute('admin', status: Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('admin/household_edit.html.twig', [
+            'form' => $form,
+            'household' => $household,
+            'members' => $this->users->findByHousehold($household),
+        ], new Response(status: $form->isSubmitted() ? 422 : 200));
+    }
+
+    /**
+     * Name ändern, optional ein neues Passwort setzen (Ersatz für „Passwort vergessen“). Das neue Passwort meldet die
+     * Person überall ab. Ändert der Admin sein eigenes, bleibt er auf diesem Gerät angemeldet.
+     */
+    #[Route('/personen/{id}', name: '_person_edit', requirements: ['id' => self::ID], methods: ['GET', 'POST'])]
+    public function editPerson(Request $request, string $id, Security $security): Response
+    {
+        $user = $this->users->find(Uuid::fromString($id)) ?? throw $this->createNotFoundException();
+        $data = new PersonEditData();
+        $data->displayName = $user->getDisplayName();
+        $form = $this->createForm(PersonEditType::class, $data);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->registration->renameUser($user, (string) $data->displayName);
+            $message = \sprintf('%s gespeichert.', $user->getDisplayName());
+            if (null !== $data->password && '' !== $data->password) {
+                $this->registration->setPassword($user, $data->password);
+                $message = \sprintf('%s gespeichert, neues Passwort gesetzt.', $user->getDisplayName());
+                if ($user === $this->getUser()) {
+                    $security->login($user, 'form_login', 'main', [(new RememberMeBadge())->enable()]);
+                }
+            }
+            $this->addFlash('success', $message);
+
+            return $this->redirectToRoute('admin_household_edit', ['id' => $user->getHousehold()->getId()->toRfc4122()], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('admin/person_edit.html.twig', ['form' => $form, 'person' => $user], new Response(status: $form->isSubmitted() ? 422 : 200));
+    }
+
+    #[Route('/haushalte/{id}/person', name: '_member_new', requirements: ['id' => self::ID], methods: ['GET', 'POST'])]
     public function newMember(Request $request, string $id): Response
     {
-        $household = $this->households->find(Uuid::fromString($id)) ?? throw $this->createNotFoundException();
+        $household = $this->household($id);
         $form = $this->createForm(PersonType::class, new PersonData());
         $form->handleRequest($request);
 
@@ -135,6 +198,11 @@ final class AdminController extends AbstractController
         }
 
         return $this->render('admin/person_new.html.twig', ['form' => $form, 'household' => $household], new Response(status: $form->isSubmitted() ? 422 : 200));
+    }
+
+    private function household(string $id): Household
+    {
+        return $this->households->find(Uuid::fromString($id)) ?? throw $this->createNotFoundException();
     }
 
     /**

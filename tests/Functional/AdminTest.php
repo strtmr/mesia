@@ -154,6 +154,89 @@ final class AdminTest extends WebTestCase
         self::assertTrue($this->user('anna@example.com')->getHousehold()->getId()->equals($this->admin->getHousehold()->getId()));
     }
 
+    public function testRenamesHousehold(): void
+    {
+        self::createUser('anna@example.com', 'Anna', 'Familie Anna');
+        $this->client->loginUser($this->admin);
+        $crawler = $this->client->request('GET', '/admin');
+        $row = $crawler->filter('.admin-household')->reduce(static fn ($row): bool => str_contains($row->text(), 'Familie Anna'));
+        $this->client->click($row->selectLink('Bearbeiten')->link());
+
+        self::assertInputValueSame('household[name]', 'Familie Anna');
+        self::assertSelectorTextContains('main', 'anna@example.com');
+        $this->client->submitForm('Speichern', ['household[name]' => 'WG Anna']);
+
+        self::assertResponseRedirects('/admin', 303);
+        self::assertSame('WG Anna', $this->user('anna@example.com')->getHousehold()->getName());
+        $this->client->followRedirect();
+        self::assertSelectorTextContains('.notice--success', 'WG Anna');
+
+        // Leerer Name wird abgelehnt
+        $this->client->request('GET', '/admin/haushalte/'.$this->user('anna@example.com')->getHousehold()->getId()->toRfc4122());
+        $this->client->submitForm('Speichern', ['household[name]' => '']);
+        self::assertResponseStatusCodeSame(422);
+        self::assertSame('WG Anna', $this->user('anna@example.com')->getHousehold()->getName());
+    }
+
+    public function testRenamesPersonAndKeepsPasswordWhenLeftEmpty(): void
+    {
+        $anna = self::createUser('anna@example.com', 'Anna', 'Familie Anna');
+        $this->client->loginUser($this->admin);
+        $this->client->request('GET', '/admin/haushalte/'.$anna->getHousehold()->getId()->toRfc4122());
+        $this->client->clickLink('Anna');
+
+        self::assertInputValueSame('person_edit[displayName]', 'Anna');
+        $this->client->submitForm('Speichern', ['person_edit[displayName]' => 'Anna B.']);
+
+        self::assertResponseRedirects('/admin/haushalte/'.$anna->getHousehold()->getId()->toRfc4122(), 303);
+        $anna = $this->user('anna@example.com');
+        self::assertSame('Anna B.', $anna->getDisplayName());
+        self::assertTrue(self::getContainer()->get('security.user_password_hasher')->isPasswordValid($anna, self::PASSWORD));
+    }
+
+    public function testSetsNewPasswordForPerson(): void
+    {
+        $anna = self::createUser('anna@example.com', 'Anna', 'Familie Anna');
+        $this->client->loginUser($this->admin);
+        $url = '/admin/personen/'.$anna->getId()->toRfc4122();
+
+        $this->client->request('GET', $url);
+        $this->client->submitForm('Speichern', [
+            'person_edit[password][first]' => 'kurz',
+            'person_edit[password][second]' => 'kurz',
+        ]);
+        self::assertResponseStatusCodeSame(422);
+        self::assertSelectorTextContains('main', 'Mindestens 10 Zeichen.');
+
+        $this->client->submitForm('Speichern', [
+            'person_edit[password][first]' => 'annas-neues-pw',
+            'person_edit[password][second]' => 'annas-neues-pw',
+        ]);
+        self::assertResponseRedirects(expectedCode: 303);
+        $this->client->followRedirect();
+        self::assertSelectorTextContains('.notice--success', 'neues Passwort gesetzt');
+        self::assertTrue(self::getContainer()->get('security.user_password_hasher')->isPasswordValid($this->user('anna@example.com'), 'annas-neues-pw'));
+
+        $this->client->request('GET', '/admin/personen/'.Uuid::v7()->toRfc4122());
+        self::assertResponseStatusCodeSame(404);
+    }
+
+    public function testAdminChangingOwnPasswordStaysLoggedIn(): void
+    {
+        $this->client->loginUser($this->admin);
+        $this->client->request('GET', '/admin/personen/'.$this->admin->getId()->toRfc4122());
+        $this->client->submitForm('Speichern', [
+            'person_edit[password][first]' => 'admins-neues-pw',
+            'person_edit[password][second]' => 'admins-neues-pw',
+        ]);
+
+        self::assertResponseRedirects(expectedCode: 303);
+        $this->client->followRedirect();
+        self::assertResponseIsSuccessful();
+        $this->client->request('GET', '/admin');
+        self::assertResponseIsSuccessful();
+    }
+
     public function testReportsShowManualArticlesAndPurchases(): void
     {
         $this->client->loginUser($this->admin);

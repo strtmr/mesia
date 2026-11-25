@@ -5,6 +5,12 @@
 # Kurz und aus Sicht der Benutzer schreiben, ohne Technik. Einträge immer in '…' setzen (ein „: “ im Text würde sonst
 # als Schlüssel gelesen).
 
+- version: 0.10.0
+  date: 2026-11-25
+  changes:
+    - 'Namen ändern unter „Mehr → Konto“. So erscheinst du bei „Hinzugefügt von …“ und in den Mitteilungen'
+    - 'Passwort selbst ändern, ebenfalls unter „Mehr → Konto“. Auf diesem Gerät bleibst du angemeldet, auf allen anderen meldest du dich mit dem neuen Passwort neu an'
+
 - version: 0.9.0
   date: 2026-11-24
   changes:

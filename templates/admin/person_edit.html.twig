@@ -1,0 +1,38 @@
+{% extends 'app/layout.html.twig' %}
+
+{# Person umbenennen, optional neues Passwort (AdminController::editPerson) #}
+
+{% block page_title %}{{ 'admin.person_edit.title'|trans }}{% endblock %}
+
+{% block header_actions %}
+    <a class="header-link" href="{{ path('admin_household_edit', {id: person.household.id}) }}">‹ {{ person.household.name }}</a>
+{% endblock %}
+
+{% block content %}
+    <p class="page-hint">{{ 'admin.person_edit.hint'|trans({'%email%': person.email, '%household%': person.household.name}) }}</p>
+
+    {{ form_start(form, {attr: {class: 'form-group', novalidate: 'novalidate'}}) }}
+        <label class="field">
+            <span class="field__label">{{ 'admin.person.display_name'|trans }}</span>
+            {{ form_widget(form.displayName) }}
+            {{ _self.errors(form.displayName) }}
+        </label>
+        <label class="field">
+            <span class="field__label">{{ 'admin.person_edit.password'|trans }}</span>
+            {{ form_widget(form.password.first) }}
+            {{ _self.errors(form.password.first) }}
+        </label>
+        <label class="field">
+            <span class="field__label">{{ 'admin.person.password_repeat'|trans }}</span>
+            {{ form_widget(form.password.second) }}
+        </label>
+        <p class="page-hint">{{ 'admin.person_edit.password_hint'|trans }}</p>
+        <button type="submit" class="button button--primary button--block">{{ 'admin.save'|trans }}</button>
+    {{ form_end(form) }}
+{% endblock %}
+
+{% macro errors(field) %}
+    {% for error in field.vars.errors %}
+        <span class="form-error">{{ error.message }}</span>
+    {% endfor %}
+{% endmacro %}

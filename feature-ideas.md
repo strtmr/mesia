@@ -17,8 +17,7 @@ _keine_
 + Statistiken, wer wie oft, welche Produkte, etc.
 
 # Development
-+ Matt Pocock skills installieren und nutzen
-+ GitHub Issues erstellen und abarbeiten
++ [x] GitHub Issues erstellen und abarbeiten (Phase 2: #1–#9)
 
 # Backlog (für später)
 + Weitere Listen hinzufügen, Vorlagen für Todo, Geschenke, ...

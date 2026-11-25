@@ -48,7 +48,10 @@
                             · {{ household.lastActivity ? 'admin.households.last_activity'|trans({'%date%': household.lastActivity|date('d.m.Y, H:i')}) : 'admin.households.never_active'|trans }}
                         </small>
                     </span>
-                    <a class="admin-household__add" href="{{ path('admin_member_new', {id: household.id}) }}">{{ 'admin.households.add_member'|trans }}</a>
+                    <span class="admin-household__actions">
+                        <a class="admin-household__action" href="{{ path('admin_household_edit', {id: household.id}) }}">{{ 'admin.households.edit'|trans }}</a>
+                        <a class="admin-household__action" href="{{ path('admin_member_new', {id: household.id}) }}">{{ 'admin.households.add_member'|trans }}</a>
+                    </span>
                 </div>
             {% else %}
                 <p class="list-group__row">{{ 'admin.households.empty'|trans }}</p>
