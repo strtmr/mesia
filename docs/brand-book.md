@@ -13,6 +13,7 @@ werden (und umgekehrt).
 | Version | Datum | Änderung |
 |---|---|---|
 | 1.0 | – | PDF: Markenidee, Logo-Konzept, Startpalette, Typografie, Tokens |
+| 1.8 | 2026-11-25 | Startbild für die installierte App (iOS) |
 | 1.7 | 2026-11-24 | Hintergrund hell: Paper `#f7f5ef` statt Cream, dunklere Schrift auf getönten Etiketten |
 | 1.6 | 2026-11-24 | Läden: Chips (Filter und Auswahl), Datumsmarkierung heute/abgelaufen, Erfolgsfarbe im Dunkelmodus |
 | 1.5 | 2026-11-23 | Auswahlfelder: Chip in der Zeile, Pfeil auf/ab im Formular |
@@ -133,6 +134,10 @@ Im Seitenkopf steht die flache Bildmarke 30 px hoch links neben dem Titel, der F
 **Regeln:** nur das Symbol, ohne Wortmarke und Claim. Hintergrund Deep. Das M muss in kleinen Größen klar
 erkennbar bleiben (Größenstufen in Kapitel 3). PNGs und `favicon.ico` neu erzeugen: `ddev exec node
 scripts/render-icons.mjs` (rendert mit Chromium, weil ImageMagick die Kontur nicht darstellt).
+
+**Startbild (iOS):** Hintergrund Paper (dunkel: Ink), Sticker-Bildmarke mit Versatz in Deep, 46 % der
+Bildschirmbreite, darunter die Wortmarke (Ink, dunkel: Cream), Gruppe leicht über der Mitte. Erzeugt von `ddev exec
+node scripts/render-splash.mjs` nach `public/splash/`.
 
 **Offen:** Masterdatei 1024 × 1024 px für App-Stores, Monochrom-Varianten (dunkel, weiß), Social-Preview-Bild.
 

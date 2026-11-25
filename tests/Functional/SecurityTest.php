@@ -56,6 +56,11 @@ final class SecurityTest extends WebTestCase
         self::assertSelectorExists('input[name="email"][type="email"][autocomplete="username"]');
         self::assertSelectorExists('link[rel="manifest"][href="/manifest.webmanifest"]');
         self::assertSelectorExists('link[rel="apple-touch-icon"]');
+        // Startbilder, sonst startet die installierte App auf dem iPhone mit weißem Bildschirm
+        self::assertSelectorExists('link[rel="apple-touch-startup-image"][href="/splash/splash-1179x2556-light.png"]');
+        foreach ($client->getCrawler()->filter('link[rel="apple-touch-startup-image"]')->extract(['href']) as $href) {
+            self::assertFileExists(\dirname(__DIR__, 2).'/public'.$href);
+        }
         self::assertSelectorExists('meta[name="viewport"][content*="viewport-fit=cover"]');
         self::assertSelectorTextContains('h1.wordmark', 'mesia');
         self::assertSelectorTextContains('.login__claim', 'Life, intelligently connected.');

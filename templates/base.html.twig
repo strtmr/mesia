@@ -18,6 +18,9 @@
         <link rel="icon" href="/icons/favicon.svg" type="image/svg+xml">
         <link rel="icon" href="/favicon.ico" sizes="48x48">
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+        {{ include('pwa/_startup_images.html.twig') }}
+        {# Hintergrund sofort, nicht erst wenn app.css geladen ist: sonst blitzt beim Start kurz Weiß auf #}
+        <style>html{background:#f7f5ef}@media (prefers-color-scheme:dark){html{background:#01161e}}</style>
         {% block head_meta %}{% endblock %}
 
         {% block stylesheets %}{% endblock %}

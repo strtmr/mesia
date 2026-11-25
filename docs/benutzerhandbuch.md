@@ -28,6 +28,10 @@ Danach startet die App vom Home-Bildschirm ohne Browserleiste. Wichtig: Die inst
 Speicher, du musst dich dort **einmal neu anmelden** und die Einkaufsliste einmal mit Verbindung öffnen. Danach
 startet sie auch im Funkloch. iOS bewahrt die Daten installierter Apps zuverlässiger auf als die von Safari.
 
+Beim Start zeigt die App kurz das Mesia-Logo auf hellem Grund (im dunklen Modus auf dunklem Grund). Siehst du
+stattdessen einen weißen Bildschirm, wurde die App vor Version 0.10.1 installiert: App vom Home-Bildschirm löschen
+und wie oben neu hinzufügen. Die Einkaufsliste bleibt erhalten, sie liegt auf dem Server.
+
 ## Bereiche
 
 | Tab | Inhalt |

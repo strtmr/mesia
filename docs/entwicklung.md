@@ -281,7 +281,9 @@ Gestaltungsregeln, Farben, Typografie, Komponenten und Kontrastwerte: [brand-boo
 Grundlage `MESIA_Brand_Book_v1.pdf`). Hier nur die technischen Punkte. Palette:
 `#01161e` Ink, `#124559` Deep, `#598392` Slate, `#aec3b0` Sage, `#eff6e0` Cream, `#f7f5ef` Paper (Hintergrund hell), `#ff6a2b` Signal-Orange.
 
-- **Hintergrundfarbe** steht außer in `app.css` auch in `templates/base.html.twig` (`theme-color`), `public/manifest.webmanifest` und `public/offline.html`. Alle gemeinsam ändern.
+- **Hintergrundfarbe** steht außer in `app.css` auch in `templates/base.html.twig` (`theme-color` und Inline-`<style>`
+  gegen weißes Aufblitzen vor dem Laden von `app.css`), `public/manifest.webmanifest`, `public/offline.html` und
+  `scripts/render-splash.mjs`. Alle gemeinsam ändern.
 - **Farben nur über Tokens** in `assets/styles/app.css` (`--mesia-*` Palette, `--color-*` Rollen, hell und dunkel).
   `--color-accent` (Deep/Sage) für Links und Überschriften, `--color-action` (Signal-Orange, Schrift Ink) für
   Primärknöpfe, Plus und Häkchen. Gedämpfter Text ist aus Slate abgedunkelt (`#4a6b78`, 4,5:1).
@@ -296,6 +298,13 @@ Grundlage `MESIA_Brand_Book_v1.pdf`). Hier nur die technischen Punkte. Palette:
   `favicon.svg` (Stufe Kontur). PNGs und `public/favicon.ico` erzeugt `ddev exec node scripts/render-icons.mjs`.
   Es rendert mit Chromium (Playwright), weil ImageMagick SVG-Konturen nicht darstellt. ImageMagick fügt nur die
   `favicon.ico` zusammen.
+- **Startbilder iOS:** iOS ignoriert `background_color` aus dem Manifest und zeigt beim Start der installierten App
+  Weiß, wenn kein `apple-touch-startup-image` genau zur Bildschirmgröße passt. `ddev exec node
+  scripts/render-splash.mjs` erzeugt pro iPhone-Größe ein helles und ein dunkles Bild (Paper/Ink, Sticker-Bildmarke,
+  Wortmarke) nach `public/splash/` sowie das Partial `templates/pwa/_startup_images.html.twig` (generiert, nicht von
+  Hand ändern). Neue iPhone-Größe: Zeile in `DEVICES` im Skript ergänzen. iOS übernimmt die Bilder nur beim
+  Hinzufügen zum Home-Bildschirm, bestehende Installationen zeigen sie erst nach Neuinstallation. iPad und Querformat
+  sind nicht abgedeckt (App ist auf Hochformat festgelegt).
 
 ## Version und Neuigkeiten
 
