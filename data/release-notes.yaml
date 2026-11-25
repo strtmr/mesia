@@ -10,6 +10,9 @@
   changes:
     - 'Namen ändern unter „Mehr → Konto“. So erscheinst du bei „Hinzugefügt von …“ und in den Mitteilungen'
     - 'Passwort selbst ändern, ebenfalls unter „Mehr → Konto“. Auf diesem Gerät bleibst du angemeldet, auf allen anderen meldest du dich mit dem neuen Passwort neu an'
+    - 'Sicherer abhaken im Laden: Ein Tipp irgendwo auf den Eintrag hakt ab, nicht nur auf den Kreis. Bearbeiten geht jetzt über „›“ rechts in der Zeile'
+    - 'Abgehaktes bleibt stehen, bis du die Liste 1,8 Sekunden nicht berührst, und schrumpft dann sichtbar weg. So rutscht die Liste nicht mehr weg, während du schon auf den nächsten Eintrag zielst'
+    - 'Auf dem Handy sind die Zeilen der Einkaufsliste etwas größer, damit man sie sicher trifft'
 
 - version: 0.9.0
   date: 2026-11-24

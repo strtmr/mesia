@@ -64,10 +64,12 @@ Ein Artikelname darf höchstens 100 Zeichen lang sein (eine Notiz in Klammern 20
 - Beim Tippen erscheinen **Vorschläge**, zuerst Dinge, die ihr schon gekauft habt. Tippfehler werden verziehen.
 - Steht ein Artikel schon auf der Liste, kommt die Menge dazu statt eines zweiten Eintrags.
 
-**Abhaken:** auf den Kreis tippen. Der Artikel bekommt ein Häkchen und wird durchgestrichen, bleibt aber an seinem
-Platz. So kannst du schnell mehrere hintereinander abhaken, ohne dass die Liste verrutscht. Erst wenn du etwa
-3 Sekunden nichts mehr abhakst, wandern alle abgehakten Artikel gemeinsam nach **„Erledigt“** (unten, aufklappbar).
-Versehentlich abgehakt? Solange der Artikel noch durchgestrichen dasteht, einfach noch einmal auf den Kreis tippen.
+**Abhaken:** auf den Eintrag tippen, auf den Kreis oder den Namen (nur „›“ ganz rechts öffnet das Bearbeiten-Fenster).
+Der Artikel bekommt ein Häkchen und wird durchgestrichen, bleibt aber an seinem Platz. So kannst du mehrere
+hintereinander abhaken, ohne dass die Liste verrutscht. Erst wenn du die Liste etwa 2,5 Sekunden nicht berührst
+(weder tippst noch scrollst), schrumpfen alle abgehakten Artikel weg und wandern gemeinsam nach **„Erledigt“**
+(unten, aufklappbar). Auf dem Handy sind die Zeilen etwas höher als am Computer, damit du sicher triffst.
+Versehentlich abgehakt? Solange der Artikel noch durchgestrichen dasteht, einfach noch einmal darauf tippen.
 Danach in „Erledigt“ auf seinen Kreis tippen, dann kommt er wieder auf die Liste.
 
 **„Erledigt“** ist euer Vorrat an schon Gekauftem: Jeder Artikel steht dort einmal, **oft Gekauftes oben** (bei
@@ -79,7 +81,7 @@ Liste“ holt ihn ebenfalls zurück.
 „Geschenkpapier“. Der Artikel bleibt im Katalog und wird beim nächsten Eintippen wieder erkannt, er steht nur nicht
 mehr in „Erledigt“.
 
-**Bearbeiten:** auf den Namen tippen. Dort änderst du Name, Menge, Einheit, Kategorie und Notiz oder löschst den Artikel.
+**Bearbeiten:** rechts in der Zeile auf „›“ tippen. Dort änderst du Name, Menge, Einheit, Kategorie und Notiz oder löschst den Artikel.
 Unten steht, wer den Artikel wann auf die Liste gesetzt hat (z. B. „Hinzugefügt von Anna heute um 9:05“), bei
 abgehakten Artikeln auch, wer ihn wann erledigt hat.
 Änderst du die Kategorie, merkt sich die App das für das nächste Mal.

@@ -12,12 +12,16 @@ import { activeStores } from '../core/state.js';
 
 const TOAST_MS = 4000;
 /**
- * Abgehakte Einträge bleiben an ihrem Platz, bis so lange nichts mehr abgehakt wurde. Dann wandern alle gemeinsam
- * nach „Erledigt“. So rutscht beim Abhaken im Laden keine Zeile unter dem Finger weg.
+ * Abgehakte Einträge bleiben an ihrem Platz, bis die Liste so lange nicht berührt wurde (Tippen, Scrollen). Dann
+ * schrumpfen sie sichtbar weg und wandern gemeinsam nach „Erledigt“. Eine kurze Frist nach dem letzten Häkchen
+ * reicht im Laden nicht: Die Zeilen rückten genau dann hoch, wenn man schon auf die nächste zielte, und der Finger
+ * traf die darunter.
  */
-const KEEP_IN_PLACE_MS = 1000;
-/** Direkt nach dem Zusammenrücken zählt ein Tipp nicht (er galt vermutlich der Zeile, die vorher dort stand) */
-const SETTLE_GUARD_MS = 400;
+const KEEP_IN_PLACE_MS = 1800;
+/** Dauer des Wegschrumpfens (CSS .item-row--leaving) */
+const LEAVE_MS = 250;
+/** Während und direkt nach dem Zusammenrücken zählt ein Tipp nicht (er galt vermutlich der Zeile, die vorher dort stand) */
+const SETTLE_GUARD_MS = 500;
 /** Zweiter Tipp auf denselben Kreis so kurz danach: versehentlicher Doppeltipp, kein Rückgängig */
 const DOUBLE_TAP_MS = 500;
 /** Gewählter Laden-Filter, pro Gerät */
@@ -55,6 +59,7 @@ export function shoppingList(engine) {
     // Gerade abgehakt, noch an ihrem Platz (siehe KEEP_IN_PLACE_MS)
     const keptInPlace = new Set();
     let keepTimer = null;
+    let leaving = false;
     let settledAt = 0;
     let lastTap = { id: null, at: 0 };
     // Wurzelelement, in init() gesetzt. Alpine-Magics wie $refs/$root sind nach einem await nicht mehr verfügbar,
@@ -115,6 +120,7 @@ export function shoppingList(engine) {
             this.$watch('query', () => this.updateSuggestions());
             cleanups.push(engine.subscribe(() => this.render()));
             cleanups.push(trackVisualViewport());
+            cleanups.push(this.watchActivity());
             await engine.init();
             this.render();
             this.ready = true;
@@ -254,7 +260,7 @@ export function shoppingList(engine) {
          */
         async check(item) {
             const now = Date.now();
-            if (now - settledAt < SETTLE_GUARD_MS || (lastTap.id === item.id && now - lastTap.at < DOUBLE_TAP_MS)) {
+            if (leaving || now - settledAt < SETTLE_GUARD_MS || (lastTap.id === item.id && now - lastTap.at < DOUBLE_TAP_MS)) {
                 return;
             }
             lastTap = { id: item.id, at: now };
@@ -270,17 +276,66 @@ export function shoppingList(engine) {
             await this.run(checkItem(item.id, ctx));
         },
 
-        /** Frist neu starten: Solange weiter abgehakt wird, bleibt alles stehen */
+        /** Frist neu starten: Solange die Liste benutzt wird, bleibt alles stehen */
         keepInPlaceAWhile() {
             clearTimeout(keepTimer);
-            if (keptInPlace.size === 0) {
+            if (keptInPlace.size === 0 || leaving) {
                 return;
             }
-            keepTimer = setTimeout(() => {
+            keepTimer = setTimeout(() => this.collapseKept(), KEEP_IN_PLACE_MS);
+        },
+
+        /**
+         * Abgehaktes nach „Erledigt“: Zeilen (ganze Gruppe, wenn alle ihre Zeilen gehen) schrumpfen erst auf Höhe 0,
+         * danach rendert die Liste ohne sie. Ohne Animation, wenn die App gerade in den Hintergrund geht.
+         */
+        collapseKept({ animate = true } = {}) {
+            clearTimeout(keepTimer);
+            if (keptInPlace.size === 0 || leaving) {
+                return;
+            }
+            const elements = animate && !prefersReducedMotion() ? leavingElements(root, keptInPlace) : [];
+            const finish = () => {
+                for (const element of elements) {
+                    element.classList.remove('item-row--leaving', 'shopping-group--leaving');
+                    element.style.height = '';
+                }
+                leaving = false;
                 keptInPlace.clear();
                 settledAt = Date.now();
                 this.render();
-            }, KEEP_IN_PLACE_MS);
+            };
+            if (elements.length === 0) {
+                finish();
+                return;
+            }
+            leaving = true;
+            for (const element of elements) {
+                element.style.height = `${element.offsetHeight}px`;
+            }
+            void root.offsetHeight; // Ausgangshöhe festschreiben, sonst gibt es keinen Übergang
+            for (const element of elements) {
+                element.classList.add(element.matches('.shopping-group') ? 'shopping-group--leaving' : 'item-row--leaving');
+                element.style.height = '0px';
+            }
+            setTimeout(finish, LEAVE_MS);
+        },
+
+        /** Jede Berührung und jedes Scrollen der Liste verlängert die Frist; im Hintergrund sofort aufräumen */
+        watchActivity() {
+            const onActivity = () => this.keepInPlaceAWhile();
+            const onVisibility = () => {
+                if (document.hidden) this.collapseKept({ animate: false });
+            };
+            root.addEventListener('pointerdown', onActivity, { passive: true });
+            root.addEventListener('scroll', onActivity, { capture: true, passive: true });
+            document.addEventListener('visibilitychange', onVisibility);
+
+            return () => {
+                root.removeEventListener('pointerdown', onActivity);
+                root.removeEventListener('scroll', onActivity, { capture: true });
+                document.removeEventListener('visibilitychange', onVisibility);
+            };
         },
 
         async reactivate(item) {
@@ -485,6 +540,29 @@ function validLabel(item) {
     const key = { today: 'textValidToday', expired: 'textValidExpired' }[item.dateStatus] ?? 'textValidUntil';
 
     return (root?.dataset[key] ?? '').replace('%date%', date);
+}
+
+function prefersReducedMotion() {
+    return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+}
+
+/**
+ * Was beim Aufräumen wegschrumpft: die abgehakten Zeilen, bei einer Gruppe, die dadurch leer wird, die ganze Gruppe
+ * samt Überschrift.
+ */
+function leavingElements(root, itemIds) {
+    const elements = [];
+    for (const group of root?.querySelectorAll('.shopping-group') ?? []) {
+        const rows = [...group.querySelectorAll('.item-row')];
+        const leavingRows = rows.filter((row) => itemIds.has(row.dataset.id) && row.classList.contains('item-row--checked'));
+        if (leavingRows.length > 0 && leavingRows.length === rows.length) {
+            elements.push(group);
+        } else {
+            elements.push(...leavingRows);
+        }
+    }
+
+    return elements;
 }
 
 function siblingRow(element, direction) {

@@ -70,6 +70,7 @@ shopping:
     add: Hinzufügen
     add_placeholder: Artikel hinzufügen …
     check_label: Abhaken
+    edit_label: Bearbeiten
     uncheck_label: Abhaken rückgängig
     reactivate_label: Wieder auf die Liste
     toast:

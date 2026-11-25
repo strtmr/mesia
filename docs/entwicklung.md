@@ -125,11 +125,16 @@ ui/     Alpine.js: app.js (Einstieg, Store "sync"), list.js (Komponente)
   `.app-main` scrollt. Wegen `transform` beziehen sich fixierte Elemente darin (Eingabeleiste, Tab-Leiste, Toast) auf
   die Hülle, sitzen also bei offener Tastatur direkt darüber. iOS ändert beim Öffnen der Tastatur nur den sichtbaren
   Bereich, nicht das Layout. Mit Chromium lässt sich das nicht testen, nur auf dem iPhone.
+- **Zeile offener Einträge:** Der Knopf `.item-main` (Kreis, Name, Menge) hakt ab, nur `.item-edit` („›“ rechts)
+  öffnet den Dialog. Zeilenhöhe und Kreisspalte kommen aus `--list-row`/`--check-column`, auf Touch-Geräten
+  (`pointer: coarse`) größer.
 - **Abhaken bleibt stehen:** `check()` in `ui/list.js` speichert sofort, merkt sich den Eintrag aber in
   `keptInPlace`. `buildListView(state, {keepInPlace})` zeigt ihn weiter in seiner Gruppe (`checked: true`,
-  durchgestrichen). Erst nach `KEEP_IN_PLACE_MS` ohne weiteres Abhaken wandert alles nach „Erledigt“. Danach
-  ignoriert die Liste Tipps auf Kreise für `SETTLE_GUARD_MS`, damit kein Tipp die nachgerückte Zeile trifft. Ein Tipp
-  auf einen noch stehenden Eintrag schickt `item.uncheck`.
+  durchgestrichen). Die Frist `KEEP_IN_PLACE_MS` (1,8 s) beginnt bei jedem `pointerdown` und Scrollen in der Liste neu
+  (`watchActivity()`). Läuft sie ab, schrumpfen die Zeilen per `collapseKept()` sichtbar auf Höhe 0 (`LEAVE_MS`,
+  ganze Gruppe, wenn sie leer wird), erst dann wird neu gerendert. Geht die App in den Hintergrund, passiert das sofort
+  ohne Animation. Während des Schrumpfens und `SETTLE_GUARD_MS` danach zählen Tipps nicht, damit keiner die
+  nachgerückte Zeile trifft. Ein Tipp auf einen noch stehenden Eintrag schickt `item.uncheck`.
 - **„Erledigt“:** Der Kreis reaktiviert, der Name öffnet den Bearbeiten-Dialog. Dessen Knopf „Wieder auf die Liste“
   (`reactivateFromEditor()`) schickt `item.uncheck`, solange der Eintrag noch an seinem Platz steht (Menge bleibt),
   sonst `item.reactivate`.

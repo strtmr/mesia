@@ -249,7 +249,9 @@ nicht benötigt.
 |---|---|---|
 | `--touch-target` | 44 px | Mindestgröße jeder Trefferfläche, Höhe einer Listenzeile |
 | `--tabbar-height` | 50 px | Tab-Leiste unten |
-| Abhak-Kreis | 22 px | in einer 44 px breiten Spalte |
+| `--list-row` | 44 px, Touch 50 px | Mindesthöhe einer Zeile der Einkaufsliste (`pointer: coarse` = Touch) |
+| `--check-column` | 44 px, Touch 52 px | Spalte mit dem Abhak-Kreis, ab ihr beginnt die Trennlinie |
+| Abhak-Kreis | 22 px | mittig in der Kreisspalte |
 | Bildmarke im Kopf | 30 px hoch | kompakte Variante |
 
 ### Radien
@@ -269,9 +271,10 @@ nicht benötigt.
 | Primärknopf | Signal-Orange, Schrift Ink, 44 px hoch, Radius 10 |
 | Destruktiver Knopf | Fehlerfarbe, bei kritischen Aktionen Rückfrage (Kategorie löschen) |
 | Listengruppe | weiße Karte (Radius 14), Zeilen 44 px, Trennlinie ab der Textspalte |
+| Zeile der Einkaufsliste | Kreis, Name und Menge sind eine Trefferfläche zum Abhaken (beim Drücken grau hinterlegt), rechts „›“ (52 px breit, 8 px Abstand zur Menge, gedämpft) öffnet das Bearbeiten-Fenster |
 | Kategorie-Überschrift | Emoji + Name, 16 px fett in Akzentfarbe, 6 px über der Gruppe |
 | Eingabeleiste | unten fixiert, über der Tastatur, Feld rund, Plus-Knopf rund in Signal-Orange (Plus in Ink) |
-| Abhaken | Kreis füllt sich in Signal-Orange mit Häkchen in Ink, Name durchgestrichen in gedämpfter Farbe; die Zeile bleibt stehen, bis 3 s nichts mehr abgehakt wurde, dann wandert alles nach „Erledigt“ |
+| Abhaken | Kreis füllt sich in Signal-Orange mit Häkchen in Ink, Name durchgestrichen in gedämpfter Farbe; die Zeile bleibt stehen, bis die Liste 2,5 s nicht berührt wurde, dann schrumpft alles Abgehakte in 0,25 s weg und wandert nach „Erledigt“ |
 | Chip | 32 px hoch, Radius voll, Rahmen 35 % Akzent, Schrift Akzent halbfett; gewählt: Fläche Akzent, Schrift Kontrastfarbe. Laden-Filter über der Liste (waagrecht scrollbar, mit Anzahl), Läden im Bearbeiten-Fenster |
 | Laden-Auswahl (Bearbeiten) | Eingabefeld „Laden hinzufügen …“ wie die Schnelleingabe; Vorschläge erst beim Tippen, als Karte mit Schatten wie unter „Artikel hinzufügen …“ (Zeilen 44 px). Gewählte Läden als Chips mit × darüber |
 | Laden und Datum am Eintrag | Zeile unter dem Namen: Läden 13 px gedämpft (zu lange werden mit … gekürzt), direkt dahinter „gültig bis“ als Etikett (12 px halbfett, Radius voll): neutral „bis Sa., 28.11.“, grün „heute“, rot „abgelaufen 23.11.“ (Fläche jeweils 12–16 % der Farbe) |
@@ -367,6 +370,8 @@ Tokens, keine eigenen Farben, Radien oder Abstände. Auszug (helles Thema):
     --space-4: 16px; --space-5: 24px; --space-6: 32px;
 
     --touch-target: 44px;
+    --list-row: 44px;      /* Touch: 50px */
+    --check-column: 44px;  /* Touch: 52px */
     --font-system: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 ```

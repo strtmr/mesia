@@ -84,6 +84,9 @@
     --space-6: 32px;
 
     --touch-target: 44px;
+    /* Zeile der Einkaufsliste und Spalte mit dem Abhak-Kreis; auf Touch-Geräten größer (s. u.) */
+    --list-row: 44px;
+    --check-column: 44px;
     --tabbar-height: 50px;
 
     --font-system: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -92,6 +95,14 @@
     --safe-right: env(safe-area-inset-right, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
     --safe-left: env(safe-area-inset-left, 0px);
+}
+
+/* Finger statt Maus: etwas höhere Zeilen und eine breitere Kreisspalte, damit man im Laden sicher trifft */
+@media (pointer: coarse) {
+    :root {
+        --list-row: 50px;
+        --check-column: 52px;
+    }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -1107,9 +1118,8 @@ html[data-keyboard="open"] .page-shopping .item-row {
 .item-row {
     position: relative;
     display: flex;
-    align-items: center;
-    min-height: var(--touch-target);
-    padding-right: var(--space-4);
+    align-items: stretch;
+    min-height: var(--list-row);
     background: var(--color-surface);
     -webkit-user-select: none;
     user-select: none;
@@ -1122,7 +1132,7 @@ html[data-keyboard="open"] .page-shopping .item-row {
     position: absolute;
     top: 0;
     right: 0;
-    left: var(--touch-target);
+    left: var(--check-column);
     border-top: 0.5px solid var(--color-separator);
 }
 
@@ -1134,12 +1144,55 @@ html[data-keyboard="open"] .page-shopping .item-row {
     opacity: 0.35;
 }
 
+/*
+ * Offene Einträge: fast die ganze Zeile (Kreis, Name, Menge) ist ein Knopf zum Abhaken, „›“ rechts öffnet den Dialog.
+ * Beim Drücken färbt sich die Zeile, so sieht man, welche getroffen wurde.
+ */
+.item-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    min-height: var(--list-row);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.item-main:active {
+    background: var(--color-separator);
+}
+
+.item-edit {
+    flex-shrink: 0;
+    width: 52px;
+    margin-left: var(--space-2);
+    padding: 0 var(--space-2) 0 0;
+    border: 0;
+    background: none;
+    color: var(--color-text-muted);
+    font: inherit;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.item-edit:active {
+    background: var(--color-separator);
+}
+
 .item-check {
     flex-shrink: 0;
     display: grid;
     place-items: center;
-    width: var(--touch-target);
-    min-height: var(--touch-target);
+    width: var(--check-column);
+    min-height: var(--list-row);
     padding: 0;
     border: 0;
     background: none;
@@ -1154,6 +1207,7 @@ html[data-keyboard="open"] .page-shopping .item-row {
     transition: background-color 0.15s, border-color 0.15s;
 }
 
+.item-main:active .item-check__circle,
 .item-check:active .item-check__circle {
     background: color-mix(in srgb, var(--color-accent) 25%, transparent);
 }
@@ -1169,7 +1223,7 @@ html[data-keyboard="open"] .page-shopping .item-row {
     flex: 1;
     display: grid;
     min-width: 0;
-    min-height: var(--touch-target);
+    min-height: var(--list-row);
     align-content: center;
     padding: 6px var(--space-2) 6px 0;
     border: 0;
@@ -1360,6 +1414,11 @@ html[data-keyboard="open"] .page-shopping .item-row {
     border-radius: 50%;
     background: var(--color-warning);
     vertical-align: middle;
+}
+
+.item-row--done {
+    align-items: center;
+    padding-right: var(--space-4);
 }
 
 .item-row--done .item-body__name {
@@ -1614,6 +1673,7 @@ html[data-keyboard="open"] .toast {
     background: none;
     color: var(--color-accent);
     font: inherit;
+    cursor: pointer;
 }
 
 .sheet__link--strong {
@@ -1663,6 +1723,29 @@ select.field__input {
     }
 }
 
+/*
+ * Abgehaktes wandert nach „Erledigt“: Zeilen (oder ganze Gruppen) schrumpfen sichtbar weg, statt dass die Liste
+ * springt. list.js setzt vorher die aktuelle Höhe als Inline-Stil und dann 0.
+ */
+.item-row--leaving,
+.shopping-group--leaving {
+    min-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: height 0.25s ease, margin 0.25s ease, opacity 0.2s ease;
+}
+
+.shopping-group--leaving {
+    margin-bottom: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .item-row--leaving,
+    .shopping-group--leaving {
+        transition: none;
+    }
+}
+
 @keyframes check-pop {
     50% {
         transform: scale(1.2);
@@ -1697,7 +1780,7 @@ select.field__input {
     position: absolute;
     top: 0;
     right: 0;
-    left: var(--touch-target);
+    left: var(--check-column);
     z-index: 1;
     border-top: 0.5px solid var(--color-separator);
 }

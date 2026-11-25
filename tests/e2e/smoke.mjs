@@ -119,8 +119,8 @@ try {
         throw new Error('Butter sollte nach dem Rückgängigmachen offen bleiben');
     }
 
-    step('Abhaken (Zeile bleibt stehen, wandert nach 3 s nach "Erledigt")');
-    await milk.locator('.item-check').click();
+    step('Abhaken per Tipp auf den Namen (Zeile bleibt stehen, wandert nach 2,5 s ohne Berührung nach "Erledigt")');
+    await milk.locator('.item-body__name').click();
     await expectVisible(page.locator('.shopping-group', { hasText: 'Milchprodukte' }).locator('.item-row--checked', { hasText: 'Milch' }), 'Milch abgehakt an ihrem Platz');
     await page.screenshot({ path: `${screenshotDir}/2-abgehakt.png`, fullPage: true });
     await expectVisible(page.locator('.shopping-done__toggle', { hasText: 'Erledigt (1)' }), 'Erledigt (1)');
@@ -138,7 +138,7 @@ try {
     await expectVisible(page.locator('.item-row', { hasText: 'Drachenfrucht' }), 'Filter aufgehoben');
 
     step('Bearbeiten: Drachenfrucht nach Obst & Gemüse');
-    await page.locator('.item-row', { hasText: 'Drachenfrucht' }).locator('.item-body').click();
+    await page.locator('.item-row', { hasText: 'Drachenfrucht' }).locator('.item-edit').click();
     await expectVisible(page.locator('dialog.sheet[open]'), 'Sheet');
     await expectVisible(page.locator('dialog.sheet .sheet__meta', { hasText: /Hinzugefügt von E2E heute um \d{1,2}:\d{2}/ }), 'Hinzugefügt von E2E heute (im Dialog)');
     const produceValue = await page.locator('dialog.sheet select').nth(1).locator('option', { hasText: 'Obst & Gemüse' }).getAttribute('value');

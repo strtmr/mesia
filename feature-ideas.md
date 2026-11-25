@@ -11,9 +11,10 @@ _keine_
 + Impressum
 
 ## User und Abo
++ [x] change profile
 + Freemium Model
 + Payment options
-+ Registration, change profile, create household, add persons to household
++ Registration, create household, add persons to household
 + Statistiken, wer wie oft, welche Produkte, etc.
 
 # Development
