@@ -27,7 +27,7 @@ Historie und synchronisiert zuverlässig. Sie ersetzt damit iOS Erinnerungen.
 ## 2. Projektstruktur
 
 ```
-mesia/
+mesuna/
 ├── .ddev/                      PHP + PostgreSQL in den Versionen von Hetzner
 ├── assets/
 │   ├── app.js                  Turbo + Stimulus (Verwaltungsseiten)

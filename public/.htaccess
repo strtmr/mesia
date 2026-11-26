@@ -6,7 +6,7 @@
 DirectoryIndex index.php
 
 # ---------------------------------------------------------------------------------------------------------------
-# Mesia (Produktion auf Apache, z. B. Hetzner Webhosting). Lokal läuft nginx (.ddev/nginx/pwa.conf).
+# Mesuna (Produktion auf Apache, z. B. Hetzner Webhosting). Lokal läuft nginx (.ddev/nginx/pwa.conf).
 # ---------------------------------------------------------------------------------------------------------------
 
 # Das Basisverzeichnis des Deployments sperrt alles (deploy/remote.sh), hier wird nur public/ wieder freigegeben

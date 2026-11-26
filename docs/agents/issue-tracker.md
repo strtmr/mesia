@@ -1,6 +1,6 @@
 # Issue-Tracker: GitHub
 
-Tickets und Spezifikationen für dieses Repo liegen als GitHub Issues in `strtmr/mesia`. Alle Operationen laufen über
+Tickets und Spezifikationen für dieses Repo liegen als GitHub Issues in `strtmr/mesuna`. Alle Operationen laufen über
 die `gh`-CLI.
 
 ## Projektregeln

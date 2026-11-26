@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- MESIA Favicon: ohne Drehung und Versatz, nur Kontur, damit es klein ruhig bleibt. Quelle der PNG-Icons: ddev exec node scripts/render-icons.mjs -->
-  <rect width="512" height="512" rx="112" fill="#124559"/>
-  <svg x="26" y="82" width="460" height="379" viewBox="86 162 340 280"><g stroke-width="26" stroke-linejoin="round" paint-order="stroke" stroke="#01161e"><path d="M168 176 H344 C344 216 304 236 256 236 C208 236 168 216 168 176 Z" fill="#ff6a2b"/><rect x="100" y="240" width="312" height="32" rx="16" fill="#eff6e0"/><path d="M124 428 V306 Q124 278 152 278 H200 Q210 278 216 286 L256 338 L296 286 Q302 278 312 278 H360 Q388 278 388 306 V428 H322 V364 L268 418 Q256 432 244 418 L190 364 V428 Z" fill="#eff6e0"/></g></svg>
+  <!-- Mesuna Favicon: Bildmarke vergrößert und mit kräftigeren Linien, damit sie bei 16 px lesbar bleibt. Quelle der PNG-Icons: ddev exec node scripts/render-icons.mjs -->
+  <rect width="512" height="512" rx="112" fill="#01161e"/>
+  <svg x="40" y="60" width="432" height="392" viewBox="0 0 370 336"><path d="M76 0 H294 A109 70 0 0 1 76 0 Z" fill="#ff6a2b"/><g fill="none" stroke="#eff6e0" stroke-linecap="round" stroke-linejoin="round"><line x1="20" y1="104" x2="350" y2="104" stroke-width="40"/><polyline points="54,312 54,172 185,256 316,172 316,312" stroke-width="48"/></g></svg>
 </svg>

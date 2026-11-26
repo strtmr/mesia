@@ -1,7 +1,8 @@
 /**
  * Erzeugt die PNG-Icons und favicon.ico aus den SVG-Quellen in public/icons/.
  *
- * Gerendert wird mit Chromium (Playwright), weil die Bildmarke Konturen nutzt, die ImageMagick nicht darstellt.
+ * Gerendert wird mit Chromium (Playwright), damit die PNGs genau wie im Browser aussehen. ImageMagick fügt nur die
+ * favicon.ico zusammen.
  * Aufruf im DDEV-Container: ddev exec node scripts/render-icons.mjs
  * (Playwright-Browser einmalig installieren, siehe docs/entwicklung.md, Abschnitt Tests)
  */

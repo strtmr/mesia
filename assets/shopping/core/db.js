@@ -1,5 +1,7 @@
 import Dexie from 'dexie';
 
+// Historischer Name aus der Zeit vor der Umbenennung in Mesuna. Nicht ändern: Eine neue Datenbank wäre auf jedem Gerät leer,
+// noch nicht synchronisierte Änderungen gingen verloren.
 export const DATABASE_NAME = 'mesia';
 
 /**

@@ -1,5 +1,5 @@
 {
-    "name": "mesia",
+    "name": "mesuna",
     "private": true,
     "type": "module",
     "description": "Nur für Tests (Vitest/Playwright). Die Frontend-Assets werden über Symfony AssetMapper ausgeliefert, ohne Node-Build.",
@@ -9,7 +9,6 @@
     },
     "devDependencies": {
         "@fontsource-variable/manrope": "^5.3.0",
-        "@fontsource/archivo-black": "^5.3.0",
         "dexie": "4.4.7",
         "fake-indexeddb": "^6.2.8",
         "fractional-indexing": "4.0.0",

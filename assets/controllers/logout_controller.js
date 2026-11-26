@@ -8,6 +8,7 @@ export default class extends Controller {
     logout(event) {
         event.preventDefault();
         const target = this.element.href;
+        // Name wie DATABASE_NAME in shopping/core/db.js (nicht importiert, das würde Dexie auf jeder Seite laden)
         const request = indexedDB.deleteDatabase('mesia');
         const proceed = () => window.location.assign(target);
         request.onsuccess = proceed;

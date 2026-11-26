@@ -284,27 +284,43 @@ Grundlage `MESIA_Brand_Book_v1.pdf`). Hier nur die technischen Punkte. Palette:
 - **Hintergrundfarbe** steht außer in `app.css` auch in `templates/base.html.twig` (`theme-color` und Inline-`<style>`
   gegen weißes Aufblitzen vor dem Laden von `app.css`), `public/manifest.webmanifest`, `public/offline.html` und
   `scripts/render-splash.mjs`. Alle gemeinsam ändern.
-- **Farben nur über Tokens** in `assets/styles/app.css` (`--mesia-*` Palette, `--color-*` Rollen, hell und dunkel).
+- **Farben nur über Tokens** in `assets/styles/app.css` (`--mesuna-*` Palette, `--color-*` Rollen, hell und dunkel).
   `--color-accent` (Deep/Sage) für Links und Überschriften, `--color-action` (Signal-Orange, Schrift Ink) für
   Primärknöpfe, Plus und Häkchen. Gedämpfter Text ist aus Slate abgedunkelt (`#4a6b78`, 4,5:1).
 - **Schriften** (OFL, selbst ausgeliefert aus `assets/fonts/`, Quelle npm `@fontsource…`, Lizenzen daneben):
-  Manrope für die App, Archivo Black nur für die Wortmarke (`.wordmark`, Versalien per CSS). Kein Google-Fonts-Abruf.
+  Manrope für App und Wortmarke (`.wordmark`: 400, Versalien per CSS, Laufweite 0,28 em). Kein Google-Fonts-Abruf.
 - **Radien:** Eingaben 8, Knöpfe 10, Karten 14, große Flächen 20 px.
 - **Dichte:** Grundschrift 16 px (Eingaben nie kleiner, sonst zoomt iOS), Zeilen und Trefferflächen 44 px
   (`--touch-target`), Seitentitel 28 px, Kategorie-Überschriften 16 px in Markenfarbe.
-- **Bildmarke im Template:** `templates/app/_brand_mark.html.twig`, `variant: 'sticker'` (Standard, Login) oder
-  `'flat'` (Seitenkopf, Farben per CSS `.brand-mark__table` / `.brand-mark__bowl`).
+- **Bildmarke:** Vorlage ist `docs/brand/mesuna-logo.png`. Umgesetzt in `templates/app/_brand_mark.html.twig` (Login und Seitenkopf). Tischplatte und M sind Linien
+  (`stroke`), Farben per CSS `.brand-mark__table` (Akzentfarbe, dunkel Creme) und `.brand-mark__bowl`. Dieselben
+  Formen stehen in `public/icons/*.svg` und `scripts/render-splash.mjs`, bei Änderungen alle anpassen.
 - **Icons:** Quellen sind `public/icons/icon.svg` (abgerundet), `icon-maskable.svg` (randlos, auch iOS) und
-  `favicon.svg` (Stufe Kontur). PNGs und `public/favicon.ico` erzeugt `ddev exec node scripts/render-icons.mjs`.
-  Es rendert mit Chromium (Playwright), weil ImageMagick SVG-Konturen nicht darstellt. ImageMagick fügt nur die
-  `favicon.ico` zusammen.
+  `favicon.svg` (vergrößert, kräftigere Linien). PNGs und `public/favicon.ico` erzeugt `ddev exec node
+  scripts/render-icons.mjs`. Es rendert mit Chromium (Playwright), ImageMagick fügt nur die `favicon.ico` zusammen.
 - **Startbilder iOS:** iOS ignoriert `background_color` aus dem Manifest und zeigt beim Start der installierten App
   Weiß, wenn kein `apple-touch-startup-image` genau zur Bildschirmgröße passt. `ddev exec node
-  scripts/render-splash.mjs` erzeugt pro iPhone-Größe ein helles und ein dunkles Bild (Paper/Ink, Sticker-Bildmarke,
+  scripts/render-splash.mjs` erzeugt pro iPhone-Größe ein helles und ein dunkles Bild (Paper/Ink, Bildmarke,
   Wortmarke) nach `public/splash/` sowie das Partial `templates/pwa/_startup_images.html.twig` (generiert, nicht von
   Hand ändern). Neue iPhone-Größe: Zeile in `DEVICES` im Skript ergänzen. iOS übernimmt die Bilder nur beim
   Hinzufügen zum Home-Bildschirm, bestehende Installationen zeigen sie erst nach Neuinstallation. iPad und Querformat
   sind nicht abgedeckt (App ist auf Hochformat festgelegt).
+
+## Name (Mesuna, früher Mesia)
+
+Die App hieß bis Version 0.10.1 „Mesia“. Sichtbare Texte, Doku, CSS-Tokens (`--mesuna-*`), Cache-Name des Service
+Workers und Mitteilungs-Tag heißen jetzt „mesuna“. **Absichtlich geblieben** sind Bezeichner, die auf den Geräten
+gespeichert sind oder zum API-Protokoll gehören:
+
+| Bezeichner | Wo | Warum nicht umbenannt |
+|---|---|---|
+| IndexedDB `mesia` | `assets/shopping/core/db.js`, `logout_controller.js` | neue Datenbank wäre leer, die Outbox ginge verloren |
+| `localStorage` `mesia.storeFilter`, `mesia.installHintDismissed` | `list.js`, `install_hint_controller.js` | Einstellungen pro Gerät gingen verloren |
+| Header `X-Requested-With: mesia` | `ApiRequestGuard`, `api.js`, `push_settings_controller.js`, Tests | offene Seiten mit altem JavaScript würden abgewiesen |
+
+Der Service Worker räumt beim Aktivieren auch alte `mesia-*`-Caches weg. Das Original-PDF `MESIA_Brand_Book_v1.pdf`
+behält seinen Namen. Mit dem Namen kam das neue Logo (feine Bildmarke, Wortmarke „MESUNA“ in Manrope, App-Icon auf Ink, Brand Book 1.9),
+Archivo Black (`@fontsource/archivo-black`) ist entfernt.
 
 ## Version und Neuigkeiten
 

@@ -24,7 +24,7 @@ const LEAVE_MS = 250;
 const SETTLE_GUARD_MS = 500;
 /** Zweiter Tipp auf denselben Kreis so kurz danach: versehentlicher Doppeltipp, kein Rückgängig */
 const DOUBLE_TAP_MS = 500;
-/** Gewählter Laden-Filter, pro Gerät */
+/** Gewählter Laden-Filter, pro Gerät. Historischer Name aus der Zeit vor der Umbenennung in Mesuna. Nicht ändern: gespeichert auf den Geräten (localStorage). */
 const STORE_FILTER_KEY = 'mesia.storeFilter';
 
 function loadStoreFilter() {

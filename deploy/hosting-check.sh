@@ -5,7 +5,7 @@
 #   ssh -p 222 <benutzer>@<host> 'sh -s' < deploy/hosting-check.sh
 #
 # Liegt schon <basis>/shared/.env.local mit DATABASE_URL, wird auch PostgreSQL geprüft:
-#   ssh -p 222 <benutzer>@<host> 'sh -s -- ~/public_html/projects/mesia' < deploy/hosting-check.sh
+#   ssh -p 222 <benutzer>@<host> 'sh -s -- ~/public_html/projects/mesuna' < deploy/hosting-check.sh
 BASE=${1:-}
 
 section() { printf '\n== %s ==\n' "$1"; }

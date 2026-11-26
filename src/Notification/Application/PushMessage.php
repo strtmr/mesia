@@ -13,7 +13,7 @@ final readonly class PushMessage
         public string $title,
         public string $body,
         public string $url = '/einkauf',
-        public string $tag = 'mesia-einkauf',
+        public string $tag = 'mesuna-einkauf',
     ) {
     }
 

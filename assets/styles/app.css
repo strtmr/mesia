@@ -1,5 +1,5 @@
 /*
- * Mesia – Basis-Styles
+ * Mesuna – Basis-Styles
  *
  * Mobile-first, an iOS angelehnt. Wichtige iOS-Details (siehe docs/spezifikation-phase-0-1.md, Kapitel 7):
  * - Abstände zu Notch/Home-Indikator über env(safe-area-inset-*)
@@ -18,43 +18,34 @@
     src: url("../fonts/manrope-latin-wght.woff2") format("woff2-variations"), url("../fonts/manrope-latin-wght.woff2") format("woff2");
 }
 
-/* Archivo Black (OFL-1.1, assets/fonts/ARCHIVO-LICENSE.txt): nur für die Wortmarke "MESIA" und Merch */
-@font-face {
-    font-family: "Archivo Black";
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url("../fonts/archivo-black-latin.woff2") format("woff2");
-}
-
-/* ---------- Design-Tokens (Brand Book MESIA, Farbpalette angepasst) ---------- */
+/* ---------- Design-Tokens (Brand Book MESUNA, Farbpalette angepasst) ---------- */
 
 :root {
     color-scheme: light dark;
 
     /* Markenpalette */
-    --mesia-ink: #01161e;
-    --mesia-deep: #124559;
-    --mesia-slate: #598392;
-    --mesia-sage: #aec3b0;
-    --mesia-cream: #eff6e0;
+    --mesuna-ink: #01161e;
+    --mesuna-deep: #124559;
+    --mesuna-slate: #598392;
+    --mesuna-sage: #aec3b0;
+    --mesuna-cream: #eff6e0;
     /* Hintergrund im hellen Thema: warmes Papierweiß, ohne den Grünstich von Cream */
-    --mesia-paper: #f7f5ef;
+    --mesuna-paper: #f7f5ef;
     /* Signalfarbe: Aktionen, Häkchen, Schüssel der Bildmarke. Immer mit dunkler Schrift (Ink: 6,5:1) */
-    --mesia-orange: #ff6a2b;
+    --mesuna-orange: #ff6a2b;
 
     /* Rollen (helles Thema) */
-    --color-bg: var(--mesia-paper);
+    --color-bg: var(--mesuna-paper);
     --color-surface: #ffffff;
-    --color-text: var(--mesia-ink);
-    /* aus --mesia-slate abgedunkelt: erreicht 4,5:1 auf Creme und Weiß (WCAG AA) */
+    --color-text: var(--mesuna-ink);
+    /* aus --mesuna-slate abgedunkelt: erreicht 4,5:1 auf Creme und Weiß (WCAG AA) */
     --color-text-muted: #4a6b78;
     --color-separator: rgb(18 69 89 / 0.16);
-    --color-accent: var(--mesia-deep);
+    --color-accent: var(--mesuna-deep);
     --color-accent-contrast: #ffffff;
-    --color-accent-soft: var(--mesia-sage);
-    --color-action: var(--mesia-orange);
-    --color-action-contrast: var(--mesia-ink);
+    --color-accent-soft: var(--mesuna-sage);
+    --color-action: var(--mesuna-orange);
+    --color-action-contrast: var(--mesuna-ink);
     --color-danger: #c84b45;
     /* Bernstein: mindestens 3:1 auf Weiß und Creme (WCAG, grafische Hinweise wie der Punkt "ausstehend") */
     --color-warning: #b0740f;
@@ -63,9 +54,9 @@
     --color-success-text: #256b49;
     --color-danger-text: #a63a34;
     --color-tabbar-bg: rgb(247 245 239 / 0.88);
-    --color-toast-bg: var(--mesia-ink);
-    --color-toast-text: var(--mesia-cream);
-    --color-toast-action: var(--mesia-sage);
+    --color-toast-bg: var(--mesuna-ink);
+    --color-toast-text: var(--mesuna-cream);
+    --color-toast-action: var(--mesuna-sage);
     /* Pfeil auf/ab für Auswahlfelder (SVG kann keine CSS-Variablen lesen, daher je Thema eine Fassung) */
     --icon-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a6b78' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 9.5l4-4 4 4M8 14.5l4 4 4-4'/%3E%3C/svg%3E");
     --icon-select-accent: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23124559' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 9.5l4-4 4 4M8 14.5l4 4 4-4'/%3E%3C/svg%3E");
@@ -107,15 +98,15 @@
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --color-bg: var(--mesia-ink);
+        --color-bg: var(--mesuna-ink);
         /* zwischen Ink und Deep */
         --color-surface: #072633;
-        --color-text: var(--mesia-cream);
-        --color-text-muted: var(--mesia-sage);
+        --color-text: var(--mesuna-cream);
+        --color-text-muted: var(--mesuna-sage);
         --color-separator: rgb(174 195 176 / 0.18);
-        --color-accent: var(--mesia-sage);
-        --color-accent-contrast: var(--mesia-ink);
-        --color-accent-soft: var(--mesia-slate);
+        --color-accent: var(--mesuna-sage);
+        --color-accent-contrast: var(--mesuna-ink);
+        --color-accent-soft: var(--mesuna-slate);
         --color-danger: #ef7a73;
         --color-warning: #e6a23c;
         /* hell genug für Schrift auf der dunklen Fläche (heller als #32845d) */
@@ -123,9 +114,9 @@
         --color-success-text: var(--color-success);
         --color-danger-text: var(--color-danger);
         --color-tabbar-bg: rgb(7 38 51 / 0.88);
-        --color-toast-bg: var(--mesia-cream);
-        --color-toast-text: var(--mesia-ink);
-        --color-toast-action: var(--mesia-deep);
+        --color-toast-bg: var(--mesuna-cream);
+        --color-toast-text: var(--mesuna-ink);
+        --color-toast-action: var(--mesuna-deep);
         --icon-select: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23aec3b0' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 9.5l4-4 4 4M8 14.5l4 4 4-4'/%3E%3C/svg%3E");
         --icon-select-accent: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23aec3b0' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 9.5l4-4 4 4M8 14.5l4 4 4-4'/%3E%3C/svg%3E");
     }
@@ -209,7 +200,7 @@ a {
     min-width: 0;
 }
 
-/* Bildmarke neben dem Seitentitel: ohne Dampf, das M etwa so hoch wie die Großbuchstaben */
+/* Bildmarke neben dem Seitentitel, Fuß des M auf der Grundlinie */
 .app-header__mark {
     flex: none;
     width: auto;
@@ -322,9 +313,10 @@ a {
     flex-shrink: 0;
 }
 
+/* Wert immer rechts, direkt vor dem Pfeil (sonst schiebt space-between ihn bei Link-Zeilen in die Mitte) */
 .list-group__row dd,
 .list-group__value {
-    margin: 0;
+    margin: 0 0 0 auto;
     overflow: hidden;
     color: var(--color-text-muted);
     text-align: right;
@@ -660,44 +652,46 @@ a {
     text-align: left;
 }
 
-/* Bildmarke, flache Variante (Seitenkopf): M in Akzentfarbe, Schüssel in Signalfarbe.
-   Die Sticker-Variante hat feste Farben im Template. */
+/* Bildmarke (Seitenkopf und Login): Tischplatte und M als Linie in Akzentfarbe, Schüssel in Signalfarbe */
 .brand-mark__table {
-    fill: var(--color-accent);
+    stroke: var(--color-accent);
 }
 
 @media (prefers-color-scheme: dark) {
     .brand-mark__table {
-        fill: var(--mesia-cream);
+        stroke: var(--mesuna-cream);
     }
 }
 
 .brand-mark__bowl {
-    fill: var(--mesia-orange);
+    fill: var(--mesuna-orange);
 }
 
-/* Wortmarke: "MESIA" in Archivo Black, Versalien */
+/* Wortmarke: "MESUNA" in Manrope 400, Versalien mit weiter Laufweite. Im HTML steht "Mesuna" (Screenreader),
+   text-indent gleicht die Laufweite hinter dem letzten Buchstaben aus, damit das Wort mittig steht. */
 .wordmark {
-    font-family: "Archivo Black", var(--font-system);
+    font-family: var(--font-system);
     font-weight: 400;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.28em;
+    text-indent: 0.28em;
     text-transform: uppercase;
 }
 
 .login__mark {
-    width: 132px;
+    width: 120px;
     height: auto;
 }
 
+/* Proportionen wie im Logo: Wortmarke etwa 1,75-mal so breit wie die Bildmarke */
 .login__title {
-    margin: var(--space-3) 0 0;
+    margin: var(--space-5) 0 0;
     color: var(--color-text);
-    font-size: 44px;
+    font-size: 40px;
     line-height: 1;
 }
 
 .login__claim {
-    margin: var(--space-1) 0 var(--space-5);
+    margin: var(--space-3) 0 var(--space-5);
     color: var(--color-text-muted);
     font-size: 15px;
     font-weight: 500;

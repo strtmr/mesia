@@ -1,4 +1,4 @@
-# Mesia
+# Mesuna
 
 Essensplanung und gemeinsame, offlinefähige Einkaufsliste als PWA. Lernprojekt mit Symfony.
 

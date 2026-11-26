@@ -1,35 +1,12 @@
 {#
-    MESIA Bildmarke: M als Tisch, darauf eine Schüssel (Brand Book Kapitel 3).
-
-    variant:
-      "sticker" (Standard)  große Darstellungen (Login): Creme mit Ink-Kontur, Versatz in Deep, leicht gedreht
-      "flat"                kleine Darstellungen (Seitenkopf): ohne Kontur und Versatz, M in Akzentfarbe
-
-    Farben der flachen Variante: .brand-mark__table / .brand-mark__bowl in app.css (Dark Mode automatisch).
-    Die Formen sind dieselben wie in public/icons/*.svg.
+    Mesuna Bildmarke: M als Tisch, darauf eine Schüssel (Brand Book Kapitel 3). Flach, alle Linien gleich stark.
+    Tischplatte und M sind Linien (stroke), Farben per CSS: .brand-mark__table (Akzentfarbe, dunkel Creme),
+    .brand-mark__bowl (Signal-Orange). Dieselben Formen stehen in public/icons/*.svg und scripts/render-splash.mjs.
 #}
-{% set bowl = 'M168 176 H344 C344 216 304 236 256 236 C208 236 168 216 168 176 Z' %}
-{% set m = 'M124 428 V306 Q124 278 152 278 H200 Q210 278 216 286 L256 338 L296 286 Q302 278 312 278 H360 Q388 278 388 306 V428 H322 V364 L268 418 Q256 432 244 418 L190 364 V428 Z' %}
-{% set css_class = 'brand-mark' ~ (class is defined ? ' ' ~ class : '') %}
-{% if variant|default('sticker') == 'flat' %}
-<svg class="{{ css_class }} brand-mark--flat" viewBox="100 172 312 256" aria-hidden="true" focusable="false">
-    <path class="brand-mark__bowl" d="{{ bowl }}"/>
-    <rect class="brand-mark__table" x="100" y="240" width="312" height="32" rx="16"/>
-    <path class="brand-mark__table" d="{{ m }}"/>
-</svg>
-{% else %}
-<svg class="{{ css_class }} brand-mark--sticker" viewBox="70 140 380 330" aria-hidden="true" focusable="false">
-    <g transform="rotate(-5 256 300)" stroke-width="22" stroke-linejoin="round" paint-order="stroke">
-        {# Versatz (Schatten) #}
-        <g transform="translate(14 14)" fill="#124559" stroke="#124559">
-            <path d="{{ bowl }}"/>
-            <rect x="100" y="240" width="312" height="32" rx="16"/>
-            <path d="{{ m }}"/>
-        </g>
-        {# Zeichen mit Kontur #}
-        <path d="{{ bowl }}" fill="#ff6a2b" stroke="#01161e"/>
-        <rect x="100" y="240" width="312" height="32" rx="16" fill="#eff6e0" stroke="#01161e"/>
-        <path d="{{ m }}" fill="#eff6e0" stroke="#01161e"/>
+<svg class="brand-mark{{ class is defined ? ' ' ~ class : '' }}" viewBox="0 0 370 290" aria-hidden="true" focusable="false">
+    <path class="brand-mark__bowl" d="M82 2 H288 A103 65 0 0 1 82 2 Z"/>
+    <g class="brand-mark__table" fill="none" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="10" y1="92.5" x2="360" y2="92.5"/>
+        <polyline points="45,279 45,129 185,227 325,129 325,279"/>
     </g>
 </svg>
-{% endif %}

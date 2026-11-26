@@ -32,7 +32,7 @@
 
 ### Issue tracker
 
-Tickets liegen als GitHub Issues in `strtmr/mesia` (per `gh`). Siehe `docs/agents/issue-tracker.md`.
+Tickets liegen als GitHub Issues in `strtmr/mesuna` (per `gh`). Siehe `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 

@@ -15,6 +15,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * Ein fremdes Formular kann keinen eigenen Header setzen, und fremde Skripte scheitern an CORS. Zusammen mit dem
  * SameSite=Lax-Cookie genügt das ohne Token.
+ *
+ * Der Wert "mesia" stammt aus der Zeit vor der Umbenennung in Mesuna. Nicht ändern: Bereits geladene Seiten mit
+ * altem JavaScript würden sonst bis zum Neuladen abgewiesen.
  */
 #[AsEventListener(event: KernelEvents::REQUEST, priority: 30)]
 final readonly class ApiRequestGuard

@@ -6,7 +6,7 @@
 # Umgebungsvariablen (in GitHub Actions aus den Variablen der Umgebung "production"):
 #   DEPLOY_HOST, DEPLOY_USER   SSH-Zugang (Schlüssel muss im ssh-agent bzw. in ~/.ssh liegen)
 #   DEPLOY_PORT                SSH-Port (Hetzner Webhosting: 222)
-#   DEPLOY_PATH                Basisverzeichnis auf dem Server, z. B. /usr/home/<benutzer>/public_html/projects/mesia
+#   DEPLOY_PATH                Basisverzeichnis auf dem Server, z. B. /usr/home/<benutzer>/public_html/projects/mesuna
 #   DEPLOY_PHP                 PHP-CLI auf dem Server (Standard: php), Version muss zur Web-PHP-Version passen
 #   APP_URL                    optional: https://… für den Test nach dem Live-Schalten (sonst Rollback)
 set -euo pipefail

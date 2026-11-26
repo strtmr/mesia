@@ -1,5 +1,6 @@
 import { Controller } from '@hotwired/stimulus';
 
+// Historischer Name aus der Zeit vor der Umbenennung in Mesuna. Nicht ändern: gespeichert auf den Geräten (localStorage).
 const STORAGE_KEY = 'mesia.installHintDismissed';
 
 /**

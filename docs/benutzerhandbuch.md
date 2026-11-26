@@ -1,6 +1,6 @@
 # Benutzerhandbuch
 
-Mesia ist eine gemeinsame Einkaufsliste für euren Haushalt, später auch für die Essensplanung. Die App läuft im
+Mesuna (bis Version 0.10 „Mesia“) ist eine gemeinsame Einkaufsliste für euren Haushalt, später auch für die Essensplanung. Die App läuft im
 Browser und lässt sich auf dem iPhone wie eine normale App installieren.
 
 > **Stand:** Die gemeinsame Einkaufsliste funktioniert, auch ohne Verbindung, und die Kategorien lassen sich verwalten.
@@ -28,9 +28,10 @@ Danach startet die App vom Home-Bildschirm ohne Browserleiste. Wichtig: Die inst
 Speicher, du musst dich dort **einmal neu anmelden** und die Einkaufsliste einmal mit Verbindung öffnen. Danach
 startet sie auch im Funkloch. iOS bewahrt die Daten installierter Apps zuverlässiger auf als die von Safari.
 
-Beim Start zeigt die App kurz das Mesia-Logo auf hellem Grund (im dunklen Modus auf dunklem Grund). Siehst du
+Beim Start zeigt die App kurz das Mesuna-Logo auf hellem Grund (im dunklen Modus auf dunklem Grund). Siehst du
 stattdessen einen weißen Bildschirm, wurde die App vor Version 0.10.1 installiert: App vom Home-Bildschirm löschen
-und wie oben neu hinzufügen. Die Einkaufsliste bleibt erhalten, sie liegt auf dem Server.
+und wie oben neu hinzufügen. Die Einkaufsliste bleibt erhalten, sie liegt auf dem Server. Genauso zeigt eine vor
+Version 0.11.0 installierte App noch das alte Symbol mit dem dicken Sticker-M, bis du sie neu hinzufügst.
 
 ## Bereiche
 
@@ -151,7 +152,7 @@ dem anderen Gerät.
 ## Mitteilungen
 
 Unter **Mehr → Mitteilungen** schaltest du ein, dass dein Gerät Bescheid gibt, wenn **jemand anderes** etwas auf
-die Liste setzt. Was du selbst einträgst, meldet Mesia dir nicht. Beim ersten Einschalten fragt das Gerät, ob Mesia
+die Liste setzt. Was du selbst einträgst, meldet Mesuna dir nicht. Beim ersten Einschalten fragt das Gerät, ob Mesuna
 Mitteilungen senden darf: mit „Erlauben“ bestätigen.
 
 - **Pro Gerät:** Die Einstellung gilt nur für das Gerät, auf dem du sie triffst. Handy und Tablet schaltest du
@@ -163,4 +164,4 @@ Mitteilungen senden darf: mit „Erlauben“ bestätigen.
 - **iPhone:** Mitteilungen gibt es nur in der **installierten App** (siehe „Auf dem iPhone installieren“), nicht in
   Safari. Voraussetzung ist iOS 16.4 oder neuer.
 - **Ausschalten:** Schalter wieder aus. Wurden Mitteilungen einmal abgelehnt, lassen sie sich nur in den
-  Einstellungen des Geräts wieder erlauben (iPhone: Einstellungen → Mitteilungen → Mesia).
+  Einstellungen des Geräts wieder erlauben (iPhone: Einstellungen → Mitteilungen → Mesuna).

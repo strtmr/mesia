@@ -62,9 +62,9 @@ final class SecurityTest extends WebTestCase
             self::assertFileExists(\dirname(__DIR__, 2).'/public'.$href);
         }
         self::assertSelectorExists('meta[name="viewport"][content*="viewport-fit=cover"]');
-        self::assertSelectorTextContains('h1.wordmark', 'mesia');
+        self::assertSelectorTextContains('h1.wordmark', 'Mesuna');
         self::assertSelectorTextContains('.login__claim', 'Life, intelligently connected.');
-        self::assertSelectorTextContains('.login__about', 'Was ist Mesia?');
+        self::assertSelectorTextContains('.login__about', 'Was ist Mesuna?');
     }
 
     public function testWrongPasswordShowsAnError(): void

@@ -1,4 +1,4 @@
-# MESIA Brand Book
+# Mesuna Brand Book
 
 > **Life, intelligently connected.**
 > Make life simpler. Connect everything that matters.
@@ -13,6 +13,7 @@ werden (und umgekehrt).
 | Version | Datum | Änderung |
 |---|---|---|
 | 1.0 | – | PDF: Markenidee, Logo-Konzept, Startpalette, Typografie, Tokens |
+| 1.9 | 2026-11-26 | Umbenennung von MESIA in Mesuna, Tokens `--mesuna-*`. Logo nach Vorlage `docs/brand/mesuna-logo.png`: Bildmarke aus feinen, gleich starken Linien statt Sticker, Wortmarke „MESUNA“ in Manrope 400 mit weiter Laufweite statt Archivo Black, App-Icon auf Ink statt Deep |
 | 1.8 | 2026-11-25 | Startbild für die installierte App (iOS) |
 | 1.7 | 2026-11-24 | Hintergrund hell: Paper `#f7f5ef` statt Cream, dunklere Schrift auf getönten Etiketten |
 | 1.6 | 2026-11-24 | Läden: Chips (Filter und Auswahl), Datumsmarkierung heute/abgelaufen, Erfolgsfarbe im Dunkelmodus |
@@ -26,7 +27,7 @@ werden (und umgekehrt).
 
 ## 1. Überblick
 
-MESIA ist als skalierbare digitale Produktmarke gedacht, nicht nur als Meal-Planning- oder Einkaufslisten-App. Der
+Mesuna ist als skalierbare digitale Produktmarke gedacht, nicht nur als Meal-Planning- oder Einkaufslisten-App. Der
 Einstieg liegt bei Einkauf, Rezepten und Planung, die Markenidee bleibt offen für weitere Alltagsfunktionen.
 
 - **Markenidee:** Technologie verbindet Dinge, die im Alltag zusammengehören, und nimmt unnötige Organisation aus dem Weg.
@@ -38,19 +39,19 @@ Einstieg liegt bei Einkauf, Rezepten und Planung, die Markenidee bleibt offen f�
 
 | Element | Stand |
 |---|---|
-| Name | MESIA, Wortmarke in Versalien „MESIA“ **(geändert)** |
+| Name | **(geändert)** Mesuna (im PDF noch MESIA). Herleitung: „mesa“ (Tisch) + „una“ (eins), ein Tisch für den ganzen Haushalt |
 | Claim | „Life, intelligently connected.“ (exakt so) |
-| Bildmarke | M als Tisch mit Schüssel, **(geändert)** kräftiges Sticker-M mit Kontur und Versatz, siehe Kapitel 3 |
-| App-Icon | Deep, Sticker-M in Creme, Schüssel in Signal-Orange |
+| Bildmarke | M als Tisch mit Schüssel, **(geändert)** fein und flach aus Linien, siehe Kapitel 3 |
+| App-Icon | **(geändert 1.9)** Ink, M und Tischplatte in Creme, Schüssel in Signal-Orange (wie die Logo-Vorlage) |
 | Farben | **(geändert)** eigene Palette plus Signal-Orange, siehe Kapitel 5 |
-| Typografie | Manrope für die App, **(neu)** Archivo Black für Wortmarke und Merch |
-| Markenrecht, Domain | noch nicht geprüft (App läuft unter mesia.strtmr.de) |
+| Typografie | Manrope für App und **(geändert)** Wortmarke „MESUNA“ |
+| Markenrecht, Domain | Stand 2026-11-25: keine Marke „Mesuna“ gefunden (nur US-Register geprüft, DPMA/EUIPO offen). mesuna.de und mesuna.app frei, mesuna.com vergeben (ohne Website). App läuft unter mesuna.strtmr.de |
 
 ---
 
 ## 2. Markenpersönlichkeit und Ton
 
-MESIA wirkt intelligent, ohne kühl oder kompliziert zu sein.
+Mesuna wirkt intelligent, ohne kühl oder kompliziert zu sein.
 
 | Eigenschaft | Bedeutung |
 |---|---|
@@ -81,41 +82,46 @@ Kurz, klar, freundlich und lösungsorientiert. Wie ein kompetenter Begleiter: hi
 
 ## 3. Logo-System
 
-Die Bildmarke verbindet drei Ebenen: Das M bildet das Tischgestell, die Schüssel steht für Mahlzeiten, die
-**(neu)** Sticker-Anmutung (Kontur, Versatz, leichte Drehung) bringt Streetstyle für die Zielgruppe Eltern 30–45.
+Die Bildmarke verbindet zwei Ebenen: Das M bildet das Tischgestell, die Schüssel steht für Mahlzeiten. **(geändert
+1.9)** Flach und fein statt Sticker: keine Kontur, kein Versatz, keine Drehung. Die Marke soll erwachsen und ruhig
+wirken, nicht comichaft. **Vorlage:** `docs/brand/mesuna-logo.png` (Bildmarke über Wortmarke auf Ink). Die SVG-Fassung
+in der App ist daraus nachgemessen.
 
-### Bildmarke (geändert: Sticker-M)
+### Bildmarke (geändert: fein)
 
-- **Aufbau:** kräftiges M als Tischgestell (breite Beine, V-Kerbe von oben, die Tischplatte liegt auf den
-  Schultern), dicke gerade Tischplatte mit runden Enden, darauf eine Schüssel. **Kein Dampf mehr:** Dampflinien
-  erinnerten zu sehr an das Java-Logo. Die Wärme trägt jetzt die Farbe der Schüssel (Signal-Orange).
-- **Sticker:** Creme mit Kontur in Ink, Versatz (Schatten) in Deep nach rechts unten, um 5° gegen den Uhrzeigersinn
-  gedreht. Auf dunklem Grund ist der Versatz Ink.
-- **Proportionen** (512er-Raster): Tischplatte 312 × 32, M 264 × 150, Schüssel 176 × 60, Kontur 11, Versatz 14.
+- **Aufbau:** M aus feinen, gleich starken Linien als Tischgestell (senkrechte Beine, V-Kerbe von den oberen Ecken
+  bis etwa 60 % der Höhe), darüber eine Tischplatte als Linie gleicher Stärke mit runden Enden, darauf eine Schüssel
+  als flache Halbellipse (oben gerade). Alle Enden und Ecken rund. **Kein Dampf:** Dampflinien erinnerten zu sehr an das Java-Logo, die Wärme trägt die Farbe der Schüssel.
+- **Farben:** Tischplatte und M in Deep (dunkel: Creme), Schüssel immer Signal-Orange. Auf dem App-Icon Creme auf Ink.
+- **Proportionen** (Zeichenfläche 370 × 290): alle Linien 16 stark. Tischplatte 366 lang (mit runden Enden), Schüssel
+  206 × 65, M 296 × 166 (Beine bei x 45 und 325, V-Spitze bei y 227). Abstand Schüssel–Platte 17, Platte–M 21.
+- **Favicon:** dieselbe Form, Linien deutlich kräftiger (Platte 40, M 48) und das M etwas schmaler, damit sie bei
+  16 px lesbar bleibt.
 
-### Größenstufen
+### Einsatz
 
-| Stufe | Größe | Gestaltung | Einsatz | Datei |
-|---|---|---|---|---|
-| Sticker | ab ca. 80 px | Kontur, Versatz, Drehung | Login, App-Icon, Merch | `templates/app/_brand_mark.html.twig` (Standard), `public/icons/icon.svg` |
-| Kontur | 32–80 px | Kontur ohne Versatz und Drehung | Favicon | `public/icons/favicon.svg` |
-| Flach | bis ca. 40 px in der App | ohne Kontur: M in Akzentfarbe (Deep, dunkel: Creme), Schüssel Signal-Orange | Seitenkopf | `_brand_mark.html.twig` mit `variant: 'flat'` |
-
-Im Seitenkopf steht die flache Bildmarke 30 px hoch links neben dem Titel, der Fuß des M auf der Grundlinie.
+| Einsatz | Größe | Datei |
+|---|---|---|
+| Login | 120 px breit | `templates/app/_brand_mark.html.twig` (Farben per CSS `.brand-mark__table` / `.brand-mark__bowl`) |
+| Seitenkopf | 30 px hoch, links neben dem Titel, Fuß des M auf der Grundlinie | dasselbe Template |
+| App-Icon, Startbild | siehe Kapitel 4 | `public/icons/*.svg`, `scripts/render-splash.mjs` |
 
 ### Wortmarke und Claim
 
-- **(geändert)** **MESIA** in **Archivo Black**, Versalien, Laufweite +0,01 em. Im HTML steht „mesia“, die Versalien
-  kommen aus CSS (`.wordmark`), damit Screenreader den Namen normal vorlesen.
+- **(geändert)** „MESUNA“ in Versalien, **Manrope 400**, Laufweite +0,28 em. Kein Farbakzent und kein Punkt: Das
+  Orange gehört der Schüssel. Im HTML steht „Mesuna“, die Versalien kommen aus CSS (`.wordmark`), damit Screenreader
+  den Namen normal vorlesen.
+- **Logo (Bildmarke über Wortmarke):** Die Wortmarke ist etwa 1,75-mal so breit wie die Bildmarke, Abstand dazwischen
+  etwa ein Viertel der Bildmarkenbreite. Beides zentriert.
 - Farbe: Ink auf hellem, Creme auf dunklem Grund. Auf Signal-Orange immer Ink.
+- Im Fließtext heißt die App „Mesuna“ (groß geschrieben, wie ein Name).
 - Claim exakt: „Life, intelligently connected.“, Manrope Medium, gedämpfte Textfarbe.
 
 ### Schutzraum und Verwendung
 
 - Rund um das Logo mindestens die Höhe der Schüssel frei lassen.
-- Nicht stauchen, mit Illustrationen kombinieren, mit zusätzlichen Effekten (Verläufe, weiche Schatten) versehen oder
-  außerhalb der Palette umfärben. Die Drehung ist Teil des Zeichens, nicht weiter drehen.
-- Sticker-Look nur für Marke und Merch, nicht für Bedienelemente der App.
+- Nicht stauchen, drehen, mit Illustrationen kombinieren, mit Effekten (Konturen, Verläufe, Schatten) versehen oder
+  außerhalb der Palette umfärben.
 
 ---
 
@@ -128,15 +134,16 @@ Im Seitenkopf steht die flache Bildmarke 30 px hoch links neben dem Titel, der F
 | `public/icons/icon-192.png`, `icon-512.png` | 192, 512 | aus `icon.svg` |
 | `public/icons/icon-maskable-512.png` | 512 | aus `icon-maskable.svg` |
 | `public/icons/apple-touch-icon.png` | 180 | randlos, ohne Transparenz (iOS rundet selbst ab) |
-| `public/icons/favicon.svg` | Vektor | Stufe Kontur (ohne Versatz und Drehung), Zeichen vergrößert |
+| `public/icons/favicon.svg` | Vektor | Zeichen vergrößert, Linien kräftiger (Kapitel 3) |
 | `public/favicon.ico` | 16, 32, 48 | aus `favicon.svg` |
 
-**Regeln:** nur das Symbol, ohne Wortmarke und Claim. Hintergrund Deep. Das M muss in kleinen Größen klar
-erkennbar bleiben (Größenstufen in Kapitel 3). PNGs und `favicon.ico` neu erzeugen: `ddev exec node
-scripts/render-icons.mjs` (rendert mit Chromium, weil ImageMagick die Kontur nicht darstellt).
+**Regeln:** nur das Symbol, ohne Wortmarke und Claim. **(geändert 1.9)** Hintergrund Ink wie die Logo-Vorlage, M und
+Tischplatte Creme, Schüssel Signal-Orange. Bildmarke 300 von 512 breit (randlos: 280). Das M muss in kleinen Größen klar erkennbar bleiben. PNGs und `favicon.ico` neu erzeugen: `ddev exec
+node scripts/render-icons.mjs` (rendert mit Chromium).
 
-**Startbild (iOS):** Hintergrund Paper (dunkel: Ink), Sticker-Bildmarke mit Versatz in Deep, 46 % der
-Bildschirmbreite, darunter die Wortmarke (Ink, dunkel: Cream), Gruppe leicht über der Mitte. Erzeugt von `ddev exec
+**Startbild (iOS):** Hintergrund Paper (dunkel: Ink), Bildmarke in Deep (dunkel: Creme), 36 % der
+Bildschirmbreite, darunter die Wortmarke „MESUNA“ (Ink, dunkel: Cream) in den Proportionen des Logos, Gruppe leicht
+über der Mitte. Erzeugt von `ddev exec
 node scripts/render-splash.mjs` nach `public/splash/`.
 
 **Offen:** Masterdatei 1024 × 1024 px für App-Stores, Monochrom-Varianten (dunkel, weiß), Social-Preview-Bild.
@@ -153,13 +160,13 @@ genau eine Signalfarbe dazu: Signal-Orange.
 
 | Name | Hex | Token | Rolle |
 |---|---|---|---|
-| Ink | `#01161e` | `--mesia-ink` | Text (hell), Hintergrund (dunkel) |
-| Deep | `#124559` | `--mesia-deep` | Primäre Markenfarbe: Links, Überschriften, Bildmarke im Kopf, Versatz des Stickers, App-Icon-Grund |
-| Slate | `#598392` | `--mesia-slate` | Sekundär: Dekor, nicht für kleinen Text auf hellem Grund |
-| Sage | `#aec3b0` | `--mesia-sage` | Akzentfarbe im Dark Mode (Links, Überschriften) |
-| Cream | `#eff6e0` | `--mesia-cream` | Text (dunkel), Hinweise, Fläche der Sticker-Bildmarke |
-| Paper | `#f7f5ef` | `--mesia-paper` | **(neu)** Hintergrund im hellen Thema: warmes Papierweiß ohne Grünstich |
-| Signal-Orange | `#ff6a2b` | `--mesia-orange` | **(neu)** Aktionen (Knöpfe, Plus, Häkchen), Schüssel der Bildmarke, Merch |
+| Ink | `#01161e` | `--mesuna-ink` | Text (hell), Hintergrund (dunkel), App-Icon-Grund |
+| Deep | `#124559` | `--mesuna-deep` | Primäre Markenfarbe: Links, Überschriften, Bildmarke auf hellem Grund |
+| Slate | `#598392` | `--mesuna-slate` | Sekundär: Dekor, nicht für kleinen Text auf hellem Grund |
+| Sage | `#aec3b0` | `--mesuna-sage` | Akzentfarbe im Dark Mode (Links, Überschriften) |
+| Cream | `#eff6e0` | `--mesuna-cream` | Text (dunkel), Hinweise, Bildmarke auf dunklem Grund und auf dem App-Icon |
+| Paper | `#f7f5ef` | `--mesuna-paper` | **(neu)** Hintergrund im hellen Thema: warmes Papierweiß ohne Grünstich |
+| Signal-Orange | `#ff6a2b` | `--mesuna-orange` | **(neu)** Aktionen (Knöpfe, Plus, Häkchen), Schüssel der Bildmarke, Merch |
 
 ### Rollen (Tokens in der App)
 
@@ -199,15 +206,15 @@ Statusfarben dürfen nicht mit der Markenfarbe verwechselt werden.
 
 ## 6. Typografie
 
-UI-Schrift: **Manrope** (variabel, Schnitte 200–800), Alternative Inter. **(neu)** Wortmarke und Merch:
-**Archivo Black**. Beide selbst ausgeliefert aus `assets/fonts/` (Lizenz OFL-1.1, Quelle npm `@fontsource`), kein
-Abruf bei Google: Datenschutz und offline verfügbar. Archivo Black nur für „MESIA“ und Merch, nie für Fließtext.
+UI-Schrift: **Manrope** (variabel, Schnitte 200–800), Alternative Inter. **(geändert 1.9)** Auch die Wortmarke ist
+Manrope (600), Archivo Black ist entfallen. Selbst ausgeliefert aus `assets/fonts/` (Lizenz OFL-1.1, Quelle npm
+`@fontsource`), kein Abruf bei Google: Datenschutz und offline verfügbar.
 
 ### Skala in der App (geändert: kompakter als im PDF)
 
 | Stil | Größe | Schnitt | Einsatz |
 |---|---|---|---|
-| Wortmarke „MESIA“ | 44 px | Archivo Black | Login |
+| Wortmarke „MESUNA“ | 40 px | 400, Laufweite +0,28 em | Login |
 | H1 Seitentitel | 28 px | 700 | „Einkauf“, „Mehr“ (PDF: 30–32 px) |
 | H2 Abschnitt | 17–18 px | 700 | Hilfe (18), Neuigkeiten (17) |
 | Kategorie-Überschrift | 16 px | 700, Akzentfarbe | Gruppen der Einkaufsliste |
@@ -257,7 +264,7 @@ nicht benötigt.
 | `--list-row` | 44 px, Touch 50 px | Mindesthöhe einer Zeile der Einkaufsliste (`pointer: coarse` = Touch) |
 | `--check-column` | 44 px, Touch 52 px | Spalte mit dem Abhak-Kreis, ab ihr beginnt die Trennlinie |
 | Abhak-Kreis | 22 px | mittig in der Kreisspalte |
-| Bildmarke im Kopf | 30 px hoch | kompakte Variante |
+| Bildmarke im Kopf | 30 px hoch | |
 
 ### Radien
 
@@ -275,7 +282,7 @@ nicht benötigt.
 |---|---|
 | Primärknopf | Signal-Orange, Schrift Ink, 44 px hoch, Radius 10 |
 | Destruktiver Knopf | Fehlerfarbe, bei kritischen Aktionen Rückfrage (Kategorie löschen) |
-| Listengruppe | weiße Karte (Radius 14), Zeilen 44 px, Trennlinie ab der Textspalte |
+| Listengruppe | weiße Karte (Radius 14), Zeilen 44 px, Trennlinie ab der Textspalte. Beschriftung links, Wert gedämpft rechtsbündig direkt vor dem Pfeil › |
 | Zeile der Einkaufsliste | Kreis, Name und Menge sind eine Trefferfläche zum Abhaken (beim Drücken grau hinterlegt), rechts „›“ (52 px breit, 8 px Abstand zur Menge, gedämpft) öffnet das Bearbeiten-Fenster |
 | Kategorie-Überschrift | Emoji + Name, 16 px fett in Akzentfarbe, 6 px über der Gruppe |
 | Eingabeleiste | unten fixiert, über der Tastatur, Feld rund, Plus-Knopf rund in Signal-Orange (Plus in Ink) |
@@ -296,7 +303,7 @@ nicht benötigt.
 
 ## 8. Produkterlebnis
 
-MESIA wirkt wie ein intelligenter Begleiter, der Zusammenhänge erkennt und Arbeit abnimmt. KI ist eine Fähigkeit des
+Mesuna wirkt wie ein intelligenter Begleiter, der Zusammenhänge erkennt und Arbeit abnimmt. KI ist eine Fähigkeit des
 Produkts, kein dekoratives Label.
 
 1. Überblick geben. 2. Gute Vorschläge machen. 3. Entscheidungen vereinfachen. 4. Zusammenhängende Abläufe
@@ -327,7 +334,8 @@ respektieren, Trefferflächen mindestens 44 × 44 px.
 | Ink auf Signal-Orange (Primärknopf, Häkchen) | 6,5:1 | ✓ |
 | Weiß auf Signal-Orange | 2,9:1 | ✗, deshalb nicht verwenden |
 | Signal-Orange auf Paper (als Text) | 2,6:1 | ✗, nur Flächen und Grafik |
-| Creme auf Deep (App-Icon, Sticker) | 9,4:1 | ✓ |
+| Creme auf Deep | 9,4:1 | ✓ |
+| Creme auf Ink (App-Icon) | 16,7:1 | ✓ |
 | Fehlerfarbe auf Weiß, Weiß auf Fehlerfarbe | 4,6:1 | ✓ |
 | Dunkel: Cream auf Ink / auf Surface | 16,7:1 / 14,2:1 | ✓ |
 | Dunkel: Sage auf Ink / auf Surface | 9,9:1 / 8,4:1 | ✓ |
@@ -346,22 +354,22 @@ Tokens, keine eigenen Farben, Radien oder Abstände. Auszug (helles Thema):
 
 ```css
 :root {
-    --mesia-ink: #01161e;
-    --mesia-deep: #124559;
-    --mesia-slate: #598392;
-    --mesia-sage: #aec3b0;
-    --mesia-cream: #eff6e0;
-    --mesia-paper: #f7f5ef;
-    --mesia-orange: #ff6a2b;
+    --mesuna-ink: #01161e;
+    --mesuna-deep: #124559;
+    --mesuna-slate: #598392;
+    --mesuna-sage: #aec3b0;
+    --mesuna-cream: #eff6e0;
+    --mesuna-paper: #f7f5ef;
+    --mesuna-orange: #ff6a2b;
 
-    --color-bg: var(--mesia-paper);
+    --color-bg: var(--mesuna-paper);
     --color-surface: #ffffff;
-    --color-text: var(--mesia-ink);
+    --color-text: var(--mesuna-ink);
     --color-text-muted: #4a6b78;
-    --color-accent: var(--mesia-deep);
+    --color-accent: var(--mesuna-deep);
     --color-accent-contrast: #ffffff;
-    --color-action: var(--mesia-orange);
-    --color-action-contrast: var(--mesia-ink);
+    --color-action: var(--mesuna-orange);
+    --color-action-contrast: var(--mesuna-ink);
     --color-danger: #c84b45;
     --color-warning: #b0740f;
     --color-success: #32845d;
@@ -393,10 +401,11 @@ Das dunkle Thema überschreibt die Rollen unter `@media (prefers-color-scheme: d
 | 2 | Wortmarke als eigene Vektordatei (statt Schrift) | offen |
 | 3 | Desktop-Ansicht: Seitennavigation, breitere Inhalte | offen |
 | 4 | Erfolgsfarbe festlegen oder streichen (Synchron nutzt Akzentfarbe) | offen |
-| 5 | Marke, Domains und App-Stores recherchieren | offen |
+| 5 | Marke prüfen (DPMA, EUIPO), Domain mesuna.de, App-Stores | teilweise (1.9: US-Marken, Domains) |
 | – | Bildmarke als SVG | erledigt (1.1) |
 | – | Manrope eingebunden, Typografie abgestimmt | erledigt (1.1) |
 | – | Design Tokens umgesetzt | erledigt (1.1) |
 | – | Kontraste geprüft | erledigt (1.1) |
 | – | Warnpunkt auf mindestens 3:1 (`#b0740f` hell) | erledigt (1.2) |
-| – | Streetstyle: Signal-Orange, Sticker-Bildmarke, Archivo Black | erledigt (1.3) |
+| – | Streetstyle: Signal-Orange, Sticker-Bildmarke, Archivo Black | erledigt (1.3), Sticker und Archivo Black in 1.9 ersetzt |
+| – | Name Mesuna, Logo nach Vorlage (feine Bildmarke, Wortmarke „MESUNA“ in Manrope) | erledigt (1.9) |

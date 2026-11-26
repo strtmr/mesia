@@ -9,7 +9,7 @@
  */
 
 const VERSION = {{ version|json_encode|raw }};
-const CACHE_NAME = `mesia-${VERSION}`;
+const CACHE_NAME = `mesuna-${VERSION}`;
 const SHELL_URL = {{ shell_url|json_encode(constant('JSON_UNESCAPED_SLASHES'))|raw }};
 const OFFLINE_URL = '/offline.html';
 const ASSETS = {{ assets|json_encode(constant('JSON_UNESCAPED_SLASHES'))|raw }};
@@ -36,7 +36,8 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
     event.waitUntil((async () => {
         const keys = await caches.keys();
-        await Promise.all(keys.filter((key) => key.startsWith('mesia-') && key !== CACHE_NAME).map((key) => caches.delete(key)));
+        // "mesia-": Caches aus der Zeit vor der Umbenennung (bis 0.10.1)
+        await Promise.all(keys.filter((key) => (key.startsWith('mesuna-') || key.startsWith('mesia-')) && key !== CACHE_NAME).map((key) => caches.delete(key)));
         await self.clients.claim();
     })());
 });
@@ -127,9 +128,9 @@ self.addEventListener('push', (event) => {
     } catch {
         data = { body: event.data?.text() ?? '' };
     }
-    event.waitUntil(self.registration.showNotification(data.title ?? 'Mesia', {
+    event.waitUntil(self.registration.showNotification(data.title ?? 'Mesuna', {
         body: data.body ?? '',
-        tag: data.tag ?? 'mesia',
+        tag: data.tag ?? 'mesuna',
         renotify: true,
         icon: '/icons/icon-192.png',
         badge: '/icons/icon-192.png',

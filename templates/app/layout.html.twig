@@ -10,7 +10,7 @@
     <div class="app">
         <header class="app-header">
             <div class="app-header__brand">
-                {{ include('app/_brand_mark.html.twig', {class: 'app-header__mark', variant: 'flat'}) }}
+                {{ include('app/_brand_mark.html.twig', {class: 'app-header__mark'}) }}
                 <h1 class="app-header__title">{% block page_title %}{% endblock %}</h1>
             </div>
             <div class="app-header__actions">{% block header_actions %}{% endblock %}</div>

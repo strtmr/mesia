@@ -1,7 +1,7 @@
 # Alle UI-Texte. Deutsch ist vorerst die einzige Sprache, eine englische Datei kann später daneben gelegt werden.
 
 app:
-    name: Mesia
+    name: Mesuna
     claim: Life, intelligently connected.
 
 nav:
@@ -17,14 +17,14 @@ login:
     submit: Anmelden
     stay_signed_in: Du bleibst auf diesem Gerät angemeldet.
     about:
-        title: Was ist Mesia?
+        title: Was ist Mesuna?
         shared_title: Gemeinsam.
         shared: Eure Einkaufsliste für den ganzen Haushalt. Was einer einträgt, sehen alle.
         offline_title: Auch ohne Netz.
         offline: Die Liste funktioniert im Keller und im Supermarkt, abgeglichen wird später.
         smart_title: Mitdenkend.
         smart: Artikel landen in der richtigen Kategorie, oft Gekauftes ist schnell wieder auf der Liste.
-        account: Mesia ist im Moment nur auf Einladung nutzbar.
+        account: Mesuna ist im Moment nur auf Einladung nutzbar.
 
 shopping:
     title: Einkauf
@@ -166,7 +166,7 @@ push:
         quarter_hour: Alle 15 Minuten
         unsupported: Mitteilungen gibt es auf dem iPhone nur in der installierten App (Teilen → „Zum Home-Bildschirm“).
         not_configured: Mitteilungen sind auf diesem Server noch nicht eingerichtet.
-        denied: Mitteilungen sind für Mesia blockiert. Erlauben unter Einstellungen → Mitteilungen → Mesia.
+        denied: Mitteilungen sind für Mesuna blockiert. Erlauben unter Einstellungen → Mitteilungen → Mesuna.
         error: Das hat nicht geklappt. Bitte später noch einmal versuchen.
 
 categories:

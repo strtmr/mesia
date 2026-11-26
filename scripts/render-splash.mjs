@@ -28,43 +28,37 @@ const DEVICES = [
     { width: 375, height: 667, ratio: 2, name: 'iPhone SE (2. und 3. Generation), 8' },
 ];
 
-// Farben aus dem Brand Book (Kapitel 5): Hintergrund Paper / Ink, Wortmarke Ink / Cream.
-// Versatz der Bildmarke in beiden Fällen Deep, wie auf der Login-Seite (auf Ink wäre ein Ink-Versatz unsichtbar).
+// Farben aus dem Brand Book (Kapitel 5): Hintergrund Paper / Ink, Bildmarke Deep / Cream, Wortmarke Ink / Cream.
 const THEMES = {
-    light: { bg: '#f7f5ef', text: '#01161e' },
-    dark: { bg: '#01161e', text: '#eff6e0' },
+    light: { bg: '#f7f5ef', mark: '#124559', text: '#01161e' },
+    dark: { bg: '#01161e', mark: '#eff6e0', text: '#eff6e0' },
 };
 
-const BOWL = 'M168 176 H344 C344 216 304 236 256 236 C208 236 168 216 168 176 Z';
-const M = 'M124 428 V306 Q124 278 152 278 H200 Q210 278 216 286 L256 338 L296 286 Q302 278 312 278 H360 Q388 278 388 306 V428 H322 V364 L268 418 Q256 432 244 418 L190 364 V428 Z';
-
 // Als data:-URL eingebettet, weil eine per setContent geladene Seite keine file://-Schriften nachladen darf
-const fontUrl = `data:font/woff2;base64,${readFileSync(resolve('assets/fonts/archivo-black-latin.woff2')).toString('base64')}`;
+const fontUrl = `data:font/woff2;base64,${readFileSync(resolve('assets/fonts/manrope-latin-wght.woff2')).toString('base64')}`;
 
-/** Bildmarke (Stufe Sticker, wie templates/app/_brand_mark.html.twig) und Wortmarke, mittig auf dem Hintergrund. */
+/** Bildmarke (wie templates/app/_brand_mark.html.twig) und Wortmarke, mittig auf dem Hintergrund. */
 function html(theme) {
-    const { bg, text } = THEMES[theme];
+    const { bg, mark, text } = THEMES[theme];
 
     return `<!doctype html><html><head><meta charset="utf-8"><style>
-        @font-face { font-family: "Archivo Black"; src: url("${fontUrl}") format("woff2"); }
+        @font-face { font-family: "Manrope"; font-weight: 200 800; src: url("${fontUrl}") format("woff2"); }
         html, body { margin: 0; height: 100%; background: ${bg}; }
         body { display: flex; flex-direction: column; align-items: center; justify-content: center; }
         /* etwas über der Mitte, wie es optisch ruhiger wirkt */
         main { display: flex; flex-direction: column; align-items: center; margin-bottom: 8vh; }
-        svg { width: 46vw; height: auto; }
-        h1 { margin: 5vw 0 0; color: ${text}; font: 400 13vw/1 "Archivo Black"; letter-spacing: 0.01em; }
+        /* Proportionen wie im Logo: Wortmarke etwa 1,75-mal so breit wie die Bildmarke */
+        svg { width: 36vw; height: auto; }
+        h1 { margin: 8vw 0 0; color: ${text}; font: 400 12vw/1 "Manrope"; letter-spacing: 0.28em; text-indent: 0.28em; text-transform: uppercase; }
     </style></head><body><main>
-        <svg viewBox="70 140 380 330">
-            <g transform="rotate(-5 256 300)" stroke-width="22" stroke-linejoin="round" paint-order="stroke">
-                <g transform="translate(14 14)" fill="#124559" stroke="#124559">
-                    <path d="${BOWL}"/><rect x="100" y="240" width="312" height="32" rx="16"/><path d="${M}"/>
-                </g>
-                <path d="${BOWL}" fill="#ff6a2b" stroke="#01161e"/>
-                <rect x="100" y="240" width="312" height="32" rx="16" fill="#eff6e0" stroke="#01161e"/>
-                <path d="${M}" fill="#eff6e0" stroke="#01161e"/>
+        <svg viewBox="0 0 370 290">
+            <path d="M82 2 H288 A103 65 0 0 1 82 2 Z" fill="#ff6a2b"/>
+            <g fill="none" stroke="${mark}" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="10" y1="92.5" x2="360" y2="92.5"/>
+                <polyline points="45,279 45,129 185,227 325,129 325,279"/>
             </g>
         </svg>
-        <h1>MESIA</h1>
+        <h1>Mesuna</h1>
     </main></body></html>`;
 }
 

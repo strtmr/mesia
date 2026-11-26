@@ -13,7 +13,7 @@ push auf main → CI (Prüfungen, Tests) → Job "Deployment":
                      danach Test von APP_URL/login, bei Fehler automatisch zurück auf das vorherige Release
 ```
 
-Verzeichnisse auf dem Server (`<basis>`, z. B. `/usr/home/<benutzer>/public_html/projects/mesia`):
+Verzeichnisse auf dem Server (`<basis>`, z. B. `/usr/home/<benutzer>/public_html/projects/mesuna`):
 
 | Pfad | Inhalt |
 |------|--------|
@@ -28,20 +28,20 @@ Verzeichnisse auf dem Server (`<basis>`, z. B. `/usr/home/<benutzer>/public_html
 **1. Hetzner-Verwaltung (konsoleH)**
 
 1. PostgreSQL-Datenbank mit Benutzer anlegen. Host, Name, Benutzer und Passwort notieren.
-2. Subdomain anlegen, Document Root `<basis>/current/public` (hier: `public_html/projects/mesia/current/public`).
+2. Subdomain anlegen, Document Root `<basis>/current/public` (hier: `public_html/projects/mesuna/current/public`).
    Den dafür angelegten leeren Ordner `current/public` ersetzt das erste Deployment durch den Symlink.
    **Achtung:** `<basis>` liegt unter `public_html`, dem Web-Verzeichnis der Hauptdomain. Ohne Sperre wären
-   Zugangsdaten, Logs und Code über `https://<hauptdomain>/projects/mesia/…` abrufbar. Deshalb sperrt
+   Zugangsdaten, Logs und Code über `https://<hauptdomain>/projects/mesuna/…` abrufbar. Deshalb sperrt
    `<basis>/.htaccess` alles (Schritt 2, danach pflegt es jedes Deployment), `public/.htaccess` gibt nur die App frei.
 3. PHP-Version der Subdomain: 8.5. SSL-Zertifikat (Let's Encrypt) aktivieren und **HTTPS erzwingen**.
 
 **2. Zugangsdaten auf dem Server** (per SSH)
 
 ```bash
-mkdir -p ~/public_html/projects/mesia/shared
+mkdir -p ~/public_html/projects/mesuna/shared
 # Zuerst sperren, BEVOR Zugangsdaten angelegt werden (gleicher Inhalt, den später deploy/remote.sh schreibt)
-printf '<IfModule mod_authz_core.c>\n    Require all denied\n</IfModule>\n' > ~/public_html/projects/mesia/.htaccess
-cd ~/public_html/projects/mesia/shared
+printf '<IfModule mod_authz_core.c>\n    Require all denied\n</IfModule>\n' > ~/public_html/projects/mesuna/.htaccess
+cd ~/public_html/projects/mesuna/shared
 php -r 'echo bin2hex(random_bytes(16)), PHP_EOL;'   # Ausgabe = APP_SECRET
 nano .env.local && chmod 600 .env.local
 ```
@@ -49,7 +49,7 @@ nano .env.local && chmod 600 .env.local
 Prüfen, dass die Sperre wirkt (muss `403` liefern, niemals `200`):
 
 ```bash
-curl -s -o /dev/null -w '%{http_code}\n' https://<hauptdomain>/projects/mesia/shared/.env.local
+curl -s -o /dev/null -w '%{http_code}\n' https://<hauptdomain>/projects/mesuna/shared/.env.local
 ```
 
 ```dotenv
@@ -70,7 +70,7 @@ echte Version. Diese eintragen, nur die Hauptversion genügt (z. B. `16`). Alter
 **3. Hosting-Check** (von WSL aus, ändert nichts)
 
 ```bash
-ssh -p 222 <benutzer>@<host> 'sh -s -- ~/public_html/projects/mesia' < deploy/hosting-check.sh
+ssh -p 222 <benutzer>@<host> 'sh -s -- ~/public_html/projects/mesuna' < deploy/hosting-check.sh
 ```
 
 Zeigt PHP-Binaries und -Erweiterungen, Limits, Werkzeuge und die PostgreSQL-Version. Wichtig: welches CLI-PHP
@@ -79,8 +79,8 @@ dieselbe Version wie die Subdomain hat (→ Variable `DEPLOY_PHP`).
 **4. Deploy-Schlüssel** (nur für GitHub Actions, ohne Passphrase)
 
 ```bash
-ssh-keygen -t ed25519 -N "" -C "github-actions mesia" -f ~/.ssh/mesia_deploy
-ssh-copy-id -p 222 -i ~/.ssh/mesia_deploy.pub <benutzer>@<host>   # oder in konsoleH hinterlegen
+ssh-keygen -t ed25519 -N "" -C "github-actions mesuna" -f ~/.ssh/mesuna_deploy
+ssh-copy-id -p 222 -i ~/.ssh/mesuna_deploy.pub <benutzer>@<host>   # oder in konsoleH hinterlegen
 ssh-keyscan -p 222 <host>                                               # Ausgabe = DEPLOY_KNOWN_HOSTS
 ```
 
@@ -95,7 +95,7 @@ ssh-keyscan -p 222 <host>                                               # Ausgab
 | Variable | `DEPLOY_PHP` | CLI-PHP laut Hosting-Check, z. B. `php` |
 | Variable | `APP_URL` | `https://<subdomain>` (ohne `/` am Ende) |
 | Variable | `DEPLOY_PHP_VERSION` | optional, PHP-Version für den Build (Standard `8.5`) |
-| Secret | `DEPLOY_SSH_KEY` | Inhalt von `~/.ssh/mesia_deploy` (privater Schlüssel) |
+| Secret | `DEPLOY_SSH_KEY` | Inhalt von `~/.ssh/mesuna_deploy` (privater Schlüssel) |
 | Secret | `DEPLOY_KNOWN_HOSTS` | Ausgabe von `ssh-keyscan` |
 
 Fehlt etwas davon, bricht der Deployment-Job im ersten Schritt mit einer Meldung ab, welche Einträge fehlen.
@@ -107,7 +107,7 @@ Die Einträge müssen in der Umgebung `production` liegen (oder als Repository-V
 
 ```bash
 ssh -t -p 222 <benutzer>@<host>
-cd ~/public_html/projects/mesia/current
+cd ~/public_html/projects/mesuna/current
 php bin/console app:household:create "<Haushaltsname>"           # gibt die Haushalts-ID aus
 php bin/console app:user:create <email> <Name> --household=<ID>   # für jede Person
 ```
@@ -116,7 +116,7 @@ php bin/console app:user:create <email> <Name> --household=<ID>   # für jede Pe
 
 ```bash
 ssh -t -p 222 <benutzer>@<host>
-cd ~/public_html/projects/mesia/current
+cd ~/public_html/projects/mesuna/current
 php85 bin/console app:push:generate-keys    # gibt VAPID_PUBLIC_KEY=… und VAPID_PRIVATE_KEY=… aus
 nano ../shared/.env.local                   # beide Zeilen anhängen
 php85 bin/console cache:clear               # damit die neuen Werte gelten
@@ -128,7 +128,7 @@ Die Schlüssel **nicht wechseln**: Mit neuen Schlüsseln müssen alle Geräte Mi
 Dann in konsoleH unter **Cronjobs** einen Job anlegen, jede Minute (Pflicht: höchstens alle 5 Minuten):
 
 ```
-cd /usr/www/users/<benutzer>/projects/mesia/current && php85 bin/console app:push:send --quiet
+cd /usr/www/users/<benutzer>/projects/mesuna/current && php85 bin/console app:push:send --quiet
 ```
 
 Bei 5 Minuten Takt kommt „Sofort“ entsprechend bis zu 5 Minuten später. Überlappende Läufe verhindert eine Sperre.
@@ -146,13 +146,39 @@ und Personen (statt `app:household:create`/`app:user:create`). Entziehen mit `--
 
 | Aufgabe | Befehl |
 |---------|--------|
-| Logs ansehen | `ssh -p 222 <benutzer>@<host> 'tail -n 100 ~/public_html/projects/mesia/shared/log/prod-*.log'` |
+| Logs ansehen | `ssh -p 222 <benutzer>@<host> 'tail -n 100 ~/public_html/projects/mesuna/shared/log/prod-*.log'` |
 | Rollback | `ssh -p 222 <benutzer>@<host> 'sh -s rollback <basis>' < deploy/remote.sh` |
 | Katalog-Abgleich ansehen | auf dem Server: `php85 bin/console app:catalog:update --dry-run` (läuft bei jedem Deployment automatisch) |
 | Mitteilungen von Hand senden | auf dem Server: `php85 bin/console app:push:send` (zeigt gesendet/entfernt/fehlgeschlagen) |
 | Haushalt oder Person anlegen | in der App unter Mehr → Admin (oder per Konsole wie in Schritt 7) |
 | Passwort neu setzen | auf dem Server: `php bin/console app:user:set-password <email>` |
 | Von Hand deployen | `ddev exec deploy/build.sh var/build`, dann in WSL mit gesetzten `DEPLOY_*`-Variablen `deploy/release.sh var/build` |
+
+## Domain oder Server-Pfad wechseln
+
+Die Datenbank, `APP_SECRET` und die VAPID-Schlüssel bleiben, wie sie sind. Auf der neuen Domain sind Anmeldung,
+Startbildschirm-Symbol und Mitteilungen aber neu einzurichten: Cookies, lokale Daten und Push-Abos gehören immer zu
+einer Domain.
+
+1. **Neue Domain** in konsoleH anlegen, zunächst **zusätzlich** zur alten. Document Root wie bisher
+   `<basis>/current/public`, SSL aktivieren, HTTPS erzwingen. Beide Domains laufen parallel, die API prüft nur, ob
+   `Origin` zur aufgerufenen Domain passt.
+2. `shared/.env.local`: `DEFAULT_URI=https://<neue-domain>` (Links in Mitteilungen, VAPID-Absender), danach
+   `php85 bin/console cache:clear` in `current`.
+3. GitHub → Environment `production`: Variable `APP_URL` auf die neue Domain.
+4. Jede Person: In der **alten** App die Mitteilungen ausschalten und online warten, bis alles gesendet ist. Dann die neue
+   Domain öffnen, anmelden, zum Home-Bildschirm hinzufügen, Mitteilungen einschalten und das alte Symbol löschen.
+5. Wenn alle umgezogen sind: alte Domain in konsoleH per 301 auf die neue umleiten oder löschen.
+
+**Neuer Pfad (`<basis>`):** Nicht mit `mv` verschieben. Die Links auf `shared/` und der Symfony-Cache enthalten
+absolute Pfade. Stattdessen neu aufsetzen:
+
+1. `mkdir -p <neu>/shared/log`, den Ordner zuerst sperren (`.htaccess` wie in Schritt 2 der Einrichtung), dann
+   `.env.local` kopieren (`cp -p <alt>/shared/.env.local <neu>/shared/`).
+2. GitHub-Variable `DEPLOY_PATH` auf `<neu>` setzen und Actions → CI → „Run workflow“ starten. Der Test nach dem
+   Live-Schalten läuft noch gegen die alte Installation. Erst Schritt 3 macht das neue Release sichtbar.
+3. In konsoleH den Document Root aller Domains auf `<neu>/current/public` umstellen, den Cronjob auf `<neu>/current`.
+4. Funktioniert alles, `<alt>` löschen.
 
 ## Gut zu wissen
 
