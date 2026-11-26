@@ -90,23 +90,30 @@
                     <template x-for="item in group.items" :key="item.id">
                         {# Fast die ganze Zeile hakt ab (im Laden trifft man so immer), „›“ rechts öffnet den Dialog.
                            Gerade abgehakt (item.checked): bleibt an seinem Platz, bis die Liste ein paar Sekunden
-                           nicht berührt wurde, siehe KEEP_IN_PLACE_MS in list.js #}
+                           nicht berührt wurde, siehe KEEP_IN_PLACE_MS in list.js.
+                           Nach links wischen zeigt „Entfernen“ (löscht ohne Umweg über „Erledigt“). Die Wischfläche liegt
+                           innen, damit li.item-row für Sortieren und Wegschrumpfen dieselbe bleibt. #}
                         <li class="item-row" :class="{ 'item-row--pending': item.pending, 'item-row--checked': item.checked }" :data-id="item.id">
-                            <button type="button" class="item-main" @click="check(item)" :aria-pressed="item.checked.toString()"
-                                    :aria-label="(item.checked ? '{{ 'shopping.uncheck_label'|trans|e('js') }} ' : '{{ 'shopping.check_label'|trans|e('js') }} ') + item.name">
-                                <span class="item-check" :class="{ 'is-checked': item.checked }"><span class="item-check__circle"></span></span>
-                                <span class="item-body">
-                                    <span class="item-body__name" x-text="item.name"></span>
-                                    <span class="item-body__note" x-show="item.note" x-text="item.note"></span>
-                                    {# Laden, direkt dahinter "gültig bis" als Etikett (heute grün, abgelaufen rot) #}
-                                    <span class="item-body__meta" x-show="item.stores.length > 0 || item.validUntil">
-                                        <span class="item-body__stores" x-show="item.stores.length > 0" x-text="item.stores.join(' · ')"></span>
-                                        <span class="item-date" :class="'item-date--' + item.dateStatus" x-show="item.validUntil" x-text="item.validLabel"></span>
-                                    </span>
-                                </span>
-                                <span class="item-qty" x-text="item.quantityLabel"></span>
-                            </button>
-                            <button type="button" class="item-edit" @click="openEditor(item)" :aria-label="'{{ 'shopping.edit_label'|trans|e('js') }} ' + item.name">›</button>
+                            <div class="item-swipe">
+                                <div class="item-swipe__content">
+                                    <button type="button" class="item-main" @click="check(item)" :aria-pressed="item.checked.toString()"
+                                            :aria-label="(item.checked ? '{{ 'shopping.uncheck_label'|trans|e('js') }} ' : '{{ 'shopping.check_label'|trans|e('js') }} ') + item.name">
+                                        <span class="item-check" :class="{ 'is-checked': item.checked }"><span class="item-check__circle"></span></span>
+                                        <span class="item-body">
+                                            <span class="item-body__name" x-text="item.name"></span>
+                                            <span class="item-body__note" x-show="item.note" x-text="item.note"></span>
+                                            {# Laden, direkt dahinter "gültig bis" als Etikett (heute grün, abgelaufen rot) #}
+                                            <span class="item-body__meta" x-show="item.stores.length > 0 || item.validUntil">
+                                                <span class="item-body__stores" x-show="item.stores.length > 0" x-text="item.stores.join(' · ')"></span>
+                                                <span class="item-date" :class="'item-date--' + item.dateStatus" x-show="item.validUntil" x-text="item.validLabel"></span>
+                                            </span>
+                                        </span>
+                                        <span class="item-qty" x-text="item.quantityLabel"></span>
+                                    </button>
+                                    <button type="button" class="item-edit" @click="openEditor(item)" :aria-label="'{{ 'shopping.edit_label'|trans|e('js') }} ' + item.name">›</button>
+                                </div>
+                                <button type="button" class="item-swipe__action" @click="remove(item)" :aria-label="'{{ 'shopping.remove_open_label'|trans|e('js') }} ' + item.name">{{ 'shopping.remove'|trans }}</button>
+                            </div>
                         </li>
                     </template>
                 </ul>

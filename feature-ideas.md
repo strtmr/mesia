@@ -8,7 +8,7 @@ _keine_
 
 ## Design
 + Optimierte Ansicht fürs Web
-+ Impressum
++ [x] Impressum
 
 ## User und Abo
 + [x] change profile

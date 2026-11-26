@@ -67,6 +67,7 @@ shopping:
     done_hint: Kreis antippen setzt einen Artikel wieder auf die Liste, Name antippen zeigt Details, nach links wischen entfernt ihn.
     remove: Entfernen
     remove_label: Aus „Erledigt“ entfernen
+    remove_open_label: Von der Liste entfernen
     add: Hinzufügen
     add_placeholder: Artikel hinzufügen …
     check_label: Abhaken

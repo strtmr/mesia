@@ -86,6 +86,10 @@ Liste“ holt ihn ebenfalls zurück.
 „Geschenkpapier“. Der Artikel bleibt im Katalog und wird beim nächsten Eintippen wieder erkannt, er steht nur nicht
 mehr in „Erledigt“.
 
+**Von der Liste entfernen, ohne abzuhaken:** nach links wischen und „Entfernen“ tippen, z. B. wenn ihr etwas doch
+nicht braucht oder es doppelt eingetragen ist. Der Artikel landet nicht in „Erledigt“ und zählt nicht als gekauft.
+Ist eine Zeile aufgewischt, schiebt ein Tipp auf sie sie wieder zurück (ohne abzuhaken).
+
 **Bearbeiten:** rechts in der Zeile auf „›“ tippen. Dort änderst du Name, Menge, Einheit, Kategorie und Notiz oder löschst den Artikel.
 Unten steht, wer den Artikel wann auf die Liste gesetzt hat (z. B. „Hinzugefügt von Anna heute um 9:05“), bei
 abgehakten Artikeln auch, wer ihn wann erledigt hat.

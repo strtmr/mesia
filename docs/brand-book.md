@@ -12,6 +12,7 @@ werden (und umgekehrt).
 
 | Version | Datum | Änderung |
 |---|---|---|
+| 1.10 | 2026-11-26 | Wischen zum Entfernen auch bei offenen Einträgen, Schrift auf Fehlerfarbe im Dunkelmodus Ink statt Weiß (`--color-danger-contrast`) |
 | 1.0 | – | PDF: Markenidee, Logo-Konzept, Startpalette, Typografie, Tokens |
 | 1.9 | 2026-11-26 | Umbenennung von MESIA in Mesuna, Tokens `--mesuna-*`. Logo nach Vorlage `docs/brand/mesuna-logo.png`: Bildmarke aus feinen, gleich starken Linien statt Sticker, Wortmarke „MESUNA“ in Manrope 400 mit weiter Laufweite statt Archivo Black, App-Icon auf Ink statt Deep |
 | 1.8 | 2026-11-25 | Startbild für die installierte App (iOS) |
@@ -189,7 +190,7 @@ Statusfarben dürfen nicht mit der Markenfarbe verwechselt werden.
 
 | Status | Hell | Dunkel | Einsatz |
 |---|---|---|---|
-| Fehler, Löschen | `#c84b45` | `#ef7a73` | Fehlermeldungen, „Entfernen“, „Löschen“ |
+| Fehler, Löschen | `#c84b45` | `#ef7a73` | Fehlermeldungen, „Entfernen“, „Löschen“. Schrift darauf (`--color-danger-contrast`): Weiß, dunkel Ink |
 | Warnung, ausstehend | `#b0740f` | `#e6a23c` | Punkt „noch nicht übertragen“, Status „ausstehend“ |
 | Erfolg | `#32845d` | `#6fcf9a` | „heute“ am Datum eines Eintrags, Hinweis nach erfolgreichem Anlegen |
 | Schrift auf getönten Etiketten | Erfolg `#256b49`, Fehler `#a63a34` | wie Statusfarbe | „heute“ / „abgelaufen“, damit 4,5:1 auch auf der Tönung erreicht wird |
@@ -292,7 +293,7 @@ nicht benötigt.
 | Laden und Datum am Eintrag | Zeile unter dem Namen: Läden 13 px gedämpft (zu lange werden mit … gekürzt), direkt dahinter „gültig bis“ als Etikett (12 px halbfett, Radius voll): neutral „bis Sa., 28.11.“, grün „heute“, rot „abgelaufen 23.11.“ (Fläche jeweils 12–16 % der Farbe) |
 | Hinweis Erfolg | `.notice--success`: Fläche mit 16 % Erfolgsfarbe, z. B. nach dem Anlegen im Admin-Bereich |
 | Metazeile im Sheet | 13 px gedämpft über dem Löschen-Knopf („Hinzugefügt von … heute um …“) |
-| Wischen zum Entfernen | Zeile nach links schieben, roter Knopf „Entfernen“ rastet ein |
+| Wischen zum Entfernen | offene Einträge und „Erledigt“: Zeile nach links schieben, roter Knopf „Entfernen“ rastet ein. Tipp auf die aufgewischte Zeile schiebt sie zurück |
 | Hinweis (Toast) | dunkle Fläche (Radius 14, 15 px Text) über der Eingabeleiste, Fehler in Fehlerfarbe |
 | Sheet | von unten, Radius 20 oben, für Bearbeiten |
 | Schalter | in einer Listengruppen-Zeile rechts, 51 × 31 px, aus: Trennlinienfarbe, an: Signal-Orange, Knopf weiß |
@@ -337,6 +338,7 @@ respektieren, Trefferflächen mindestens 44 × 44 px.
 | Creme auf Deep | 9,4:1 | ✓ |
 | Creme auf Ink (App-Icon) | 16,7:1 | ✓ |
 | Fehlerfarbe auf Weiß, Weiß auf Fehlerfarbe | 4,6:1 | ✓ |
+| Dunkel: Ink auf Fehlerfarbe (Wischknopf, Fehler-Hinweis) | 6,8:1 | ✓, Weiß wären nur 2,7:1 |
 | Dunkel: Cream auf Ink / auf Surface | 16,7:1 / 14,2:1 | ✓ |
 | Dunkel: Sage auf Ink / auf Surface | 9,9:1 / 8,4:1 | ✓ |
 | Dunkel: Ink auf Sage | 9,9:1 | ✓ |
@@ -371,6 +373,7 @@ Tokens, keine eigenen Farben, Radien oder Abstände. Auszug (helles Thema):
     --color-action: var(--mesuna-orange);
     --color-action-contrast: var(--mesuna-ink);
     --color-danger: #c84b45;
+    --color-danger-contrast: #ffffff;
     --color-warning: #b0740f;
     --color-success: #32845d;
 

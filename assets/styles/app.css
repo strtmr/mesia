@@ -47,6 +47,8 @@
     --color-action: var(--mesuna-orange);
     --color-action-contrast: var(--mesuna-ink);
     --color-danger: #c84b45;
+    /* Schrift auf Fehlerfarbe (Wischknopf „Entfernen“, Fehler-Hinweis) */
+    --color-danger-contrast: #ffffff;
     /* Bernstein: mindestens 3:1 auf Weiß und Creme (WCAG, grafische Hinweise wie der Punkt "ausstehend") */
     --color-warning: #b0740f;
     --color-success: #32845d;
@@ -108,6 +110,8 @@
         --color-accent-contrast: var(--mesuna-ink);
         --color-accent-soft: var(--mesuna-slate);
         --color-danger: #ef7a73;
+        /* Weiß hätte auf dem hellen Rot nur 2,6:1 */
+        --color-danger-contrast: var(--mesuna-ink);
         --color-warning: #e6a23c;
         /* hell genug für Schrift auf der dunklen Fläche (heller als #32845d) */
         --color-success: #6fcf9a;
@@ -1546,7 +1550,7 @@ html[data-keyboard="open"] .page-shopping .item-row {
 
 .toast.toast--error {
     background: var(--color-danger);
-    color: #fff;
+    color: var(--color-danger-contrast);
 }
 
 /* Längenhinweis über dem Eingabefeld ("Noch 8 Zeichen" / "3 Zeichen zu viel") */
@@ -1746,7 +1750,7 @@ select.field__input {
     }
 }
 
-/* ---------- Wischen zum Entfernen (Erledigt) ---------- */
+/* ---------- Wischen zum Entfernen (offene Einträge und Erledigt) ---------- */
 
 .shopping-done__hint {
     margin: 0 var(--space-1) var(--space-2);
@@ -1784,13 +1788,29 @@ select.field__input {
     scroll-snap-align: start;
 }
 
+/*
+ * Offene Einträge: Die Wischfläche liegt innerhalb der Zeile, li.item-row bleibt für Sortieren und Wegschrumpfen.
+ * position: static, damit die Trennlinie der Zeile (.item-row + .item-row::before) über dem Inhalt sichtbar bleibt.
+ */
+.item-row > .item-swipe {
+    position: static;
+    flex: 1;
+    min-width: 0;
+}
+
+.item-row > .item-swipe > .item-swipe__content {
+    display: flex;
+    align-items: stretch;
+    background: var(--color-surface);
+}
+
 .item-swipe__action {
     flex: 0 0 auto;
     min-width: 96px;
     padding: 0 var(--space-4);
     border: 0;
     background: var(--color-danger);
-    color: #fff;
+    color: var(--color-danger-contrast);
     font: inherit;
     font-weight: 600;
     scroll-snap-align: end;

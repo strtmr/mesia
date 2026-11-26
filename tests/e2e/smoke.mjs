@@ -188,16 +188,38 @@ try {
     if ((await page.locator('.item-row', { hasText: 'Brot' }).count()) !== 1) throw new Error('Brot doppelt nach Tab-Wechsel');
     await page.screenshot({ path: `${screenshotDir}/5-tabwechsel.png`, fullPage: true });
 
+    step('Offenen Eintrag wegwischen: Tipp schließt, "Entfernen" löscht ohne "Erledigt"');
+    await page.fill('.quick-add__input', 'Zahnpasta');
+    await page.press('.quick-add__input', 'Enter');
+    const paste = page.locator('.shopping-group .item-row', { hasText: 'Zahnpasta' });
+    await expectVisible(paste, 'Zahnpasta auf der Liste');
+    const pasteSwipe = paste.locator('.item-swipe');
+    await pasteSwipe.evaluate((row) => row.scrollTo({ left: row.scrollWidth }));
+    // click() im Element selbst: Playwright würde die Zeile sonst vorher zurückscrollen
+    await paste.locator('.item-main').evaluate((button) => button.click());
+    await pasteSwipe.evaluate((row) => new Promise((resolve) => {
+        const started = Date.now();
+        const poll = () => (row.scrollLeft < 2 || Date.now() - started > 3000 ? resolve() : requestAnimationFrame(poll));
+        poll();
+    }));
+    if ((await pasteSwipe.evaluate((row) => row.scrollLeft)) >= 2) throw new Error('Tipp hat die aufgewischte Zeile nicht geschlossen');
+    if (await paste.evaluate((row) => row.classList.contains('item-row--checked'))) throw new Error('Tipp auf aufgewischte Zeile hat abgehakt');
+    await pasteSwipe.evaluate((row) => row.scrollTo({ left: row.scrollWidth }));
+    await paste.locator('.item-swipe__action').click();
+    await paste.waitFor({ state: 'detached', timeout: 5000 });
+    if ((await page.locator('.shopping-items--done .item-swipe', { hasText: 'Zahnpasta' }).count()) !== 0) throw new Error('Zahnpasta in "Erledigt"');
+    await waitForSync(page);
+
     step('Aus "Erledigt" entfernen (Wischen)');
     await page.locator('.item-row:not(.item-row--done)', { hasText: 'Drachenfrucht' }).locator('.item-check').click();
     if ((await page.locator('.shopping-done__toggle').getAttribute('aria-expanded')) !== 'true') {
         await page.click('.shopping-done__toggle');
     }
-    const doneRow = page.locator('.item-swipe', { hasText: 'Drachenfrucht' });
+    const doneRow = page.locator('.shopping-items--done .item-swipe', { hasText: 'Drachenfrucht' });
     await expectVisible(doneRow, 'Drachenfrucht in Erledigt');
     await doneRow.evaluate((row) => row.scrollTo({ left: row.scrollWidth }));
     await doneRow.locator('.item-swipe__action').click();
-    await page.locator('.item-swipe', { hasText: 'Drachenfrucht' }).waitFor({ state: 'detached', timeout: 5000 });
+    await page.locator('.shopping-items--done .item-swipe', { hasText: 'Drachenfrucht' }).waitFor({ state: 'detached', timeout: 5000 });
     await waitForSync(page);
 
     step('Service Worker hat die Listenseite gespeichert');

@@ -259,6 +259,9 @@ export function shoppingList(engine) {
          * Gespeichert und abgeglichen wird sofort. Ein weiterer Tipp auf einen noch stehenden Eintrag macht es rückgängig.
          */
         async check(item) {
+            if (closeSwipe(root, item.id)) {
+                return;
+            }
             const now = Date.now();
             if (leaving || now - settledAt < SETTLE_GUARD_MS || (lastTap.id === item.id && now - lastTap.at < DOUBLE_TAP_MS)) {
                 return;
@@ -350,9 +353,21 @@ export function shoppingList(engine) {
             await this.run(deleteItem(item.id, ctx));
         },
 
+        /**
+         * Offenen Eintrag per Wischen entfernen, ohne ihn abzuhaken: Er landet nicht in „Erledigt“ und zählt nicht als
+         * gekauft (z. B. doch nicht nötig oder doppelt eingetragen). Der Artikel bleibt im Katalog.
+         */
+        async remove(item) {
+            keptInPlace.delete(item.id);
+            await this.run(deleteItem(item.id, ctx));
+        },
+
         // ------------------------------------------------------------ Bearbeiten
 
         openEditor(item) {
+            if (closeSwipe(root, item.id)) {
+                return;
+            }
             const source = engine.state.items.get(item.id);
             if (!source) {
                 return;
@@ -563,6 +578,20 @@ function leavingElements(root, itemIds) {
     }
 
     return elements;
+}
+
+/**
+ * Ist die Zeile gerade aufgewischt („Entfernen“ sichtbar), schiebt ein Tipp sie zurück, statt abzuhaken oder den
+ * Dialog zu öffnen (wie bei iOS). Gibt true zurück, wenn sie offen war.
+ */
+function closeSwipe(root, itemId) {
+    const swipe = root?.querySelector(`.item-row[data-id="${itemId}"] .item-swipe`);
+    if (!swipe || swipe.scrollLeft < 4) {
+        return false;
+    }
+    swipe.scrollTo({ left: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+
+    return true;
 }
 
 function siblingRow(element, direction) {

@@ -138,6 +138,11 @@ ui/     Alpine.js: app.js (Einstieg, Store "sync"), list.js (Komponente)
 - **„Erledigt“:** Der Kreis reaktiviert, der Name öffnet den Bearbeiten-Dialog. Dessen Knopf „Wieder auf die Liste“
   (`reactivateFromEditor()`) schickt `item.uncheck`, solange der Eintrag noch an seinem Platz steht (Menge bleibt),
   sonst `item.reactivate`.
+- **Wischen zum Entfernen:** In offenen Zeilen und in „Erledigt“ ist `.item-swipe` horizontal scrollbar mit
+  Einrasten (CSS `scroll-snap`, kein Gesten-JavaScript), rechts liegt der Knopf „Entfernen“ (`item.delete`). Bei offenen
+  Einträgen sitzt `.item-swipe` innerhalb von `li.item-row`, damit SortableJS und das Wegschrumpfen weiter an der Zeile
+  hängen. `remove()` löscht ohne Abhaken (nicht in „Erledigt“, keine Kaufhistorie). Ist eine Zeile aufgewischt, schließt
+  ein Tipp sie nur (`closeSwipe()` in `check()` und `openEditor()`).
 - **Wer und wann:** Beiträge tragen `created_by`, Einträge `checked_by`. Namen liefert `/api/me`
   (`household.members`). Die SyncEngine speichert sie mit der eigenen ID in `meta.people` (auch offline verfügbar)
   und gibt die ID an `buildState` weiter, damit eigene, noch nicht gesendete Änderungen den Benutzer schon tragen.
